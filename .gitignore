@@ -60,3 +60,4 @@ coverage/
 # ========================
 firebase-debug.log
 client/src/firebase
+client/src/firebase.js
