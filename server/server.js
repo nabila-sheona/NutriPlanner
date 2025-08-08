@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const userRoute = require("./Routes/user.route");
 const authRoute = require("./Routes/auth.route");
-
+const recipeRoute = require("./Routes/recipe.route");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
@@ -36,7 +36,7 @@ app.use(cookieParser());
 
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
-
+app.use("/recipes", recipeRoute);
 mongoose
   .connect(process.env.MONGODB_URI, {})
   .then(() => {
