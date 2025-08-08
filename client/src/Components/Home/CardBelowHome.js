@@ -1,0 +1,125 @@
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import HomeDarkCardLeftPic from "./images/misssion1.png";
+import HomeDarkCardRightPic from "./images/mission2.png";
+
+const CardBelowHome = () => {
+  return (
+    <Box
+      sx={{
+        justifyContent: "center",
+        maxWidth: "100%",
+        backgroundColor: "#004346",
+        width: "80%",
+        minheight: "50vh",
+        margin: "auto",
+        padding: "10px",
+        marginTop: "30px",
+        borderRadius: "40px 50px 20px 20px",
+        display: "flex",
+
+        alignItems: "center",
+        color: "#4aedc4",
+      }}
+    >
+      {/* Left Image (corresponds to .left-pic) */}
+      <Box
+        sx={{
+          position: "relative",
+          bottom: "50px",
+          width: "16vw",
+        }}
+      >
+        <Box
+          component="img"
+          src={HomeDarkCardLeftPic}
+          alt="Playful cat"
+          sx={{
+            height: 220,
+            marginLeft: "30px",
+          }}
+        />
+      </Box>
+
+      {/* Middle Text (corresponds to .right-para / .we-do) */}
+      <Box
+        sx={{
+          minwidth: "flex",
+          ml: 1,
+
+          // If you had a custom CSS variable for --textGrey, replace it with your desired color
+          color: "var(--textGrey)",
+
+          paddingRight: "30px",
+          paddingLeft: "150px",
+        }}
+      >
+        <Box
+          sx={{
+            minwidth: "flex",
+            ml: 1,
+
+            // If you had a custom CSS variable for --textGrey, replace it with your desired color
+            color: "var(--textGrey)",
+            fontSize: "22px",
+            fontWeight: 500,
+            fontFamily: '"Montserrat", sans-serif',
+            lineHeight: 1.2,
+            textAlign: "left",
+            paddingRight: "30px",
+            paddingLeft: "10px",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "28px",
+              fontWeight: 500,
+              color: "#ffffff",
+              marginBottom: "10px",
+            }}
+          >
+            OUR MISSION
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            minwidth: "flex",
+            ml: 1,
+            color: "var(--textGrey)",
+            fontSize: "22px",
+            fontWeight: 500,
+            fontFamily: '"Montserrat", sans-serif',
+            lineHeight: 1.2,
+            textAlign: "left",
+            paddingRight: "30px",
+            paddingLeft: "10px",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#ffffff",
+              marginBottom: "10px",
+            }}
+          >
+            We specialize in connecting the perfect diet for users, that will
+            spread joy and cultivate love.
+          </Typography>
+        </Box>
+      </Box>
+      {/* Right Image (corresponds to .right-pic) */}
+      <Box
+        sx={{
+          "& img": {
+            height: "170px",
+            position: "relative",
+            bottom: "15px",
+          },
+        }}
+      >
+        <img src={HomeDarkCardRightPic} alt="Happy " />
+      </Box>
+    </Box>
+  );
+};
+
+export default CardBelowHome;
