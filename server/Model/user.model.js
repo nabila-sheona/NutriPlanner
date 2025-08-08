@@ -27,45 +27,16 @@ const UserSchema = new Schema(
       type: String,
       required: false,
     },
-    petTypes: {
-      type: [String],
-      required: false,
-    },
-    areas: {
-      type: [String],
-      required: false,
-      enum: [
-        "Barishal",
-        "Chattogram",
-        "Dhaka",
-        "Khulna",
-        "Mymensingh",
-        "Rajshahi",
-        "Rangpur",
-        "Sylhet",
-      ],
-    },
     uid: {
       type: String,
-      required: false, // Optional, only for Google users
-      unique: true, // Ensure uniqueness for Google users
+      required: false,
+      unique: true, // Keep unique for Google users
+      sparse: true,
     },
-    wishlist: [
+    likedRecipes: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Pet", // Assuming you have a Pet model
-      },
-    ],
-    blockedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    Hasblocked: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: Schema.Types.ObjectId,
+        ref: "Recipe",
       },
     ],
   },
