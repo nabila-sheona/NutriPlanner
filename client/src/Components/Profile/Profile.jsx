@@ -26,7 +26,7 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { Settings } from "@mui/icons-material";
 import axios from "axios";
 import upload from "../../utils/upload.js";
-import MealPlanCard from "../Namisa/MealPlanCard.jsx";
+import MealPlanCard from "../MealPlan/MealPlanCard.jsx";
 
 const Profile = () => {
   const [mealPlans, setMealPlans] = useState([]);
