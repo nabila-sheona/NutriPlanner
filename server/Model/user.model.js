@@ -39,6 +39,12 @@ const UserSchema = new Schema(
         ref: "Recipe",
       },
     ],
+    likedMealPlanRecipes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "mealPlanRecipe",
+      },
+    ],
   },
   {
     timestamps: true,
