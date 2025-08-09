@@ -5,8 +5,9 @@ import Home from "./Components/Home/Home";
 import Profile from "./Components/Profile/Profile.jsx";
 import Login from "./Pages/login/Login.jsx";
 import Register from "./Pages/register/Register.jsx";
-import MealPlan from "./Pages/Namisa/MealPlanner.jsx";
-
+import MealPlan from "./Pages/MealPlan/MealPlanner.jsx";
+import CommunityRecipes from "./Components/community/CommunityRecipes";
+import MyRecipes from "./Components/community/MyRecipes";
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
@@ -80,6 +81,22 @@ const App = () => {
           element={
             <Layout>
               <MealPlan />
+            </Layout>
+          }
+        />
+        <Route
+          path="/community"
+          element={
+            <Layout>
+              <CommunityRecipes />
+            </Layout>
+          }
+        />
+        <Route
+          path="/myrecipes"
+          element={
+            <Layout>
+              <MyRecipes />
             </Layout>
           }
         />
