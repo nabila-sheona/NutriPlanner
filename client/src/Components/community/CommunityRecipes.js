@@ -407,11 +407,17 @@ const CommunityRecipes = () => {
               <CardActions sx={{ mt: "auto", justifyContent: "space-between" }}>
                 <Box>
                   {recipe.isMealPlan ? (
-                    <Button onClick={() => handleOpenMealPlanView(recipe)}>
+                    <Button
+                      onClick={() => handleOpenMealPlanView(recipe)}
+                      sx={{ color: "#004346" }}
+                    >
                       View Recipe
                     </Button>
                   ) : (
-                    <Button onClick={() => handleOpenRecipeView(recipe)}>
+                    <Button
+                      onClick={() => handleOpenRecipeView(recipe)}
+                      sx={{ color: "#004346" }}
+                    >
                       View Recipe
                     </Button>
                   )}
