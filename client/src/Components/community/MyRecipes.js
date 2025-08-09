@@ -304,6 +304,7 @@ const MyRecipes = () => {
                           e.stopPropagation();
                           handleEdit(recipe);
                         }}
+                        sx={{ color: "#004346" }}
                       >
                         Edit
                       </Button>
