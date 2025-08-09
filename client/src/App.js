@@ -8,6 +8,7 @@ import Register from "./Pages/register/Register.jsx";
 import MealPlan from "./Pages/MealPlan/MealPlanner.jsx";
 import CommunityRecipes from "./Components/community/CommunityRecipes";
 import MyRecipes from "./Components/community/MyRecipes";
+import RecipeUploadsHeatmap from "./Components/Heatmap/RecipeUploadsHeatmap";
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
@@ -108,6 +109,14 @@ const App = () => {
           element={
             <Layout>
               <MoodTracker />
+            </Layout>
+          }
+        />
+        <Route
+          path="/myrecipesheatmap"
+          element={
+            <Layout>
+              <RecipeUploadsHeatmap />
             </Layout>
           }
         />

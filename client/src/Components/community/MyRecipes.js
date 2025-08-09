@@ -19,7 +19,16 @@ import {
   MenuItem,
   IconButton,
 } from "@mui/material";
-import { Edit, Delete, Favorite, Add, Close } from "@mui/icons-material";
+import {
+  Edit,
+  Delete,
+  Favorite,
+  Add,
+  Close,
+  Timeline,
+  ShowChart,
+} from "@mui/icons-material";
+// or use another icon like InsertChart, ShowChart, BarChart, etc.
 import { useNavigate } from "react-router-dom";
 
 const MyRecipes = () => {
@@ -29,7 +38,9 @@ const MyRecipes = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [mode, setMode] = useState("view"); // 'view', 'create', or 'edit'
   const navigate = useNavigate();
-
+  const handleViewHeatmap = () => {
+    navigate("/myrecipesheatmap");
+  };
   const [recipeForm, setRecipeForm] = useState({
     title: "",
     category: "",
@@ -233,30 +244,32 @@ const MyRecipes = () => {
             >
               <Typography variant="h5">My Recipes</Typography>
 
-              {mode !== "view" && selectedRecipe && (
-                <Box
+              <Box sx={{ display: "flex", gap: 2 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<ShowChart />}
+                  onClick={handleViewHeatmap}
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
+                    backgroundColor: "#004346",
+                    "&:hover": { backgroundColor: "#003336" },
                   }}
                 >
+                  View Heatmap
+                </Button>
+                {mode !== "view" && selectedRecipe && (
                   <Button
                     variant="contained"
                     startIcon={<Add />}
-                    onClick={() => {
-                      setSelectedRecipe(null);
-                      handleCreateNew();
+                    onClick={handleCreateNew}
+                    sx={{
+                      backgroundColor: "#00695c",
+                      "&:hover": { backgroundColor: "#004d40" },
                     }}
-                    sx={{ backgroundColor: "#004346", mb: 2 }}
                   >
                     New Recipe
                   </Button>
-                </Box>
-              )}
+                )}
+              </Box>
             </Box>
 
             {recipes.length === 0 ? (
