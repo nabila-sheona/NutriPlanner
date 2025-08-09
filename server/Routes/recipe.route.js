@@ -7,6 +7,7 @@ const {
   getUserRecipes,
   deleteRecipe,
   updateRecipe,
+  getRecipeHeatmap,
 } = require("../Controller/recipe.controller");
 const {
   toggleLike,
@@ -26,5 +27,7 @@ router.put("/:id", updateRecipe); //using
 
 router.post("/:recipeId/like", toggleLike); //using
 router.get("/:recipeId/like-status", checkLikeStatus); //using
-// Add this line
+
+router.get("/heatmap", getRecipeHeatmap);
+
 module.exports = router;

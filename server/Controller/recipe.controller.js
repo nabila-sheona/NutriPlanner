@@ -154,6 +154,31 @@ const updateRecipe = async (req, res, next) => {
   }
 };
 
+const getRecipeHeatmap = async (req, res, next) => {
+  try {
+    const { username } = req.query; // Changed from req.body to req.query
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const uploads = await Recipe.aggregate([
+      { $match: { authorUsername: username } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json(uploads);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   createRecipe,
   getRecipes,
@@ -162,4 +187,5 @@ module.exports = {
   getUserRecipes,
   deleteRecipe,
   searchRecipes,
+  getRecipeHeatmap,
 };
