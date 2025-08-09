@@ -7,10 +7,6 @@ import {
   Button,
   Avatar,
   Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
   Divider,
   Tabs,
   Tab,
@@ -19,25 +15,24 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  List,
-  ListItem,
-  ListItemText,
   Snackbar,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import FoodBankIcon from "@mui/icons-material/FoodBank";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 
 import { Settings } from "@mui/icons-material";
 import axios from "axios";
 import upload from "../../utils/upload.js";
+import MealPlanCard from "../Namisa/MealPlanCard.jsx";
 
 const Profile = () => {
-  const [blockedEmails, setBlockedEmails] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar state
+  const [mealPlans, setMealPlans] = useState([]);
+  const [mealplanrecipes, setmealplanRecipes] = useState([]);
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [user, setUser] = useState({
     username: "",
     email: "",
@@ -52,10 +47,46 @@ const Profile = () => {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [userPets, setUserPets] = useState([]);
-  const [userReviews, setUserReviews] = useState([]);
-  const [replyContent, setReplyContent] = useState("");
-  const [replyError, setReplyError] = useState("");
+
+  /************************N4M154**************************/
+  useEffect(() => {
+    const fetchMealPlans = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await axios.get("http://localhost:4000/mealplans/myplans", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setMealPlans(res.data);
+      } catch (err) {
+        console.error("Failed to fetch meal plans:", err);
+      }
+    };
+
+    fetchMealPlans();
+  }, []);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await axios.get(
+          "http://localhost:4000/mealplanrecipes/myrecipes",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setmealplanRecipes(res.data);
+      } catch (err) {
+        console.error("Failed to fetch recipes:", err);
+      }
+    };
+    fetchRecipes();
+  }, []);
+
+  /************************N4M154**************************/
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -68,12 +99,9 @@ const Profile = () => {
         );
         setUser(userResponse.data);
 
-        // Fetch blocked users
-
         await fetchWishlistDetails();
       } catch (err) {
         console.error(err);
-        // Handle session expiry
       }
     };
 
@@ -122,7 +150,7 @@ const Profile = () => {
     setNewPassword("");
     setConfirmNewPassword("");
     setProfileImage(null);
-    setImagePreview(""); // Clear preview
+    setImagePreview("");
     setMessage("");
   };
 
@@ -130,7 +158,7 @@ const Profile = () => {
     const file = e.target.files[0];
     if (file) {
       setProfileImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Generate a preview URL
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -149,7 +177,7 @@ const Profile = () => {
 
       let imageUrl = user.img;
       if (profileImage) {
-        imageUrl = await upload(profileImage); // Upload the new image
+        imageUrl = await upload(profileImage);
       }
 
       const updateData = {
@@ -191,7 +219,7 @@ const Profile = () => {
       >
         <Avatar
           alt="Profile"
-          src={imagePreview || user.img || "/default-pfp.png"} // Use preview if available
+          src={imagePreview || user.img || "/default-pfp.png"}
           sx={{ width: 135, height: 135, mb: 2 }}
         />
         <Typography variant="h4" fontWeight="bold">
@@ -207,14 +235,14 @@ const Profile = () => {
             color: "#004346",
             display: "flex",
             alignItems: "center",
-            gap: 1, // Gap between the icon and the text
+            gap: 1,
             transition: "transform 0.3s ease-in-out",
             "&:hover": {
-              transform: "scale(1.05)", // Enlarge the button on hover for better feedback
-              backgroundColor: "transparent", // Removes the default hover background color
+              transform: "scale(1.05)",
+              backgroundColor: "transparent",
             },
             "&:hover .MuiTouchRipple-root": {
-              display: "none", // Disables the ripple effect on hover
+              display: "none",
             },
           }}
         >
@@ -224,25 +252,23 @@ const Profile = () => {
           </Typography>
         </IconButton>
       </Box>
-
       {/* Tabs */}
       <Tabs value={activeTab} onChange={handleTabChange} centered>
         <Tab label="User Details" />
-
         <Tab label="Something" />
-
         <Tab label="Wishlist" />
+        <Tab label="Meal Plans" />
+        <Tab label="Meal Plan Recipes" />
       </Tabs>
-
       {/* Tab Content */}
       <Divider sx={{ my: 4 }} />
       {activeTab === 0 && (
         <Box
           sx={{
             padding: 3,
-            backgroundColor: "#e8eaf6", // Light indigo background for a fresh look
+            backgroundColor: "#e8eaf6",
             borderRadius: 2,
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)", // Soft shadow for depth
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
           }}
         >
           <Typography
@@ -256,17 +282,16 @@ const Profile = () => {
           </Typography>
 
           <Grid container spacing={2}>
-            {/* Username Display */}
             <Grid item xs={12} sm={6}>
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 2, // Increase gap for better spacing
-                  padding: 2, // Padding for touch-friendly design
-                  backgroundColor: "#fff", // White background for cards
-                  borderRadius: 3, // Slightly rounded corners for card-like feel
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)", // Subtle shadow on each item
+                  gap: 2,
+                  padding: 2,
+                  backgroundColor: "#fff",
+                  borderRadius: 3,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                 }}
               >
                 <AccountCircleIcon
@@ -292,17 +317,16 @@ const Profile = () => {
               </Box>
             </Grid>
 
-            {/* Email Display */}
             <Grid item xs={12} sm={6}>
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 2, // Increase gap for better spacing
-                  padding: 2, // Padding for touch-friendly design
-                  backgroundColor: "#fff", // White background for cards
-                  borderRadius: 3, // Slightly rounded corners for card-like feel
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)", // Subtle shadow on each item
+                  gap: 2,
+                  padding: 2,
+                  backgroundColor: "#fff",
+                  borderRadius: 3,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                 }}
               >
                 <EmailIcon color="#004346" sx={{ fontSize: "2.7rem" }} />
@@ -325,17 +349,16 @@ const Profile = () => {
               </Box>
             </Grid>
 
-            {/* Area Display */}
             <Grid item xs={12} sm={6}>
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 2, // Increase gap for better spacing
-                  padding: 2, // Padding for touch-friendly design
-                  backgroundColor: "#fff", // White background for cards
-                  borderRadius: 3, // Slightly rounded corners for card-like feel
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)", // Subtle shadow on each item
+                  gap: 2,
+                  padding: 2,
+                  backgroundColor: "#fff",
+                  borderRadius: 3,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                 }}
               >
                 <LocationOnIcon color="#004346" sx={{ fontSize: "2.7rem" }} />
@@ -363,11 +386,11 @@ const Profile = () => {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 2, // Increase gap for better spacing
-                  padding: 2, // Padding for touch-friendly design
-                  backgroundColor: "#fff", // White background for cards
-                  borderRadius: 3, // Slightly rounded corners for card-like feel
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)", // Subtle shadow on each item
+                  gap: 2,
+                  padding: 2,
+                  backgroundColor: "#fff",
+                  borderRadius: 3,
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                 }}
               >
                 <FoodBankIcon color="#004346" sx={{ fontSize: "2.7rem" }} />
@@ -385,11 +408,9 @@ const Profile = () => {
           </Grid>
         </Box>
       )}
-
       {activeTab === 1 && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5">Something</Typography>
-
           <Snackbar
             open={openSnackbar}
             autoHideDuration={3000}
@@ -398,7 +419,6 @@ const Profile = () => {
           />
         </Box>
       )}
-
       {activeTab === 2 && (
         <Box sx={{ padding: 3 }}>
           <Typography
@@ -411,7 +431,93 @@ const Profile = () => {
           </Typography>
         </Box>
       )}
+      {/************************N4M154**************************/}{" "}
+      {activeTab === 3 && (
+        <Box sx={{ padding: 3 }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              mb: 3,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "#004346",
+            }}
+          >
+            <RestaurantMenuIcon sx={{ fontSize: "2rem" }} />
+            Your Saved Meal Plans
+          </Typography>
 
+          {mealPlans.length === 0 ? (
+            <Box
+              sx={{
+                textAlign: "center",
+                py: 4,
+                backgroundColor: "#f8f9fa",
+                borderRadius: 2,
+                border: "2px dashed #dee2e6",
+              }}
+            >
+              <RestaurantMenuIcon
+                sx={{ fontSize: "4rem", color: "#6c757d", mb: 2 }}
+              />
+              <Typography variant="h6" color="textSecondary">
+                No meal plans saved yet
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Create your first meal plan to see it here!
+              </Typography>
+            </Box>
+          ) : (
+            <Grid container spacing={3}>
+              {mealPlans.map((plan, index) => (
+                <MealPlanCard key={index} plan={plan} index={index} />
+              ))}
+            </Grid>
+          )}
+        </Box>
+      )}
+      {activeTab === 4 && (
+        <Box sx={{ padding: 3 }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              mb: 3,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "#004346",
+            }}
+          >
+            <RestaurantMenuIcon sx={{ fontSize: "2rem" }} />
+            Your Saved Recipes
+          </Typography>
+
+          {mealplanrecipes.length === 0 ? (
+            <Typography>No recipes saved yet</Typography>
+          ) : (
+            mealplanrecipes.map((rec, idx) => (
+              <Box
+                key={idx}
+                sx={{ mb: 3, p: 2, background: "#fff", borderRadius: 2 }}
+              >
+                <Typography variant="h6">{rec.title}</Typography>
+                <Typography variant="body2">{rec.mealType}</Typography>
+                <ul>
+                  {rec.ingredients.map((ing, i) => (
+                    <li key={i}>{ing}</li>
+                  ))}
+                </ul>
+              </Box>
+            ))
+          )}
+        </Box>
+      )}
+      {/************************N4M154**************************/}
       {/* Settings Dialog */}
       <Dialog open={settingsOpen} onClose={handleSettingsClose}>
         <DialogTitle>Update Profile</DialogTitle>
@@ -427,10 +533,10 @@ const Profile = () => {
             sx={{
               mt: 3,
               mb: 2,
-              backgroundColor: "#004346", // Midnight Blue
-              color: "white", // Ensure text color contrasts well
+              backgroundColor: "#004346",
+              color: "white",
               "&:hover": {
-                backgroundColor: "#4aedc4", // Slightly darker shade for hover effect
+                backgroundColor: "#4aedc4",
               },
             }}
           >
@@ -439,7 +545,7 @@ const Profile = () => {
               type="file"
               hidden
               accept="image/*"
-              onChange={handleImageChange} // Handle file selection
+              onChange={handleImageChange}
             />
           </Button>
           {imagePreview && (
