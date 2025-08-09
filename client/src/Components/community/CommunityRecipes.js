@@ -90,13 +90,27 @@ const CommunityRecipes = () => {
 
         // Fetch liked recipes if user is logged in
         if (currentUser?.username) {
-          const likedResponse = await fetch(
-            `http://localhost:4000/recipes/liked?username=${currentUser.username}`
-          );
-          if (likedResponse.ok) {
-            const likedData = await likedResponse.json();
-            setLikedRecipes(new Set(likedData.likedRecipes || []));
-          }
+          const [likedRegularRes, likedMealPlanRes] = await Promise.all([
+            fetch(
+              `http://localhost:4000/recipes/liked?username=${currentUser.username}`
+            ),
+            fetch(
+              `http://localhost:4000/mealplanrecipes/liked?username=${currentUser.username}`
+            ),
+          ]);
+
+          const regularJson = likedRegularRes.ok
+            ? await likedRegularRes.json()
+            : { likedRecipes: [] };
+          const mealPlanJson = likedMealPlanRes.ok
+            ? await likedMealPlanRes.json()
+            : { likedRecipes: [] };
+
+          const unionIds = new Set([
+            ...(regularJson.likedRecipes || []),
+            ...(mealPlanJson.likedRecipes || []),
+          ]);
+          setLikedRecipes(unionIds);
         }
       } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -149,18 +163,21 @@ const CommunityRecipes = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:4000/recipes/${recipeId}/like`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: currentUser.username,
-          }),
-        }
-      );
+      const targetRecipe = recipes.find((r) => r._id === recipeId);
+      const isMealPlan = targetRecipe?.isMealPlan;
+      const endpoint = isMealPlan
+        ? `http://localhost:4000/mealplanrecipes/${recipeId}/like`
+        : `http://localhost:4000/recipes/${recipeId}/like`;
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: currentUser.username,
+        }),
+      });
 
       const data = await response.json();
 

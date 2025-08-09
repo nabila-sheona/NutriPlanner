@@ -31,6 +31,7 @@ import axios from "axios";
 import upload from "../../utils/upload.js";
 import MealPlanCard from "../MealPlan/MealPlanCard.jsx";
 import ViewRecipeDialog from "../community/ViewRecipeDialog";
+import MealPlanRecipeDialog from "../community/MealPlanCard";
 const Profile = () => {
   const [mealPlans, setMealPlans] = useState([]);
   const [mealplanRecipes, setMealplanRecipes] = useState([]);
@@ -64,16 +65,34 @@ const Profile = () => {
         );
         setUser(userResponse.data);
 
-        // Fetch liked recipes
+        // Fetch liked recipes (regular + meal plan)
         if (userResponse.data.username) {
-          const likedResponse = await axios.get(
-            "http://localhost:4000/recipes/likedbyuser",
-            {
+          const [likedRegular, likedMealPlan] = await Promise.all([
+            axios.get("http://localhost:4000/recipes/likedbyuser", {
               headers: { Authorization: `Bearer ${token}` },
               params: { username: userResponse.data.username },
-            }
-          );
-          setLikedRecipes(likedResponse.data.likedRecipes || []);
+            }),
+            axios.get(
+              "http://localhost:4000/mealplanrecipes/likedbyuser",
+              {
+                headers: { Authorization: `Bearer ${token}` },
+                params: { username: userResponse.data.username },
+              }
+            ),
+          ]);
+
+          const combined = [
+            ...(likedRegular.data.likedRecipes || []).map((r) => ({
+              ...r,
+              isMealPlan: false,
+            })),
+            ...(likedMealPlan.data.likedRecipes || []).map((r) => ({
+              ...r,
+              isMealPlan: true,
+            })),
+          ];
+
+          setLikedRecipes(combined);
         }
 
         // Fetch meal plans
@@ -446,12 +465,12 @@ const Profile = () => {
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1, mt: 0.5 }}>
                       <Chip
-                        label={recipe.category}
+                        label={recipe.isMealPlan ? recipe.mealType : recipe.category}
                         size="small"
                         color="primary"
                         variant="outlined"
                       />
-                      {recipe.tags.slice(0, 2).map((tag, index) => (
+                      {(recipe.tags || []).slice(0, 2).map((tag, index) => (
                         <Chip
                           key={index}
                           label={tag}
@@ -459,7 +478,7 @@ const Profile = () => {
                           variant="outlined"
                         />
                       ))}
-                      {recipe.tags.length > 2 && (
+                      {Array.isArray(recipe.tags) && recipe.tags.length > 2 && (
                         <Chip
                           label={`+${recipe.tags.length - 2}`}
                           size="small"
@@ -482,8 +501,11 @@ const Profile = () => {
                       onClick={async () => {
                         try {
                           const token = localStorage.getItem("token");
+                          const endpoint = recipe.isMealPlan
+                            ? `http://localhost:4000/mealplanrecipes/${recipe._id}/like`
+                            : `http://localhost:4000/recipes/${recipe._id}/like`;
                           await axios.post(
-                            `http://localhost:4000/recipes/${recipe._id}/like`,
+                            endpoint,
                             { username: user.username },
                             { headers: { Authorization: `Bearer ${token}` } }
                           );
@@ -515,12 +537,20 @@ const Profile = () => {
             </Box>
           )}
 
-          {/* Add ViewRecipeDialog at the bottom of your component */}
-          <ViewRecipeDialog
-            open={!!selectedRecipe}
-            onClose={() => setSelectedRecipe(null)}
-            recipe={selectedRecipe}
-          />
+          {/* View dialogs for liked recipes */}
+          {selectedRecipe && selectedRecipe.isMealPlan ? (
+            <MealPlanRecipeDialog
+              open={!!selectedRecipe}
+              onClose={() => setSelectedRecipe(null)}
+              recipe={selectedRecipe}
+            />
+          ) : (
+            <ViewRecipeDialog
+              open={!!selectedRecipe}
+              onClose={() => setSelectedRecipe(null)}
+              recipe={selectedRecipe}
+            />
+          )}
         </Box>
       )}
 
