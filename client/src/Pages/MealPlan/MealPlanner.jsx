@@ -37,7 +37,10 @@ export default function MealPlanner() {
   const [recipe, setRecipe] = useState("");
   const [loadingRecipe, setLoadingRecipe] = useState(false);
 
-  const GEMINI_API_KEY = "AIzaSyAe5jVx78jgIf7TEhdciw0bOj4rNqFsw2Q";
+  const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+  if (!GEMINI_API_KEY) {
+    console.error("Missing REACT_APP_GEMINI_API_KEY. Set it in client/.env.local and restart.");
+  }
   const GEMINI_ENDPOINT =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
