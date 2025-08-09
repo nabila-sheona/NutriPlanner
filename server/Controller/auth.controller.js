@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
 
     // Generate token
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
 
     // Send token and user data back to the client
@@ -78,7 +78,7 @@ const googleLogin = async (req, res, next) => {
 
     // Generate token using MongoDB '_id'
     const token = jwt.sign({ id: user._id }, process.env.JWT_KEY, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
 
     res.status(200).json({ token, user });
