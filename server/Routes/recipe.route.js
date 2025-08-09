@@ -12,8 +12,10 @@ const {
   toggleLike,
   checkLikeStatus,
   getLikedRecipes,
+  getLikedRecipesbyuser,
 } = require("../Controller/like.controller");
 router.get("/liked", getLikedRecipes); //using
+router.get("/likedbyuser", getLikedRecipesbyuser); //using
 router.post("/", createRecipe); //using
 router.get("/", getRecipes); //using
 router.get("/search", searchRecipes); //using

@@ -120,8 +120,29 @@ const getLikedRecipes = async (req, res, next) => {
   }
 };
 
+const getLikedRecipesbyuser = async (req, res, next) => {
+  try {
+    const { username } = req.query;
+    if (!username) return next(createError(400, "Username is required"));
+
+    const user = await User.findOne({ username })
+      .populate("likedRecipes")
+      .lean();
+
+    if (!user) return next(createError(404, "User not found"));
+
+    res.status(200).json({
+      success: true,
+      likedRecipes: user.likedRecipes || [],
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   toggleLike,
   checkLikeStatus,
   getLikedRecipes,
+  getLikedRecipesbyuser,
 };
