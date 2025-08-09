@@ -256,10 +256,26 @@ const CommunityRecipes = () => {
       setSnackbarOpen(true);
     }
   };
-
+  const categoryMapping = {
+    breakfast: ["breakfast"],
+    lunch: ["lunch"],
+    dinner: ["dinner"],
+    snack: ["snack"],
+    dessert: ["dessert"],
+  };
   const filteredRecipes = recipes.filter((recipe) => {
     if (filter === "all") return true;
-    return recipe.category === filter;
+    // Get the current recipe's category or mealType
+    const recipeCategory = (
+      recipe.category ||
+      recipe.mealType ||
+      ""
+    ).toLowerCase();
+
+    // Check if it matches the filter or any of its mapped values
+    return categoryMapping[filter]
+      ? categoryMapping[filter].includes(recipeCategory)
+      : recipeCategory === filter;
   });
 
   const showFallback = searchTerm.trim() !== "" && filteredRecipes.length === 0;
