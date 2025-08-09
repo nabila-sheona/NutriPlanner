@@ -16,6 +16,13 @@ const RecipeSchema = new Schema(
     ingredients: { type: [String], default: [] },
     instructions: { type: [String], default: [] },
     macros: { type: String },
+    likeCount: { type: Number, default: 0 },
+    likedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
