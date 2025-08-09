@@ -256,18 +256,19 @@ const MyRecipes = () => {
                 >
                   View Heatmap
                 </Button>
-
-                <Button
-                  variant="contained"
-                  startIcon={<Add />}
-                  onClick={handleCreateNew}
-                  sx={{
-                    backgroundColor: "#00695c",
-                    "&:hover": { backgroundColor: "#004d40" },
-                  }}
-                >
-                  New Recipe
-                </Button>
+                {mode !== "view" && selectedRecipe && (
+                  <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleCreateNew}
+                    sx={{
+                      backgroundColor: "#00695c",
+                      "&:hover": { backgroundColor: "#004d40" },
+                    }}
+                  >
+                    New Recipe
+                  </Button>
+                )}
               </Box>
             </Box>
 
