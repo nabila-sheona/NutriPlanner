@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 
 const userRoute = require("./Routes/user.route");
 const authRoute = require("./Routes/auth.route");
+const recipeRoute = require("./Routes/recipe.route");
+const mealplanRoute = require("./Namisa/Routes/mealPlanRoutes");
+const mealplanrecipeRoute = require("./Namisa/Routes/mealPlanRecipeRoutes");
 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -36,7 +39,9 @@ app.use(cookieParser());
 
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
-
+app.use("/recipes", recipeRoute);
+app.use("/mealplans", mealplanRoute);
+app.use("/mealplanrecipes", mealplanrecipeRoute);
 mongoose
   .connect(process.env.MONGODB_URI, {})
   .then(() => {

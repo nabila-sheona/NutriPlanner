@@ -5,6 +5,7 @@ import Home from "./Components/Home/Home";
 import Profile from "./Components/Profile/Profile.jsx";
 import Login from "./Pages/login/Login.jsx";
 import Register from "./Pages/register/Register.jsx";
+import MealPlan from "./Pages/Namisa/MealPlanner.jsx";
 
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
@@ -71,6 +72,14 @@ const App = () => {
           element={
             <Layout>
               <Register />
+            </Layout>
+          }
+        />
+        <Route
+          path="/mealplanner"
+          element={
+            <Layout>
+              <MealPlan />
             </Layout>
           }
         />

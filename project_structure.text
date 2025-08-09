@@ -2,6 +2,7 @@
 - client
   - package-lock.json
   - package.json
+  - postcss.config.js
   - public
     - icon.png
     - index.html
@@ -31,6 +32,8 @@
       - MessageModal
         - MessageModal.js
         - MessageModal.scss
+      - Namisa
+        - MealPlanCard.jsx
       - NavBar
         - images
           - logo.jpeg
@@ -52,6 +55,8 @@
       - login
         - Login.jsx
         - signup.jpeg
+      - Namisa
+        - MealPlanner.jsx
       - register
         - loginpage.jpeg
         - Register.jsx
@@ -65,6 +70,7 @@
       - newRequest.js
       - setInterval.js
       - upload.js
+  - tailwind.config.js
 - README.md
 - server
   - .env
@@ -72,7 +78,9 @@
     - cloudinary.js
   - Controller
     - auth.controller.js
+    - like.controller.js
     - profilecontroller.js
+    - recipe.controller.js
     - user.controller.js
   - images
     - homemain.jpeg
@@ -84,12 +92,25 @@
   - middleware
     - jwt.js
   - Model
+    - like.model.js
+    - recipe.model.js
     - user.model.js
+  - Namisa
+    - Controller
+      - mealPlanController.js
+      - mealPlanRecipeController.js
+    - Model
+      - MealPlan.js
+      - MealPlanRecipe.js
+    - Routes
+      - mealPlanRecipeRoutes.js
+      - mealPlanRoutes.js
   - package-lock.json
   - package.json
   - Routes
     - auth.route.js
     - profileroute.js
+    - recipe.route.js
     - user.route.js
   - server.js
   - utils
