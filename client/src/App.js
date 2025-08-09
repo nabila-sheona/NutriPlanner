@@ -11,6 +11,9 @@ import MyRecipes from "./Components/community/MyRecipes";
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
+import MoodTracker from "./Components/moodtracker/MoodTracker.jsx";
+
+
 import "./App.css";
 
 // Layout Component without Sidebar
@@ -97,6 +100,14 @@ const App = () => {
           element={
             <Layout>
               <MyRecipes />
+            </Layout>
+          }
+        />
+         <Route
+          path="/moodtracker"
+          element={
+            <Layout>
+              <MoodTracker />
             </Layout>
           }
         />
