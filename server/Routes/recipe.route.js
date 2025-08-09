@@ -20,9 +20,9 @@ router.post("/", createRecipe); //using
 router.get("/", getRecipes); //using
 router.get("/search", searchRecipes); //using
 
-router.post("/user", getUserRecipes);
-router.delete("/:id", deleteRecipe);
-router.put("/:id", updateRecipe);
+router.post("/user", getUserRecipes); //using
+router.delete("/:id", deleteRecipe); //using
+router.put("/:id", updateRecipe); //using
 
 router.post("/:recipeId/like", toggleLike); //using
 router.get("/:recipeId/like-status", checkLikeStatus); //using
