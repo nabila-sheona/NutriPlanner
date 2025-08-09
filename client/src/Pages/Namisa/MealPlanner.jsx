@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { ChefHat, Calendar, Target, Check } from "lucide-react";
+import { useEffect } from "react";
 
 const dietaryOptions = [
   "Vegetarian",
@@ -33,8 +34,10 @@ export default function MealPlanner() {
   const [goal, setGoal] = useState(healthGoals[0]);
   const [plan, setPlan] = useState("");
   const [loading, setLoading] = useState(false);
+  const [recipe, setRecipe] = useState("");
+  const [loadingRecipe, setLoadingRecipe] = useState(false);
 
-  const GEMINI_API_KEY = "";
+  const GEMINI_API_KEY = "AIzaSyAe5jVx78jgIf7TEhdciw0bOj4rNqFsw2Q";
   const GEMINI_ENDPOINT =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
@@ -44,6 +47,79 @@ export default function MealPlanner() {
         ? prev.filter((p) => p !== option)
         : [...prev, option]
     );
+  };
+
+  useEffect(() => {
+    console.log("API Key:", process.env.REACT_APP_API_KEY_GEMINI);
+  }, []);
+
+  const generateRecipe = async () => {
+    setLoadingRecipe(true);
+
+    const basePrompt = `
+Generate a COMPLETE healthy recipe in the following format.
+Keep it under 300 words per message, but if you can't finish, I will ask you to continue.
+Always include ALL sections exactly in this order and do not stop mid-sentence.
+
+Format:
+Title: [Recipe Name]
+Time: [Time in minutes]
+Calories: [Calories]
+Type: [Breakfast/Lunch/Dinner]
+
+Ingredients:
+- Item - quantity in grams or cups
+
+Instructions:
+1. Step 1
+2. Step 2
+3. Step 3
+
+Macros:
+Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
+`;
+
+    let fullText = "";
+    let continuePrompt = basePrompt;
+    let attempt = 0;
+    const maxAttempts = 5;
+
+    try {
+      while (attempt < maxAttempts) {
+        attempt++;
+
+        const response = await axios.post(
+          `${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`,
+          {
+            contents: [{ parts: [{ text: continuePrompt }] }],
+            generationConfig: {
+              maxOutputTokens: 1024, // gives more space per turn
+              temperature: 0.7,
+            },
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        const aiChunk =
+          response.data.candidates[0].content.parts[0].text.trim();
+        fullText += (fullText ? "\n" : "") + aiChunk;
+
+        // If the chunk already contains "Macros:" we’re done
+        if (aiChunk.toLowerCase().includes("macros:")) {
+          break;
+        }
+
+        // If not, ask Gemini to continue EXACTLY where it left off
+        continuePrompt = `Continue the previous recipe from where it stopped. Do not repeat anything. Here is what you wrote so far:\n${fullText}`;
+      }
+
+      setRecipe(fullText);
+    } catch (error) {
+      console.error("Error generating recipe:", error);
+      setRecipe("Oops! Couldn't fetch recipe. Blame the AI chef. 🤖🍳");
+    } finally {
+      setLoadingRecipe(false);
+    }
   };
 
   const generatePlan = async () => {
@@ -88,6 +164,48 @@ export default function MealPlanner() {
     }
   };
 
+  const saveMealPlanToProfile = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/mealplans/save",
+        {
+          planText: plan,
+          goal,
+          preferences,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Meal plan saved to profile!");
+    } catch (error) {
+      console.error("Error saving meal plan:", error);
+      alert("Failed to save meal plan.");
+    }
+  };
+
+  const saveRecipeToProfile = async () => {
+    const token = localStorage.getItem("token");
+    const recipeData = parseRecipeText(recipe); // Already exists in your code
+    try {
+      await axios.post(
+        "http://localhost:4000/mealplanrecipes/save",
+        recipeData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("Recipe saved to profile!");
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      alert("Failed to save recipe.");
+    }
+  };
+
   const extractMealsPerDay = (text) => {
     const mealMap = {};
     let currentDay = null;
@@ -116,6 +234,65 @@ export default function MealPlanner() {
     }
 
     return mealMap;
+  };
+
+  const parseRecipeText = (text) => {
+    const lines = text
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    let title = "";
+    let time = "";
+    let calories = "";
+    let mealType = "";
+    let ingredients = [];
+    let instructions = [];
+    let macros = "";
+
+    let section = "";
+
+    for (const line of lines) {
+      if (line.startsWith("Title:")) {
+        title = line.replace("Title:", "").trim();
+      } else if (line.startsWith("Time:")) {
+        time = line.replace("Time:", "").trim();
+      } else if (line.startsWith("Calories:") && !macros) {
+        calories = line.replace("Calories:", "").trim();
+      } else if (line.startsWith("Type:")) {
+        mealType = line.replace("Type:", "").trim();
+      } else if (
+        line === "Ingredients:" ||
+        line === "Instructions:" ||
+        line.startsWith("Macros:")
+      ) {
+        section = line.toLowerCase();
+      } else {
+        if (section === "ingredients:") {
+          // Ingredient lines usually start with "- "
+          if (line.startsWith("- ")) {
+            ingredients.push(line.replace("- ", "").trim());
+          }
+        } else if (section === "instructions:") {
+          // Instructions lines usually start with a number + dot (e.g., "1. Step")
+          if (/^\d+\./.test(line)) {
+            instructions.push(line.replace(/^\d+\.\s*/, ""));
+          }
+        } else if (section.startsWith("macros:")) {
+          macros = line.trim();
+        }
+      }
+    }
+
+    return {
+      title,
+      time,
+      calories,
+      mealType,
+      ingredients,
+      instructions,
+      macros,
+    };
   };
 
   return (
@@ -234,6 +411,18 @@ export default function MealPlanner() {
             {loading ? "Crafting Your Plan..." : "Generate Meal Plan"}
           </button>
         </div>
+        <div className="text-center mt-4">
+          <button
+            onClick={generateRecipe}
+            disabled={loadingRecipe}
+            className="inline-flex items-center gap-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none transition-all duration-200"
+          >
+            <ChefHat className="w-5 h-5" />
+            {loadingRecipe
+              ? "Whipping Up Your Recipe..."
+              : "Generate AI Recipe"}
+          </button>
+        </div>
 
         {/* Loading State */}
         {loading && (
@@ -246,6 +435,91 @@ export default function MealPlanner() {
         )}
 
         {/* Meal Plan Results */}
+        {recipe &&
+          !loadingRecipe &&
+          (() => {
+            const {
+              title,
+              time,
+              calories,
+              mealType,
+              ingredients,
+              instructions,
+              macros,
+            } = parseRecipeText(recipe);
+
+            return (
+              <div className="bg-white mt-10 rounded-2xl shadow-lg border border-gray-100 max-w-4xl mx-auto">
+                <div className="bg-[#004346] px-6 py-4 flex items-center gap-3">
+                  <ChefHat className="w-6 h-6 text-white" />
+                  <h2 className="text-xl font-semibold text-white">
+                    {title || "Recipe"}
+                  </h2>
+                  <button
+                    onClick={saveRecipeToProfile}
+                    className="mt-4 inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
+                  >
+                    Save Recipe to Profile
+                  </button>
+                </div>
+                <div className="p-6 text-gray-800">
+                  {/* Summary */}
+                  <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
+                    {time && (
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{time}</span>
+                      </div>
+                    )}
+                    {calories && (
+                      <div className="flex items-center gap-1">
+                        <span>🔥</span>
+                        <span>{calories} cal</span>
+                      </div>
+                    )}
+                    {mealType && (
+                      <div className="flex items-center gap-1">
+                        <span>🍽️</span>
+                        <span>{mealType}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Ingredients */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-[#004346] mb-2">
+                      Ingredients
+                    </h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      {ingredients.map((ing, i) => (
+                        <li key={i}>{ing}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Instructions */}
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-[#004346] mb-2">
+                      Instructions
+                    </h3>
+                    <ol className="list-decimal list-inside space-y-2 text-gray-700">
+                      {instructions.map((step, i) => (
+                        <li key={i}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  {/* Macros */}
+                  {macros && (
+                    <div className="pt-4 border-t border-gray-200 text-sm text-gray-600">
+                      <strong>Macros:</strong> {macros}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+
         {plan && !loading && (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="bg-[#004346] px-6 py-4">
@@ -256,6 +530,12 @@ export default function MealPlanner() {
                 <h2 className="text-2xl font-semibold text-white">
                   Your Weekly Meal Plan
                 </h2>
+                <button
+                  onClick={saveMealPlanToProfile}
+                  className="mt-4 inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
+                >
+                  Save to Profile
+                </button>
               </div>
             </div>
             <div className="p-6">
