@@ -12,8 +12,7 @@ import RecipeUploadsHeatmap from "./Components/Heatmap/RecipeUploadsHeatmap";
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
-import MoodTracker from "./Components/moodtracker/MoodTracker.jsx";
-
+import MoodTracker from "./Components/moodtracker/MoodTracker";
 
 import "./App.css";
 
@@ -104,7 +103,7 @@ const App = () => {
             </Layout>
           }
         />
-         <Route
+        <Route
           path="/moodtracker"
           element={
             <Layout>
