@@ -124,9 +124,10 @@ const Navbar = ({ title, children }) => {
           <Box display="flex" gap={2} alignItems="center">
             {[
               { label: "Home", path: "/" },
-              { label: "Services", path: "/services" },
-              { label: "News", path: "/news" },
+              { label: "Community", path: "/community" },
+              { label: "My Recipes", path: "/myrecipes" },
               { label: "Contact", path: "/contact" },
+              { label: "Meal Planner", path: "/mealplanner" },
             ].map((link) => (
               <Button
                 key={link.path}
@@ -145,14 +146,10 @@ const Navbar = ({ title, children }) => {
                 }}
                 onClick={() =>
                   link.path === "/services" ||
-                  link.path === "/pets" ||
-                  link.path === "/nearby-vets" ||
-                  link.path === "/news" ||
-                  link.path === "/communication" ||
+                  link.path === "/community" ||
                   link.path === "/profile" ||
-                  link.path === "/trainpets" ||
-                  link.path === "/wishlist" ||
-                  link.path === "/post-pet"
+                  link.path === "/myrecipes" ||
+                  link.path === "/mealplanner"
                     ? handleRestrictedNavigation(link.path)
                     : navigate(link.path)
                 }
