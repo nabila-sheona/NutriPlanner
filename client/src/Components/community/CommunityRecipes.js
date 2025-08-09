@@ -212,7 +212,6 @@ const CommunityRecipes = () => {
     setOpenMealPlanDialog(false);
     setSelectedRecipe(null);
   };
-
   const handleSubmit = async (recipeData) => {
     try {
       const response = await fetch("http://localhost:4000/recipes", {
@@ -355,7 +354,7 @@ const CommunityRecipes = () => {
                 )}
                 {recipe.mealType && (
                   <Typography variant="body2" sx={{ mt: 1 }}>
-                    Meal Type: {recipe.mealType}
+                    Category: {recipe.mealType}
                   </Typography>
                 )}
                 <Box
@@ -374,23 +373,13 @@ const CommunityRecipes = () => {
               </CardContent>
               <CardActions sx={{ mt: "auto", justifyContent: "space-between" }}>
                 <Box>
-                  {!recipe.isMealPlan && (
-                    <Button
-                      size="small"
-                      onClick={() => handleOpenRecipeView(recipe)} // opens ViewRecipeDialog
-                      sx={{ color: "#004346", mr: 1 }}
-                    >
+                  {recipe.isMealPlan ? (
+                    <Button onClick={() => handleOpenMealPlanView(recipe)}>
                       View Recipe
                     </Button>
-                  )}
-
-                  {recipe.isMealPlan && (
-                    <Button
-                      size="small"
-                      onClick={() => handleOpenMealPlanView(recipe)} // opens ViewMealPlanRecipeDialog
-                      sx={{ color: "#004346" }}
-                    >
-                      View Meal Plan
+                  ) : (
+                    <Button onClick={() => handleOpenRecipeView(recipe)}>
+                      View Recipe
                     </Button>
                   )}
                 </Box>
@@ -427,17 +416,19 @@ const CommunityRecipes = () => {
         username={username}
       />
 
-      <ViewRecipeDialog
-        open={openRecipeDialog}
-        onClose={handleCloseRecipeDialog}
-        recipe={selectedRecipe}
-      />
-
-      <MealPlanCard
-        open={openMealPlanDialog}
-        onClose={handleCloseMealPlanDialog}
-        recipe={selectedRecipe}
-      />
+      {selectedRecipe && selectedRecipe.isMealPlan ? (
+        <MealPlanCard
+          open={openMealPlanDialog}
+          onClose={handleCloseMealPlanDialog}
+          recipe={selectedRecipe}
+        />
+      ) : (
+        <ViewRecipeDialog
+          open={openRecipeDialog}
+          onClose={handleCloseRecipeDialog}
+          recipe={selectedRecipe}
+        />
+      )}
 
       <Snackbar
         open={snackbarOpen}
