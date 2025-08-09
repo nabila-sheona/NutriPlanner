@@ -21,11 +21,13 @@ import {
 import { Favorite, FavoriteBorder, Add, Search } from "@mui/icons-material";
 import AddRecipeDialog from "./AddRecipeDialog";
 import ViewRecipeDialog from "./ViewRecipeDialog";
+import MealPlanCard from "./MealPlanCard";
 
 const CommunityRecipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [allRecipes, setAllRecipes] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openMealPlanDialog, setOpenMealPlanDialog] = useState(false);
   const [openRecipeDialog, setOpenRecipeDialog] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -33,30 +35,68 @@ const CommunityRecipes = () => {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [likedRecipes, setLikedRecipes] = useState(new Set());
+  const [recipeType, setRecipeType] = useState("all");
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const [username] = useState(currentUser?.username || "");
 
-  // Combined data fetching effect
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch recipes
+        // Fetch regular recipes
         const recipesResponse = await fetch("http://localhost:4000/recipes");
         if (!recipesResponse.ok) throw new Error("Failed to fetch recipes");
         const recipesData = await recipesResponse.json();
-        setRecipes(recipesData);
-        setAllRecipes(recipesData);
+
+        // Try fetching meal plan recipes
+        let mealPlanData = [];
+        try {
+          const mealPlanResponse = await fetch(
+            "http://localhost:4000/mealplanrecipes/all"
+          );
+          if (mealPlanResponse.ok) {
+            mealPlanData = await mealPlanResponse.json();
+          }
+        } catch (mealPlanErr) {
+          console.log("Meal plan endpoint not available yet");
+        }
+
+        // Combine both types of recipes
+        const combinedRecipes = [
+          ...recipesData.map((recipe) => ({
+            ...recipe,
+            isMealPlan: false,
+            instructions: Array.isArray(recipe.instructions)
+              ? recipe.instructions
+              : typeof recipe.instructions === "string"
+              ? recipe.instructions
+                  .split("\n")
+                  .filter((step) => step.trim() !== "")
+              : [],
+          })),
+          ...mealPlanData.map((mp) => ({
+            ...mp,
+            isMealPlan: true,
+            instructions: Array.isArray(mp.instructions)
+              ? mp.instructions
+              : typeof mp.instructions === "string"
+              ? mp.instructions.split("\n").filter((step) => step.trim() !== "")
+              : [],
+          })),
+        ];
+
+        setRecipes(combinedRecipes);
+        setAllRecipes(combinedRecipes);
 
         // Fetch liked recipes if user is logged in
         if (currentUser?.username) {
           const likedResponse = await fetch(
             `http://localhost:4000/recipes/liked?username=${currentUser.username}`
           );
-          if (!likedResponse.ok)
-            throw new Error("Failed to fetch liked recipes");
-          const likedData = await likedResponse.json();
-          setLikedRecipes(new Set(likedData.likedRecipes || []));
+          if (likedResponse.ok) {
+            const likedData = await likedResponse.json();
+            setLikedRecipes(new Set(likedData.likedRecipes || []));
+          }
         }
       } catch (err) {
         console.error("Failed to fetch data:", err);
@@ -66,9 +106,8 @@ const CommunityRecipes = () => {
     };
 
     fetchData();
-  }, [currentUser?.username]); // Only depend on username
+  }, [currentUser?.username]);
 
-  // Handle search functionality
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setRecipes(allRecipes);
@@ -126,7 +165,6 @@ const CommunityRecipes = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Update liked recipes set
         const newLikedRecipes = new Set(likedRecipes);
         if (data.liked) {
           newLikedRecipes.add(recipeId);
@@ -135,7 +173,6 @@ const CommunityRecipes = () => {
         }
         setLikedRecipes(newLikedRecipes);
 
-        // Update recipe like count in state
         setRecipes((prevRecipes) =>
           prevRecipes.map((recipe) =>
             recipe._id === recipeId
@@ -151,16 +188,28 @@ const CommunityRecipes = () => {
     }
   };
 
-  // Other handler functions
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
-  const handleOpenRecipeDialog = (recipe) => {
+
+  // Proper dialog handlers for each type
+  const handleOpenRecipeView = (recipe) => {
     setSelectedRecipe(recipe);
     setOpenRecipeDialog(true);
   };
+
   const handleCloseRecipeDialog = () => {
     setOpenRecipeDialog(false);
+    setSelectedRecipe(null);
+  };
+
+  const handleOpenMealPlanView = (recipe) => {
+    setSelectedRecipe(recipe);
+    setOpenMealPlanDialog(true);
+  };
+
+  const handleCloseMealPlanDialog = () => {
+    setOpenMealPlanDialog(false);
     setSelectedRecipe(null);
   };
 
@@ -200,7 +249,12 @@ const CommunityRecipes = () => {
   const showFallback = searchTerm.trim() !== "" && filteredRecipes.length === 0;
   const displayedRecipes = showFallback
     ? allRecipes.slice(0, 3)
-    : filteredRecipes;
+    : filteredRecipes.filter((recipe) => {
+        if (recipeType === "all") return true;
+        if (recipeType === "regular") return !recipe.isMealPlan;
+        if (recipeType === "mealplan") return recipe.isMealPlan;
+        return true;
+      });
 
   return (
     <Container>
@@ -221,11 +275,24 @@ const CommunityRecipes = () => {
 
       <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
         <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Filter</InputLabel>
+          <InputLabel>Recipe Type</InputLabel>
+          <Select
+            value={recipeType}
+            onChange={(e) => setRecipeType(e.target.value)}
+            label="Recipe Type"
+          >
+            <MenuItem value="all">All Recipes</MenuItem>
+            <MenuItem value="regular">Regular Recipes</MenuItem>
+            <MenuItem value="mealplan">Meal Plan Recipes</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl sx={{ minWidth: 150 }}>
+          <InputLabel>Category</InputLabel>
           <Select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            label="Filter"
+            label="Category"
           >
             <MenuItem value="all">All Categories</MenuItem>
             <MenuItem value="breakfast">Breakfast</MenuItem>
@@ -273,19 +340,28 @@ const CommunityRecipes = () => {
               }}
             >
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {recipe.title}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {recipe.title}
+                  </Typography>
+                </Box>
                 <Typography variant="subtitle2" color="text.secondary">
-                  by {recipe.authorUsername}
+                  by {recipe.authorUsername || "Unknown"}
                 </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  Category: {recipe.category}
-                </Typography>
+                {recipe.category && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    Category: {recipe.category}
+                  </Typography>
+                )}
+                {recipe.mealType && (
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    Meal Type: {recipe.mealType}
+                  </Typography>
+                )}
                 <Box
                   sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 0.5 }}
                 >
-                  {recipe.tags.map((tag, index) => (
+                  {recipe.tags?.map((tag, index) => (
                     <Chip
                       key={index}
                       label={tag}
@@ -297,13 +373,27 @@ const CommunityRecipes = () => {
                 </Box>
               </CardContent>
               <CardActions sx={{ mt: "auto", justifyContent: "space-between" }}>
-                <Button
-                  size="small"
-                  onClick={() => handleOpenRecipeDialog(recipe)}
-                  sx={{ color: "#004346" }}
-                >
-                  View Recipe
-                </Button>
+                <Box>
+                  {!recipe.isMealPlan && (
+                    <Button
+                      size="small"
+                      onClick={() => handleOpenRecipeView(recipe)} // opens ViewRecipeDialog
+                      sx={{ color: "#004346", mr: 1 }}
+                    >
+                      View Recipe
+                    </Button>
+                  )}
+
+                  {recipe.isMealPlan && (
+                    <Button
+                      size="small"
+                      onClick={() => handleOpenMealPlanView(recipe)} // opens ViewMealPlanRecipeDialog
+                      sx={{ color: "#004346" }}
+                    >
+                      View Meal Plan
+                    </Button>
+                  )}
+                </Box>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <IconButton
                     onClick={() => handleLike(recipe._id)}
@@ -340,6 +430,12 @@ const CommunityRecipes = () => {
       <ViewRecipeDialog
         open={openRecipeDialog}
         onClose={handleCloseRecipeDialog}
+        recipe={selectedRecipe}
+      />
+
+      <MealPlanCard
+        open={openMealPlanDialog}
+        onClose={handleCloseMealPlanDialog}
         recipe={selectedRecipe}
       />
 

@@ -51,5 +51,13 @@ const getRecipes = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch recipes." });
   }
 };
-
-module.exports = { saveRecipe, getRecipes };
+const getAllMealPlanRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find().sort({ createdAt: -1 });
+    res.status(200).json(recipes);
+  } catch (err) {
+    console.error("Error fetching meal plan recipes:", err);
+    res.status(500).json({ error: "Failed to fetch meal plan recipes." });
+  }
+};
+module.exports = { saveRecipe, getRecipes, getAllMealPlanRecipes };
