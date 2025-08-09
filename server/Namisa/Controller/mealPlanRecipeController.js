@@ -35,7 +35,13 @@ const saveRecipe = async (req, res) => {
     });
 
     await recipe.save();
-    res.status(201).json({ message: "Recipe saved successfully!", recipe });
+    const populated = await Recipe.findById(recipe._id)
+      .populate("userId", "username")
+      .lean();
+    res.status(201).json({
+      message: "Recipe saved successfully!",
+      recipe: { ...populated, authorUsername: populated.userId?.username },
+    });
   } catch (err) {
     console.error("Error saving recipe:", err);
     res.status(500).json({ error: "Failed to save recipe." });
@@ -46,8 +52,17 @@ const saveRecipe = async (req, res) => {
 const getRecipes = async (req, res) => {
   try {
     const userId = req.userId;
-    const recipes = await Recipe.find({ userId }).sort({ createdAt: -1 });
-    res.status(200).json(recipes);
+    const recipes = await Recipe.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate("userId", "username")
+      .lean();
+
+    const formatted = recipes.map((r) => ({
+      ...r,
+      authorUsername: r.userId?.username,
+    }));
+
+    res.status(200).json(formatted);
   } catch (err) {
     console.error("Error fetching recipes:", err);
     res.status(500).json({ error: "Failed to fetch recipes." });
@@ -55,8 +70,17 @@ const getRecipes = async (req, res) => {
 };
 const getAllMealPlanRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find().sort({ createdAt: -1 });
-    res.status(200).json(recipes);
+    const recipes = await Recipe.find()
+      .sort({ createdAt: -1 })
+      .populate("userId", "username")
+      .lean();
+
+    const formatted = recipes.map((r) => ({
+      ...r,
+      authorUsername: r.userId?.username,
+    }));
+
+    res.status(200).json(formatted);
   } catch (err) {
     console.error("Error fetching meal plan recipes:", err);
     res.status(500).json({ error: "Failed to fetch meal plan recipes." });
