@@ -14,6 +14,9 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const createError = require("./utils/createError");
 
+const moodRoutes = require('./Routes/mood.routes');
+const recipeRoutes = require('./Routes/recipe2.routes');
+
 const app = express();
 
 app.use(morgan("combined"));
@@ -41,6 +44,10 @@ app.use("/users", userRoute);
 app.use("/recipes", recipeRoute);
 app.use("/mealplans", mealplanRoute);
 app.use("/mealplanrecipes", mealplanrecipeRoute);
+
+app.use('/api/mood', moodRoutes);
+app.use('/api/recipes', recipeRoutes);
+
 mongoose
   .connect(process.env.MONGODB_URI, {})
   .then(() => {
