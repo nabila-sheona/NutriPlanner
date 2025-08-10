@@ -184,7 +184,49 @@ const getLikedMealPlanRecipesByUser = async (req, res, next) => {
     next(err);
   }
 };
+const searchMealPlanRecipes = async (req, res, next) => {
+  try {
+    const { q } = req.query;
 
+    if (!q || q.trim() === "") {
+      return res.status(400).json({
+        success: false,
+        message: "Search query parameter 'q' is required",
+      });
+    }
+
+    // Perform case-insensitive search in title, ingredients, or tags
+    const recipes = await Recipe.find({
+      $or: [
+        { title: { $regex: q, $options: "i" } },
+        { ingredients: { $regex: q, $options: "i" } },
+        { tags: { $regex: q, $options: "i" } },
+      ],
+    })
+      .sort({ createdAt: -1 })
+      .populate("userId", "username")
+      .lean();
+
+    const formatted = recipes.map((r) => ({
+      ...r,
+      authorUsername: r.userId?.username,
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: formatted.length,
+      recipes: formatted,
+    });
+  } catch (err) {
+    console.error("Meal plan search error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Search operation failed",
+      error: err.message,
+    });
+  }
+};
+module.exports.searchMealPlanRecipes = searchMealPlanRecipes;
 module.exports.toggleMealPlanLike = toggleMealPlanLike;
 module.exports.getLikedMealPlanRecipes = getLikedMealPlanRecipes;
 module.exports.getLikedMealPlanRecipesByUser = getLikedMealPlanRecipesByUser;

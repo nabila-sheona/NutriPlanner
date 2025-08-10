@@ -130,14 +130,39 @@ const CommunityRecipes = () => {
 
     const searchRecipes = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:4000/recipes/search?q=${encodeURIComponent(
-            searchTerm
-          )}`
-        );
-        if (!response.ok) throw new Error("Failed to search recipes");
-        const data = await response.json();
-        setRecipes(data.recipes || data);
+        const [regularRes, mealPlanRes] = await Promise.all([
+          fetch(
+            `http://localhost:4000/recipes/search?q=${encodeURIComponent(
+              searchTerm
+            )}`
+          ),
+          fetch(
+            `http://localhost:4000/mealplanrecipes/search?q=${encodeURIComponent(
+              searchTerm
+            )}`
+          ),
+        ]);
+
+        const regularData = regularRes.ok
+          ? await regularRes.json()
+          : { recipes: [] };
+        const mealPlanData = mealPlanRes.ok
+          ? await mealPlanRes.json()
+          : { recipes: [] };
+
+        // Mark meal plan recipes
+        const formattedMealPlans = (mealPlanData.recipes || []).map((mp) => ({
+          ...mp,
+          isMealPlan: true,
+        }));
+
+        // Merge and update state
+        const combinedResults = [
+          ...(regularData.recipes || []),
+          ...formattedMealPlans,
+        ];
+
+        setRecipes(combinedResults);
       } catch (err) {
         console.error("Search failed:", err);
         setSnackbarMessage(
