@@ -13,6 +13,8 @@ import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
 import MoodTracker from "./Components/moodtracker/MoodTracker";
+import MoodRecipeHistory from './Components/moodtracker/MoodRecipeHistory';
+
 
 import "./App.css";
 
@@ -119,6 +121,8 @@ const App = () => {
             </Layout>
           }
         />
+        <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
+
       </Routes>
     </Router>
   );
