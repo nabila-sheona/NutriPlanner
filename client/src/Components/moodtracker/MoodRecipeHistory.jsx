@@ -24,7 +24,8 @@ import {
   SentimentDissatisfied as StressedIcon,
   Bolt as EnergeticIcon,
   SelfImprovement as CalmIcon,
-  ArrowBack
+  ArrowBack,
+  Favorite as LikedIcon
 } from '@mui/icons-material';
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
@@ -49,42 +50,41 @@ const MoodRecipeHistory = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMood, setSelectedMood] = useState('');
+  const [showLikedOnly, setShowLikedOnly] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchRecipes = async () => {
-    try {
-      setLoading(true);
-      const url = `${API_BASE}/api/recipes/history${
-        selectedMood ? `?mood=${selectedMood}` : ''
-      }`;
-      
-      console.log('Making API request to:', url); // Debug log
-      console.log('Using token:', token ? 'Yes' : 'No'); // Debug log
+      try {
+        setLoading(true);
+        let url;
+        let params = {};
+        
+        if (showLikedOnly) {
+          url = `${API_BASE}/api/recipes/liked`;
+        } else {
+          url = `${API_BASE}/api/recipes/history`;
+          if (selectedMood) {
+            params.mood = selectedMood;
+          }
+        }
 
-      const response = await axios.get(url, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-
-      console.log('API response:', response); // Debug log
-      setRecipes(response.data);
-
-    } catch (error) {
-      console.error('Error details:', {
-        message: error.message,
-        config: error.config,
-        response: error.response,
-        stack: error.stack
-      });
-      alert('Failed to load recipe history. Check console for details.');
-    } finally {
-      setLoading(false);
-    }
-  };
+        const response = await axios.get(url, {
+          params,
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        
+        setRecipes(response.data);
+      } catch (error) {
+        console.error('Error fetching recipes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchRecipes();
-  }, [selectedMood, token]);
+  }, [selectedMood, showLikedOnly, token]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -131,30 +131,50 @@ const MoodRecipeHistory = () => {
             textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
           }}
         >
-          Your Recipe History
+          {showLikedOnly ? 'Your Liked Recipes' : 'Your Recipe History'}
         </Typography>
         
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Filter by Mood</InputLabel>
-          <Select
-            value={selectedMood}
-            onChange={(e) => setSelectedMood(e.target.value)}
-            label="Filter by Mood"
-          >
-            <MenuItem value="">All Moods</MenuItem>
-            <MenuItem value="Happy">Happy</MenuItem>
-            <MenuItem value="Sad">Sad</MenuItem>
-            <MenuItem value="Stressed">Stressed</MenuItem>
-            <MenuItem value="Energetic">Energetic</MenuItem>
-            <MenuItem value="Calm">Calm</MenuItem>
-          </Select>
-        </FormControl>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Chip
+            label="Your Liked"
+            icon={<LikedIcon />}
+            clickable
+            color={showLikedOnly ? 'primary' : 'default'}
+            onClick={() => setShowLikedOnly(!showLikedOnly)}
+            sx={{ 
+              px: 2,
+              '& .MuiChip-icon': { color: showLikedOnly ? '#fff' : '#f44336' }
+            }}
+          />
+
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Filter by Mood</InputLabel>
+            <Select
+              value={selectedMood}
+              onChange={(e) => {
+                setSelectedMood(e.target.value);
+                setShowLikedOnly(false);
+              }}
+              label="Filter by Mood"
+              disabled={showLikedOnly}
+            >
+              <MenuItem value="">All Moods</MenuItem>
+              <MenuItem value="Happy">Happy</MenuItem>
+              <MenuItem value="Sad">Sad</MenuItem>
+              <MenuItem value="Stressed">Stressed</MenuItem>
+              <MenuItem value="Energetic">Energetic</MenuItem>
+              <MenuItem value="Calm">Calm</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
       
       {recipes.length === 0 ? (
         <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h6" color="textSecondary">
-            No recipes found. Track your mood to generate some delicious recipes!
+            {showLikedOnly 
+              ? "You haven't liked any recipes yet!" 
+              : "No recipes found. Track your mood to generate some delicious recipes!"}
           </Typography>
         </Paper>
       ) : (
@@ -186,6 +206,13 @@ const MoodRecipeHistory = () => {
                       sx={{ fontWeight: 'bold' }}
                     >
                       {recipe.title}
+                      {recipe.isLiked && (
+                        <LikedIcon 
+                          color="error" 
+                          fontSize="small" 
+                          sx={{ ml: 1, verticalAlign: 'middle' }} 
+                        />
+                      )}
                     </Typography>
                   </Box>
                   
