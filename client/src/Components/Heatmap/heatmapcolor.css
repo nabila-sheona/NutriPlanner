@@ -1,80 +1,81 @@
-
 /* Empty cells */
 .react-calendar-heatmap .color-empty {
-    fill: #e6f0f0 !important;
-  }
-  
-  /* Lightest shade */
-  .react-calendar-heatmap .color-github-1 {
-    fill: #b3c9c9 !important;
-  }
-  
-  /* Medium-light */
-  .react-calendar-heatmap .color-github-2 {
-    fill: #669999 !important;
-  }
-  
-  /* Medium-dark */
-  .react-calendar-heatmap .color-github-3 {
-    fill: #336666 !important;
-  }
-  
-  /* Darkest */
-  .react-calendar-heatmap .color-github-4 {
-    fill: #004346 !important;
-  }
-  
+  fill: #e6f0f0 !important;
+}
 
-  /* Hover effect for heatmap cells */
+/* Lightest shade */
+.react-calendar-heatmap .color-github-1 {
+  fill: #b3c9c9 !important;
+}
+
+/* Medium-light */
+.react-calendar-heatmap .color-github-2 {
+  fill: #669999 !important;
+}
+
+/* Medium-dark */
+.react-calendar-heatmap .color-github-3 {
+  fill: #336666 !important;
+}
+
+/* Darkest */
+.react-calendar-heatmap .color-github-4 {
+  fill: #004346 !important;
+}
+
+/* Hover effect for heatmap cells */
 .react-calendar-heatmap rect:hover {
-    stroke: #002d2d;
-    stroke-width: 1px;
-    cursor: pointer;
-    filter: brightness(1.0);
-  }
-
-  
+  stroke: #002d2d;
+  stroke-width: 1px;
+  cursor: pointer;
+  filter: brightness(1);
+}
 
 .react-tooltip {
-    background-color: #004346bb !important;
-    color: #e6f0f0 !important; 
-    font-weight: 600;
-    border-radius: 8px !important;
-    padding: 8px 12px !important;
-    box-shadow: 0 4px 8px rgba(0, 67, 70, 0.3);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: background-color 0.3s ease;
-    max-width: 220px;
-    white-space: normal;
-    text-align: center;
-    pointer-events: none; 
-  }
-  
-  .react-tooltip[data-show] {
-    opacity: 1;
-    transition: opacity 0.2s ease-in-out;
-  }
-  
- 
-  .react-tooltip::after {
-    border-top-color: #004346 !important; 
-  }
-  
-  .heatmap-description {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #004346; /* Dark teal for consistency */
-    text-align: center;
-    margin-top: 24px;
-    line-height: 1.5;
-    letter-spacing: 0.02em;
-    font-weight: 500;
-  }
-  
-  .heatmap-description small {
-    display: block;
-    margin-top: 6px;
-    color: #336666; /* Medium teal for subtle contrast */
-    font-size: 0.875rem;
-    font-weight: 400;
-  }
-  
+  background-color: #004346bb !important;
+  color: #e6f0f0 !important;
+  font-weight: 600;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 4px 8px rgba(0, 67, 70, 0.3);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease;
+  max-width: 220px;
+  white-space: normal;
+  text-align: center;
+  pointer-events: none;
+}
+
+.react-tooltip[data-show] {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.react-tooltip::after {
+  border-top-color: #004346 !important;
+}
+
+.heatmap-description {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #004346; /* Dark teal for consistency */
+  text-align: center;
+  margin-top: 24px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+.heatmap-description small {
+  display: block;
+  margin-top: 6px;
+  color: #336666; /* Medium teal for subtle contrast */
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.react-calendar-heatmap .react-calendar-heatmap-day {
+  width: 20px !important;
+  height: 20px !important;
+  margin: 3px !important;
+  border-radius: 6px;
+}
