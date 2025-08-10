@@ -57,6 +57,9 @@ const Profile = () => {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  // New state for dialogs
+  const [selectedMealPlan, setSelectedMealPlan] = useState(null);
+  const [selectedMealPlanRecipe, setSelectedMealPlanRecipe] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -237,7 +240,6 @@ const Profile = () => {
           </Typography>
         </IconButton>
       </Box>
-
       {/* Tabs */}
       <Tabs value={activeTab} onChange={handleTabChange} centered>
         <Tab label="User Details" />
@@ -246,10 +248,8 @@ const Profile = () => {
         <Tab label="Meal Plans" />
         <Tab label="Meal Plan Recipes" />
       </Tabs>
-
       {/* Tab Content */}
       <Divider sx={{ my: 4 }} />
-
       {/* User Details Tab */}
       {activeTab === 0 && (
         <Box
@@ -397,7 +397,6 @@ const Profile = () => {
           </Grid>
         </Box>
       )}
-
       {/* Heatmap Tab */}
       {activeTab === 1 && (
         <Box sx={{ padding: 1 }}>
@@ -412,7 +411,6 @@ const Profile = () => {
           </Box>
         </Box>
       )}
-
       {/* Liked Recipes Tab */}
       {activeTab === 2 && (
         <Box sx={{ padding: 3 }}>
@@ -567,7 +565,153 @@ const Profile = () => {
           )}
         </Box>
       )}
+      {/* Meal Plans Tab 
+      {activeTab === 3 && (
+        <Box sx={{ padding: 3 }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              mb: 3,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "#004346",
+            }}
+          >
+            <RestaurantMenuIcon sx={{ fontSize: "2rem" }} />
+            Your Saved Meal Plans
+          </Typography>
 
+          {mealPlans.length === 0 ? (
+            <Box
+              sx={{
+                textAlign: "center",
+                py: 4,
+                backgroundColor: "#f8f9fa",
+                borderRadius: 2,
+                border: "2px dashed #dee2e6",
+              }}
+            >
+              <RestaurantMenuIcon
+                sx={{ fontSize: "4rem", color: "#6c757d", mb: 2 }}
+              />
+              <Typography variant="h6" color="textSecondary">
+                No meal plans saved yet
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Create your first meal plan to see it here!
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ width: "100%" }}>
+              {mealPlans.map((plan, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                    mb: 2,
+                    backgroundColor: "#fff",
+                    borderRadius: 1,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="subtitle1" fontWeight="medium">
+                      {plan.title || `Meal Plan ${index + 1}`}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {plan.description || "No description provided"}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "#004346", borderColor: "#004346" }}
+                  >
+                    <MealPlanCard plan={plan} index={index} />
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+   
+      {activeTab === 4 && (
+        <Box sx={{ padding: 3 }}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            sx={{
+              mb: 3,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              color: "#004346",
+            }}
+          >
+            <RestaurantMenuIcon sx={{ fontSize: "2rem" }} />
+            Your Saved Meal Plan Recipes
+          </Typography>
+
+          {mealplanRecipes.length === 0 ? (
+            <Typography>No recipes saved yet</Typography>
+          ) : (
+            <Box sx={{ width: "100%" }}>
+              {mealplanRecipes.map((rec, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                    mb: 2,
+                    backgroundColor: "#fff",
+                    borderRadius: 1,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="subtitle1" fontWeight="medium">
+                      {rec.title || `Recipe ${idx + 1}`}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {rec.mealType || "No meal type specified"}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "#004346", borderColor: "#004346" }}
+                  >
+                    <MealPlanRecipeCard recipe={rec} />
+                  </Button>
+                </Box>
+              ))}
+            </Box>
+          )}
+        </Box>
+      )}
+      */}
       {/* Meal Plans Tab */}
       {activeTab === 3 && (
         <Box sx={{ padding: 3 }}>
@@ -608,15 +752,67 @@ const Profile = () => {
               </Typography>
             </Box>
           ) : (
-            <Grid container spacing={3}>
+            <Box sx={{ width: "100%" }}>
               {mealPlans.map((plan, index) => (
-                <MealPlanCard key={index} plan={plan} index={index} />
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                    mb: 2,
+                    backgroundColor: "#fff",
+                    borderRadius: 1,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="subtitle1" fontWeight="medium">
+                      {plan.title || `Meal Plan ${index + 1}`}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {plan.description || "No description provided"}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "#004346", borderColor: "#004346" }}
+                    onClick={() => setSelectedMealPlan(plan)}
+                  >
+                    View
+                  </Button>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           )}
+
+          {/* Dialog for viewing meal plan */}
+          <Dialog
+            open={!!selectedMealPlan}
+            onClose={() => setSelectedMealPlan(null)}
+            maxWidth="md"
+            fullWidth
+          >
+            <DialogTitle>{selectedMealPlan?.title || "Meal Plan"}</DialogTitle>
+            <DialogContent>
+              {selectedMealPlan && (
+                <MealPlanCard plan={selectedMealPlan} index={0} />
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setSelectedMealPlan(null)}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       )}
-
       {/* Meal Plan Recipes Tab */}
       {activeTab === 4 && (
         <Box sx={{ padding: 3 }}>
@@ -639,14 +835,69 @@ const Profile = () => {
           {mealplanRecipes.length === 0 ? (
             <Typography>No recipes saved yet</Typography>
           ) : (
-            <Grid container spacing={2}>
+            <Box sx={{ width: "100%" }}>
               {mealplanRecipes.map((rec, idx) => (
-                <Grid item xs={12} sm={6} key={idx}>
-                  <MealPlanRecipeCard recipe={rec} />
-                </Grid>
+                <Box
+                  key={idx}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    p: 2,
+                    mb: 2,
+                    backgroundColor: "#fff",
+                    borderRadius: 1,
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      transform: "translateY(-2px)",
+                    },
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Typography variant="subtitle1" fontWeight="medium">
+                      {rec.title || `Recipe ${idx + 1}`}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {rec.mealType || "No meal type specified"}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{ color: "#004346", borderColor: "#004346" }}
+                    onClick={() => setSelectedMealPlanRecipe(rec)}
+                  >
+                    View
+                  </Button>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           )}
+
+          {/* Dialog for viewing meal plan recipe */}
+          <Dialog
+            open={!!selectedMealPlanRecipe}
+            onClose={() => setSelectedMealPlanRecipe(null)}
+            maxWidth="md"
+            fullWidth
+          >
+            <DialogTitle>
+              {selectedMealPlanRecipe?.title || "Meal Plan Recipe"}
+            </DialogTitle>
+            <DialogContent>
+              {selectedMealPlanRecipe && (
+                <MealPlanRecipeCard recipe={selectedMealPlanRecipe} />
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setSelectedMealPlanRecipe(null)}>
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       )}
 
