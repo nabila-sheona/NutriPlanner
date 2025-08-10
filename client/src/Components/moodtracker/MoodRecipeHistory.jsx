@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent, 
-  Grid, 
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Grid,
   CircularProgress,
   Button,
   Chip,
@@ -14,45 +14,45 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { 
+  InputLabel,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
   SentimentVerySatisfied as HappyIcon,
   SentimentVeryDissatisfied as SadIcon,
   SentimentDissatisfied as StressedIcon,
   Bolt as EnergeticIcon,
   SelfImprovement as CalmIcon,
   ArrowBack,
-  Favorite as LikedIcon
-} from '@mui/icons-material';
+  Favorite as LikedIcon,
+} from "@mui/icons-material";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:4000';
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000";
 
 const moodIcons = {
   Happy: <HappyIcon color="success" fontSize="large" />,
   Sad: <SadIcon color="primary" fontSize="large" />,
   Stressed: <StressedIcon color="error" fontSize="large" />,
   Energetic: <EnergeticIcon color="warning" fontSize="large" />,
-  Calm: <CalmIcon color="info" fontSize="large" />
+  Calm: <CalmIcon color="info" fontSize="large" />,
 };
 
 const moodColors = {
-  Happy: '#FFD700',
-  Sad: '#4682B4',
-  Stressed: '#8B0000',
-  Energetic: '#32CD32',
-  Calm: '#9370DB'
+  Happy: "#FFD700",
+  Sad: "#4682B4",
+  Stressed: "#8B0000",
+  Energetic: "#32CD32",
+  Calm: "#9370DB",
 };
 
 const MoodRecipeHistory = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMood, setSelectedMood] = useState('');
+  const [selectedMood, setSelectedMood] = useState("");
   const [showLikedOnly, setShowLikedOnly] = useState(false);
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -60,7 +60,7 @@ const MoodRecipeHistory = () => {
         setLoading(true);
         let url;
         let params = {};
-        
+
         if (showLikedOnly) {
           url = `${API_BASE}/api/recipes/liked`;
         } else {
@@ -72,12 +72,12 @@ const MoodRecipeHistory = () => {
 
         const response = await axios.get(url, {
           params,
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
-        
+
         setRecipes(response.data);
       } catch (error) {
-        console.error('Error fetching recipes:', error);
+        console.error("Error fetching recipes:", error);
       } finally {
         setLoading(false);
       }
@@ -87,63 +87,78 @@ const MoodRecipeHistory = () => {
   }, [selectedMood, showLikedOnly, token]);
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
         <CircularProgress size={80} />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ 
-      p: 4, 
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      minHeight: '100vh'
-    }}>
-      <Button 
-        variant="contained" 
+    <Box
+      sx={{
+        p: 4,
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        minHeight: "100vh",
+      }}
+    >
+      <Button
+        variant="contained"
         startIcon={<ArrowBack />}
-        sx={{ mb: 4 }}
-        onClick={() => navigate('/moodtracker')}
+        sx={{ mb: 4, backgroundColor: "#004346", color: "#ffffff" }}
+        onClick={() => navigate("/moodtracker")}
       >
         Back to Mood Tracker
       </Button>
-      
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: 2,
-        mb: 4
-      }}>
-        <Typography 
-          variant="h3" 
-          component="h1" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: '#333',
-            textShadow: '1px 1px 2px rgba(0,0,0,0.1)'
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+          mb: 4,
+        }}
+      >
+        <Typography
+          variant="h3"
+          component="h1"
+          sx={{
+            fontWeight: "bold",
+            color: "#333",
+            textShadow: "1px 1px 2px rgba(0,0,0,0.1)",
           }}
         >
-          {showLikedOnly ? 'Your Liked Recipes' : 'Your Recipe History'}
+          {showLikedOnly ? "Your Liked Recipes" : "Your Recipe History"}
         </Typography>
-        
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
           <Chip
             label="Your Liked"
             icon={<LikedIcon />}
             clickable
-            color={showLikedOnly ? 'primary' : 'default'}
+            color={showLikedOnly ? "primary" : "default"}
             onClick={() => setShowLikedOnly(!showLikedOnly)}
-            sx={{ 
+            sx={{
               px: 2,
-              '& .MuiChip-icon': { color: showLikedOnly ? '#fff' : '#f44336' }
+              "& .MuiChip-icon": { color: showLikedOnly ? "#fff" : "#f44336" },
             }}
           />
 
@@ -168,12 +183,12 @@ const MoodRecipeHistory = () => {
           </FormControl>
         </Box>
       </Box>
-      
+
       {recipes.length === 0 ? (
-        <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
+        <Paper elevation={3} sx={{ p: 4, textAlign: "center" }}>
           <Typography variant="h6" color="textSecondary">
-            {showLikedOnly 
-              ? "You haven't liked any recipes yet!" 
+            {showLikedOnly
+              ? "You haven't liked any recipes yet!"
               : "No recipes found. Track your mood to generate some delicious recipes!"}
           </Typography>
         </Paper>
@@ -181,56 +196,60 @@ const MoodRecipeHistory = () => {
         <Grid container spacing={4}>
           {recipes.map((recipe) => (
             <Grid item xs={12} sm={6} md={4} key={recipe._id}>
-              <Card sx={{ 
-                height: '100%', 
-                display: 'flex', 
-                flexDirection: 'column',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6
-                }
-              }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  transition: "transform 0.3s",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: 6,
+                  },
+                }}
+              >
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Box display="flex" alignItems="center" gap={1} mb={2}>
-                    <Avatar sx={{ 
-                      bgcolor: moodColors[recipe.mood], 
-                      width: 40, 
-                      height: 40 
-                    }}>
+                    <Avatar
+                      sx={{
+                        bgcolor: moodColors[recipe.mood],
+                        width: 40,
+                        height: 40,
+                      }}
+                    >
                       {moodIcons[recipe.mood]}
                     </Avatar>
-                    <Typography 
-                      variant="h6" 
+                    <Typography
+                      variant="h6"
                       component="h3"
-                      sx={{ fontWeight: 'bold' }}
+                      sx={{ fontWeight: "bold" }}
                     >
                       {recipe.title}
                       {recipe.isLiked && (
-                        <LikedIcon 
-                          color="error" 
-                          fontSize="small" 
-                          sx={{ ml: 1, verticalAlign: 'middle' }} 
+                        <LikedIcon
+                          color="error"
+                          fontSize="small"
+                          sx={{ ml: 1, verticalAlign: "middle" }}
                         />
                       )}
                     </Typography>
                   </Box>
-                  
-                  <Typography 
-                    variant="caption" 
+
+                  <Typography
+                    variant="caption"
                     color="text.secondary"
                     display="block"
                     gutterBottom
                   >
                     Created: {formatDate(recipe.createdAt)}
                   </Typography>
-                  
+
                   <Divider sx={{ my: 2 }} />
-                  
-                  <Typography 
-                    variant="subtitle1" 
+
+                  <Typography
+                    variant="subtitle1"
                     gutterBottom
-                    sx={{ fontWeight: 'bold' }}
+                    sx={{ fontWeight: "bold" }}
                   >
                     Ingredients:
                   </Typography>
@@ -241,15 +260,19 @@ const MoodRecipeHistory = () => {
                       </li>
                     ))}
                   </ul>
-                  
-                  <Typography 
-                    variant="subtitle1" 
+
+                  <Typography
+                    variant="subtitle1"
                     gutterBottom
-                    sx={{ fontWeight: 'bold', mt: 2 }}
+                    sx={{ fontWeight: "bold", mt: 2 }}
                   >
                     Instructions:
                   </Typography>
-                  <Typography variant="body2" paragraph sx={{ whiteSpace: 'pre-line' }}>
+                  <Typography
+                    variant="body2"
+                    paragraph
+                    sx={{ whiteSpace: "pre-line" }}
+                  >
                     {recipe.instructions}
                   </Typography>
                 </CardContent>
