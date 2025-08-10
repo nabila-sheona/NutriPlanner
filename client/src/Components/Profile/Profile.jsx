@@ -20,6 +20,9 @@ import {
   CardContent,
   CardActions,
   Chip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EmailIcon from "@mui/icons-material/Email";
@@ -27,13 +30,14 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import FoodBankIcon from "@mui/icons-material/FoodBank";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import { Favorite, Settings } from "@mui/icons-material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import upload from "../../utils/upload.js";
 import MealPlanCard from "../MealPlan/MealPlanCard.jsx";
 import ViewRecipeDialog from "../community/ViewRecipeDialog";
 import MealPlanRecipeDialog from "../community/MealPlanCard";
+import MealPlanRecipeCard from "../MealPlan/MealPlanRecipeCard.jsx";
 import RecipeUploadsHeatmap from "../Heatmap/RecipeUploadsHeatmap";
-
 
 const Profile = () => {
   const [mealPlans, setMealPlans] = useState([]);
@@ -75,13 +79,10 @@ const Profile = () => {
               headers: { Authorization: `Bearer ${token}` },
               params: { username: userResponse.data.username },
             }),
-            axios.get(
-              "http://localhost:4000/mealplanrecipes/likedbyuser",
-              {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { username: userResponse.data.username },
-              }
-            ),
+            axios.get("http://localhost:4000/mealplanrecipes/likedbyuser", {
+              headers: { Authorization: `Bearer ${token}` },
+              params: { username: userResponse.data.username },
+            }),
           ]);
 
           const combined = [
@@ -399,13 +400,18 @@ const Profile = () => {
 
       {/* Heatmap Tab */}
       {activeTab === 1 && (
-  <Box sx={{ padding: 1 }}>
-    <Typography variant="h5" sx={{ display: "flex", justifyContent: "center" }}>Recipe Uploads</Typography>
-    <Box sx={{ width: "100%", maxWidth: 900, mx: "auto" }}>
-      <RecipeUploadsHeatmap heatmapSize={900} />
-    </Box>
-  </Box>
-)}
+        <Box sx={{ padding: 1 }}>
+          <Typography
+            variant="h5"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            Recipe Uploads
+          </Typography>
+          <Box sx={{ width: "100%", maxWidth: 900, mx: "auto" }}>
+            <RecipeUploadsHeatmap heatmapSize={900} />
+          </Box>
+        </Box>
+      )}
 
       {/* Liked Recipes Tab */}
       {activeTab === 2 && (
@@ -471,7 +477,9 @@ const Profile = () => {
                     </Typography>
                     <Box sx={{ display: "flex", gap: 1, mt: 0.5 }}>
                       <Chip
-                        label={recipe.isMealPlan ? recipe.mealType : recipe.category}
+                        label={
+                          recipe.isMealPlan ? recipe.mealType : recipe.category
+                        }
                         size="small"
                         color="primary"
                         variant="outlined"
@@ -625,26 +633,19 @@ const Profile = () => {
             }}
           >
             <RestaurantMenuIcon sx={{ fontSize: "2rem" }} />
-            Your Saved Recipes
+            Your Saved Meal Plan Recipes
           </Typography>
 
           {mealplanRecipes.length === 0 ? (
             <Typography>No recipes saved yet</Typography>
           ) : (
-            mealplanRecipes.map((rec, idx) => (
-              <Box
-                key={idx}
-                sx={{ mb: 3, p: 2, background: "#fff", borderRadius: 2 }}
-              >
-                <Typography variant="h6">{rec.title}</Typography>
-                <Typography variant="body2">{rec.mealType}</Typography>
-                <ul>
-                  {rec.ingredients.map((ing, i) => (
-                    <li key={i}>{ing}</li>
-                  ))}
-                </ul>
-              </Box>
-            ))
+            <Grid container spacing={2}>
+              {mealplanRecipes.map((rec, idx) => (
+                <Grid item xs={12} sm={6} key={idx}>
+                  <MealPlanRecipeCard recipe={rec} />
+                </Grid>
+              ))}
+            </Grid>
           )}
         </Box>
       )}
