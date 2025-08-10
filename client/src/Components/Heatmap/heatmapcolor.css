@@ -60,3 +60,21 @@
     border-top-color: #004346 !important; 
   }
   
+  .heatmap-description {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #004346; /* Dark teal for consistency */
+    text-align: center;
+    margin-top: 24px;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+  
+  .heatmap-description small {
+    display: block;
+    margin-top: 6px;
+    color: #336666; /* Medium teal for subtle contrast */
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+  

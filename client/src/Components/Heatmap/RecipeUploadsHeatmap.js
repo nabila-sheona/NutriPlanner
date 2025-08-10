@@ -7,6 +7,7 @@ import {
   CircularProgress,
   Box,
 } from "@mui/material";
+import { ChefHat } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
@@ -97,6 +98,46 @@ const RecipeUploadsHeatmap = () => {
     });
   };
 
+  const calculateMaxStreak = (data) => {
+    if (!data.length) return 0;
+  
+    // Sort by date ascending
+    const sorted = [...data].sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+    let maxStreak = 0;
+    let currentStreak = 0;
+    let prevDate = null;
+  
+    for (let i = 0; i < sorted.length; i++) {
+      const { date, count } = sorted[i];
+      if (count > 0) {
+        const currentDate = new Date(date);
+  
+        if (
+          prevDate &&
+          (currentDate - prevDate) / (1000 * 60 * 60 * 24) === 1
+        ) {
+          // consecutive day
+          currentStreak++;
+        } else {
+          // reset streak
+          currentStreak = 1;
+        }
+  
+        if (currentStreak > maxStreak) maxStreak = currentStreak;
+        prevDate = currentDate;
+      } else {
+        // zero upload breaks streak
+        currentStreak = 0;
+        prevDate = null;
+      }
+    }
+  
+    return maxStreak;
+  };
+  const maxStreak = calculateMaxStreak(heatmapData);
+
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3, display: "flex", flexDirection: "column" }}>
@@ -143,14 +184,23 @@ const RecipeUploadsHeatmap = () => {
           </Box>
         )}
 
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body1" color="text.secondary">
-            This heatmap shows your recipe upload activity over the past year.
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Hover over squares to see details. Darker colors indicate more uploads.
-          </Typography>
-        </Box>
+<Box
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    mt: 3,
+    gap: 1,
+    color: "#004346",
+    fontWeight: 600,
+    fontSize: "1.1rem",
+  }}
+>
+  <ChefHat size={24} />
+  <span>
+    Your longest upload streak: <strong>{maxStreak} day{maxStreak !== 1 ? "s" : ""}</strong>. Keep it up!
+  </span>
+</Box>
       </Paper>
 
       <Snackbar
