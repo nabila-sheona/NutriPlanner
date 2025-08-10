@@ -241,7 +241,12 @@ const Profile = () => {
         </IconButton>
       </Box>
       {/* Tabs */}
-      <Tabs value={activeTab} onChange={handleTabChange} centered>
+      <Tabs
+        value={activeTab}
+        onChange={handleTabChange}
+        centered
+        sx={{ color: "#004346" }}
+      >
         <Tab label="User Details" />
         <Tab label="Recipe Uploads Contributions" />
         <Tab label="Liked Recipes" />
@@ -249,13 +254,13 @@ const Profile = () => {
         <Tab label="Meal Plan Recipes" />
       </Tabs>
       {/* Tab Content */}
-      <Divider sx={{ my: 4 }} />
+      <Divider sx={{ my: 4, color: "#004346" }} />
       {/* User Details Tab */}
       {activeTab === 0 && (
         <Box
           sx={{
             padding: 3,
-            backgroundColor: "#e8eaf6",
+            backgroundColor: "#b3c9c9",
             borderRadius: 2,
             boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
           }}
@@ -893,7 +898,10 @@ const Profile = () => {
               )}
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setSelectedMealPlanRecipe(null)}>
+              <Button
+                onClick={() => setSelectedMealPlanRecipe(null)}
+                sx={{ color: "#004346" }}
+              >
                 Close
               </Button>
             </DialogActions>
