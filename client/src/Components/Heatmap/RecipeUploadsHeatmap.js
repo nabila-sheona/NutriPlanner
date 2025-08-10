@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
+import "./heatmapcolor.css";
 
 const RecipeUploadsHeatmap = () => {
   const navigate = useNavigate();

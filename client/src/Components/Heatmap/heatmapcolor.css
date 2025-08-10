@@ -1,0 +1,26 @@
+
+/* Empty cells */
+.react-calendar-heatmap .color-empty {
+    fill: #e6f0f0 !important;
+  }
+  
+  /* Lightest shade */
+  .react-calendar-heatmap .color-github-1 {
+    fill: #b3c9c9 !important;
+  }
+  
+  /* Medium-light */
+  .react-calendar-heatmap .color-github-2 {
+    fill: #669999 !important;
+  }
+  
+  /* Medium-dark */
+  .react-calendar-heatmap .color-github-3 {
+    fill: #336666 !important;
+  }
+  
+  /* Darkest */
+  .react-calendar-heatmap .color-github-4 {
+    fill: #004346 !important;
+  }
+  
