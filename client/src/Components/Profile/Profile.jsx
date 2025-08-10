@@ -32,6 +32,9 @@ import upload from "../../utils/upload.js";
 import MealPlanCard from "../MealPlan/MealPlanCard.jsx";
 import ViewRecipeDialog from "../community/ViewRecipeDialog";
 import MealPlanRecipeDialog from "../community/MealPlanCard";
+import RecipeUploadsHeatmap from "../Heatmap/RecipeUploadsHeatmap";
+
+
 const Profile = () => {
   const [mealPlans, setMealPlans] = useState([]);
   const [mealplanRecipes, setMealplanRecipes] = useState([]);
@@ -237,7 +240,7 @@ const Profile = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onChange={handleTabChange} centered>
         <Tab label="User Details" />
-        <Tab label="Something" />
+        <Tab label="Recipe Uploads Contributions" />
         <Tab label="Liked Recipes" />
         <Tab label="Meal Plans" />
         <Tab label="Meal Plan Recipes" />
@@ -334,7 +337,7 @@ const Profile = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Box
                 sx={{
                   display: "flex",
@@ -389,17 +392,20 @@ const Profile = () => {
                   </Typography>
                 </Box>
               </Box>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
       )}
 
-      {/* Something Tab */}
+      {/* Heatmap Tab */}
       {activeTab === 1 && (
-        <Box sx={{ padding: 3 }}>
-          <Typography variant="h5">Something</Typography>
-        </Box>
-      )}
+  <Box sx={{ padding: 1 }}>
+    <Typography variant="h5" sx={{ display: "flex", justifyContent: "center" }}>Recipe Uploads</Typography>
+    <Box sx={{ width: "100%", maxWidth: 900, mx: "auto" }}>
+      <RecipeUploadsHeatmap heatmapSize={900} />
+    </Box>
+  </Box>
+)}
 
       {/* Liked Recipes Tab */}
       {activeTab === 2 && (

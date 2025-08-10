@@ -19,7 +19,7 @@ import { interpolateRgb } from "d3-interpolate";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 
-const RecipeUploadsHeatmap = () => {
+const RecipeUploadsHeatmap = ({ heatmapSize = 800 }) => {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -142,7 +142,6 @@ const RecipeUploadsHeatmap = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Paper elevation={3} sx={{ p: 3, display: "flex", flexDirection: "column" }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Recipe Uploads Heatmap
         </Typography>
 
         {loading ? (
@@ -179,6 +178,12 @@ const RecipeUploadsHeatmap = () => {
                   },
                 })
               }
+              style={{
+                width: heatmapSize,
+                height: 180,
+                margin: "0 auto",
+                display: "block",
+              }}
             />
             <Tooltip id="heatmap-tooltip" />
           </Box>
