@@ -12,6 +12,12 @@ import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 import "./heatmapcolor.css";
 
+import * as d3 from "d3-scale";
+import { interpolateRgb } from "d3-interpolate";
+
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+
 const RecipeUploadsHeatmap = () => {
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
@@ -20,6 +26,12 @@ const RecipeUploadsHeatmap = () => {
   const [loading, setLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const colorScale = d3
+    .scaleLinear()
+    .domain([0, 10]) 
+    .range(["#e6f0f0", "#004346"])
+    .interpolate(interpolateRgb);
 
   useEffect(() => {
     const fetchHeatmapData = async () => {
@@ -50,13 +62,12 @@ const RecipeUploadsHeatmap = () => {
 
         const data = await response.json();
 
-        // Transform data for the heatmap component
-        const transformedData = data.map((item) => ({
-          date: item._id,
-          count: item.count,
-        }));
-
-        setHeatmapData(transformedData);
+        setHeatmapData(
+          data.map((item) => ({
+            date: item._id,
+            count: item.count,
+          }))
+        );
       } catch (err) {
         console.error("Heatmap fetch failed:", err);
         setSnackbarMessage(err.message || "Failed to load heatmap data");
@@ -69,20 +80,26 @@ const RecipeUploadsHeatmap = () => {
     fetchHeatmapData();
   }, [currentUser?.username, navigate]);
 
-  // Helper function to get the date range for the heatmap
   const getStartDate = () => {
     const date = new Date();
-    date.setMonth(date.getMonth() - 11); // Show 12 months of data
-    date.setDate(1); // Start from first day of the month
+    date.setMonth(date.getMonth() - 11);
+    date.setDate(1);
     return date;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Paper
-        elevation={3}
-        sx={{ p: 3, display: "flex", flexDirection: "column" }}
-      >
+      <Paper elevation={3} sx={{ p: 3, display: "flex", flexDirection: "column" }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Recipe Uploads Heatmap
         </Typography>
@@ -97,20 +114,32 @@ const RecipeUploadsHeatmap = () => {
               startDate={getStartDate()}
               endDate={new Date()}
               values={heatmapData}
+              gutterSize={3}
+              showWeekdayLabels
+              tooltipDataAttrs={(value) => ({
+                "data-tooltip-id": "heatmap-tooltip",
+                "data-tooltip-content": value?.date
+                  ? `${formatDate(value.date)} — ${value.count} upload${
+                      value.count !== 1 ? "s" : ""
+                    }`
+                  : "No uploads",
+              })}
               classForValue={(value) => {
                 if (!value || !value.count) return "color-empty";
                 return `color-github-${Math.min(4, value.count)}`;
               }}
-              tooltipDataAttrs={(value) => ({
-                "data-tip": value?.date
-                  ? `${value.date}: ${value.count} recipe${
-                      value.count !== 1 ? "s" : ""
-                    } uploaded`
-                  : "No data",
-              })}
-              showWeekdayLabels
-              gutterSize={2}
+              transformDayElement={(element, value) =>
+                React.cloneElement(element, {
+                  style: {
+                    fill: value?.count ? colorScale(value.count) : "#f0f0f0",
+                    rx: 4, 
+                    ry: 4,
+                    transition: "fill 0.2s ease-in-out",
+                  },
+                })
+              }
             />
+            <Tooltip id="heatmap-tooltip" />
           </Box>
         )}
 
@@ -119,8 +148,7 @@ const RecipeUploadsHeatmap = () => {
             This heatmap shows your recipe upload activity over the past year.
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Hover over squares to see details. Darker colors indicate more
-            uploads.
+            Hover over squares to see details. Darker colors indicate more uploads.
           </Typography>
         </Box>
       </Paper>

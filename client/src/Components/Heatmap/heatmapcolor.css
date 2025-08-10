@@ -24,3 +24,39 @@
     fill: #004346 !important;
   }
   
+
+  /* Hover effect for heatmap cells */
+.react-calendar-heatmap rect:hover {
+    stroke: #002d2d;
+    stroke-width: 1px;
+    cursor: pointer;
+    filter: brightness(1.0);
+  }
+
+  
+
+.react-tooltip {
+    background-color: #004346bb !important;
+    color: #e6f0f0 !important; 
+    font-weight: 600;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    box-shadow: 0 4px 8px rgba(0, 67, 70, 0.3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s ease;
+    max-width: 220px;
+    white-space: normal;
+    text-align: center;
+    pointer-events: none; 
+  }
+  
+  .react-tooltip[data-show] {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+ 
+  .react-tooltip::after {
+    border-top-color: #004346 !important; 
+  }
+  
