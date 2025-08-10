@@ -153,8 +153,7 @@ const Login = () => {
           backgroundColor: "background.default",
           minHeight: "100vh",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
         }}
       >
         <Card
@@ -166,6 +165,8 @@ const Login = () => {
             borderRadius: 2,
             boxShadow: 3,
             overflow: "hidden",
+            margin: "0 auto",
+            mt: 5,
           }}
         >
           {/* Left Side - Welcome Section */}

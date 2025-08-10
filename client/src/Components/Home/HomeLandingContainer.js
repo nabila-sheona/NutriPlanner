@@ -14,18 +14,18 @@ const HomeLandingContainer = (props) => {
     window.scrollTo(0, 0);
   };
 
-  const handleAdoptClick = () => {
+  const handleDietPlan = () => {
     if (currentUser) {
-      navigate("/pets");
+      navigate("/mealplanner");
       scrollToTop();
     } else {
       setIsModalOpen(true);
     }
   };
 
-  const handleServicesClick = () => {
+  const handleExploreRecipes = () => {
     if (currentUser) {
-      navigate("/services");
+      navigate("/community");
       scrollToTop();
     } else {
       setIsModalOpen(true);
@@ -86,7 +86,7 @@ const HomeLandingContainer = (props) => {
               <Button
                 variant="contained"
                 size="large"
-                onClick={handleAdoptClick}
+                onClick={handleDietPlan}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -113,7 +113,7 @@ const HomeLandingContainer = (props) => {
               <Button
                 variant="outlined"
                 size="large"
-                onClick={handleServicesClick}
+                onClick={handleExploreRecipes}
                 sx={{
                   padding: "0.85rem 2rem",
                   fontWeight: "bold",
@@ -132,7 +132,7 @@ const HomeLandingContainer = (props) => {
                 }}
                 startIcon={<RamenDiningIcon />}
               >
-                Find Food
+                Explore Recipes
               </Button>
             </Box>
           </motion.div>
