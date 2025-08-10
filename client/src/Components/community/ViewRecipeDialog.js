@@ -54,7 +54,7 @@ const ViewRecipeDialog = ({ open, onClose, recipe }) => {
               key={index}
               label={tag}
               variant="outlined"
-              sx={{ backgroundColor: "#33c9dc", color: "#ffffff" }}
+              sx={{ backgroundColor: "#669999", color: "#ffffff" }}
             />
           ))}
         </Box>

@@ -65,12 +65,12 @@ const MealPlanCard = ({ open, onClose, recipe }) => {
                 gutterBottom
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
-                <MealIcon color="primary" />
+                <MealIcon color="#336666" />
                 Meal Type
               </Typography>
               <Chip
                 label={recipe.mealType}
-                color="primary"
+                color="#336666"
                 variant="outlined"
                 size="medium"
               />
@@ -82,14 +82,14 @@ const MealPlanCard = ({ open, onClose, recipe }) => {
                 gutterBottom
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
-                <TimeIcon color="primary" />
+                <TimeIcon color="#669999" />
                 Preparation Time
               </Typography>
               <Chip
                 label={recipe.time}
                 color="secondary"
                 size="medium"
-                sx={{ fontSize: "1rem" }}
+                sx={{ fontSize: "1rem", backgroundColor: "#004346" }}
               />
             </Box>
 
@@ -99,7 +99,7 @@ const MealPlanCard = ({ open, onClose, recipe }) => {
                 gutterBottom
                 sx={{ display: "flex", alignItems: "center", gap: 1 }}
               >
-                <CaloriesIcon color="primary" />
+                <CaloriesIcon color="#669999" />
                 Calories
               </Typography>
               <Chip

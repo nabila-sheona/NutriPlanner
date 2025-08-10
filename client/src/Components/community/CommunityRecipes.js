@@ -424,7 +424,7 @@ const CommunityRecipes = () => {
                       label={tag}
                       size="small"
                       variant="outlined"
-                      sx={{ backgroundColor: "#33c9dc", color: "#ffffff" }}
+                      sx={{ backgroundColor: "#669999", color: "#ffffff" }}
                     />
                   ))}
                 </Box>
