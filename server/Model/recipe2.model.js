@@ -19,8 +19,9 @@ const recipeSchema = new mongoose.Schema({
     enum: ['Happy', 'Sad', 'Stressed', 'Energetic', 'Calm']
   },
   generatedBy: {
-    type: String,
-    default: 'Gemini'
+    type: mongoose.Schema.Types.ObjectId, // Changed to ObjectId
+    ref: 'User',
+    required: true
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
