@@ -1,7 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ChefHat, Calendar, Target, Check } from "lucide-react";
-import { useEffect } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardHeader,
+  CardContent,
+  Checkbox,
+  CircularProgress,
+  Divider,
+  FormControlLabel,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Radio,
+  RadioGroup,
+  Typography,
+  styled,
+  Chip,
+  Avatar,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const dietaryOptions = [
   "Vegetarian",
@@ -29,26 +55,102 @@ const dayNames = [
   "Sunday",
 ];
 
-// Simple Modal Component
-function Modal({ open, onClose, children }) {
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div
-        className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-6 relative"
-        style={{ maxHeight: "80vh", overflow: "auto" }}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
-        >
-          ×
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-}
+// Custom styled components
+const PrimaryButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#004346",
+  color: "white",
+  padding: "12px 24px",
+  borderRadius: "12px",
+  fontWeight: 600,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#336666",
+    boxShadow: theme.shadows[4],
+  },
+  "&:disabled": {
+    backgroundColor: theme.palette.grey[400],
+  },
+}));
+
+const SecondaryButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#669999",
+  color: "white",
+  padding: "12px 24px",
+  borderRadius: "12px",
+  fontWeight: 600,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#336666",
+    boxShadow: theme.shadows[4],
+  },
+}));
+
+const RecipeButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#FF7D33",
+  color: "white",
+  padding: "12px 24px",
+  borderRadius: "12px",
+  fontWeight: 600,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#E66A2A",
+    boxShadow: theme.shadows[4],
+  },
+}));
+
+const SaveButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#4CAF50",
+  color: "white",
+  padding: "8px 16px",
+  borderRadius: "8px",
+  fontWeight: 600,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#3E8E41",
+    boxShadow: theme.shadows[3],
+  },
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0, 67, 70, 0.1)",
+  transition: "transform 0.3s, box-shadow 0.3s",
+  "&:hover": {
+    transform: "translateY(-2px)",
+    boxShadow: "0 6px 24px rgba(0, 67, 70, 0.15)",
+  },
+}));
+
+const StyledCardHeader = styled(CardHeader)(({ theme }) => ({
+  backgroundColor: "#004346",
+  color: "white",
+  borderTopLeftRadius: "16px",
+  borderTopRightRadius: "16px",
+  "& .MuiCardHeader-title": {
+    fontSize: "1.25rem",
+    fontWeight: 600,
+  },
+}));
+
+const DayCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: "12px",
+  backgroundColor: "#f8faf9",
+  border: "1px solid #e0e0e0",
+  transition: "all 0.3s ease",
+  "&:hover": {
+    boxShadow: "0 4px 12px rgba(0, 67, 70, 0.1)",
+    transform: "translateY(-2px)",
+  },
+}));
+
+const MealItem = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(2),
+  backgroundColor: "white",
+  borderRadius: "8px",
+  borderLeft: `4px solid #004346`,
+}));
 
 export default function MealPlanner() {
   const [preferences, setPreferences] = useState([]);
@@ -57,17 +159,8 @@ export default function MealPlanner() {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState("");
   const [loadingRecipe, setLoadingRecipe] = useState(false);
-  const [showPlanModal, setShowPlanModal] = useState(false);
-  const [showRecipeModal, setShowRecipeModal] = useState(false);
-  const [minimizedPlan, setMinimizedPlan] = useState(false);
-  const [minimizedRecipe, setMinimizedRecipe] = useState(false);
 
-  const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) {
-    console.error(
-      "Missing REACT_APP_GEMINI_API_KEY. Set it in client/.env.local and restart."
-    );
-  }
+  const GEMINI_API_KEY = "AIzaSyAe5jVx78jgIf7TEhdciw0bOj4rNqFsw2Q";
   const GEMINI_ENDPOINT =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
@@ -123,7 +216,7 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
           {
             contents: [{ parts: [{ text: continuePrompt }] }],
             generationConfig: {
-              maxOutputTokens: 1024, // gives more space per turn
+              maxOutputTokens: 1024,
               temperature: 0.7,
             },
           },
@@ -134,12 +227,10 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
           response.data.candidates[0].content.parts[0].text.trim();
         fullText += (fullText ? "\n" : "") + aiChunk;
 
-        // If the chunk already contains "Macros:" we’re done
         if (aiChunk.toLowerCase().includes("macros:")) {
           break;
         }
 
-        // If not, ask Gemini to continue EXACTLY where it left off
         continuePrompt = `Continue the previous recipe from where it stopped. Do not repeat anything. Here is what you wrote so far:\n${fullText}`;
       }
 
@@ -220,7 +311,7 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
 
   const saveRecipeToProfile = async () => {
     const token = localStorage.getItem("token");
-    const recipeData = parseRecipeText(recipe); // Already exists in your code
+    const recipeData = parseRecipeText(recipe);
     try {
       await axios.post(
         "http://localhost:4000/mealplanrecipes/save",
@@ -299,12 +390,10 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
         section = line.toLowerCase();
       } else {
         if (section === "ingredients:") {
-          // Ingredient lines usually start with "- "
           if (line.startsWith("- ")) {
             ingredients.push(line.replace("- ", "").trim());
           }
         } else if (section === "instructions:") {
-          // Instructions lines usually start with a number + dot (e.g., "1. Step")
           if (/^\d+\./.test(line)) {
             instructions.push(line.replace(/^\d+\.\s*/, ""));
           }
@@ -325,259 +414,224 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
     };
   };
 
-  // Minimized Card component
-  function MinimizedCard({ type, onClick }) {
-    return (
-      <div
-        className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-3 flex items-center gap-3"
-        style={{ minWidth: 220 }}
-      >
-        {type === "plan" ? (
-          <>
-            <Calendar className="w-5 h-5 text-[#004346]" />
-            <span className="font-semibold text-[#004346]">Meal Plan</span>
-          </>
-        ) : (
-          <>
-            <ChefHat className="w-5 h-5 text-orange-600" />
-            <span className="font-semibold text-orange-600">Recipe</span>
-          </>
-        )}
-        <div className="ml-auto flex gap-2">
-          <button
-            className="text-xs px-3 py-1 rounded bg-[#004346] text-white hover:bg-[#003139] transition"
-            onClick={onClick}
-          >
-            Expand
-          </button>
-          <button
-            className="text-xs px-3 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400 transition"
-            onClick={() => window.location.reload()}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box sx={{ backgroundColor: "#f5f9f9", minHeight: "100vh" }}>
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <ChefHat className="w-8 h-8 text-[#004346]" />
-            <h1 className="text-4xl font-bold text-[#004346]">NutriPlan</h1>
-          </div>
-          <p className="text-center text-gray-600 text-lg">
+      <Box
+        sx={{
+          backgroundColor: "white",
+          boxShadow: "0 2px 10px rgba(0, 67, 70, 0.1)",
+          borderBottom: "1px solid #e0e0e0",
+        }}
+      >
+        <Box sx={{ maxWidth: "lg", mx: "auto", px: 3, py: 4 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              mb: 1,
+            }}
+          >
+            <ChefHat sx={{ width: 32, height: 32, color: "#004346" }} />
+            <Typography
+              variant="h3"
+              sx={{
+                fontWeight: 700,
+                color: "#004346",
+                fontSize: { xs: "2rem", sm: "2.5rem" },
+              }}
+            >
+              NutriPlan
+            </Typography>
+          </Box>
+          <Typography
+            variant="subtitle1"
+            sx={{ textAlign: "center", color: "#669999" }}
+          >
             Your personalized weekly meal planning companion
-          </p>
-        </div>
-      </div>
+          </Typography>
+        </Box>
+      </Box>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <Box sx={{ maxWidth: "lg", mx: "auto", px: 3, py: 4 }}>
         {/* Configuration Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <Grid container spacing={4} sx={{ mb: 4 }}>
           {/* Dietary Preferences Card */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-[#004346] px-6 py-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Check className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-xl font-semibold text-white">
-                  Dietary Preferences
-                </h2>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {dietaryOptions.map((opt) => (
-                  <label
-                    key={opt}
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
-                      preferences.includes(opt)
-                        ? "border-[#004346] bg-[#004346]/5"
-                        : "border-gray-200 hover:border-[#004346]/30"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={preferences.includes(opt)}
-                      onChange={() => togglePreference(opt)}
-                      className="w-5 h-5 accent-[#004346] rounded"
-                    />
-                    <span
-                      className={`font-medium ${
-                        preferences.includes(opt)
-                          ? "text-[#004346]"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {opt}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
+          <Grid item xs={12} md={6}>
+            <StyledCard>
+              <StyledCardHeader
+                avatar={
+                  <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)" }}>
+                    <Check size={20} />
+                  </Avatar>
+                }
+                title="Dietary Preferences"
+              />
+              <CardContent>
+                <Grid container spacing={2}>
+                  {dietaryOptions.map((opt) => (
+                    <Grid item xs={12} sm={6} key={opt}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 2,
+                          borderRadius: "12px",
+                          border: "1px solid",
+                          borderColor: preferences.includes(opt)
+                            ? "#004346"
+                            : "#e0e0e0",
+                          backgroundColor: preferences.includes(opt)
+                            ? "rgba(0, 67, 70, 0.05)"
+                            : "white",
+                          cursor: "pointer",
+                          transition: "all 0.3s",
+                          "&:hover": {
+                            borderColor: "#004346",
+                          },
+                        }}
+                        onClick={() => togglePreference(opt)}
+                      >
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={preferences.includes(opt)}
+                              sx={{
+                                color: "#004346",
+                                "&.Mui-checked": {
+                                  color: "#004346",
+                                },
+                              }}
+                            />
+                          }
+                          label={
+                            <Typography
+                              sx={{
+                                fontWeight: 500,
+                                color: preferences.includes(opt)
+                                  ? "#004346"
+                                  : "text.secondary",
+                              }}
+                            >
+                              {opt}
+                            </Typography>
+                          }
+                        />
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CardContent>
+            </StyledCard>
+          </Grid>
 
           {/* Health Goals Card */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-[#004346] px-6 py-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Target className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-xl font-semibold text-white">
-                  Health Goals
-                </h2>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {healthGoals.map((g) => (
-                  <label
-                    key={g}
-                    className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:shadow-md ${
-                      goal === g
-                        ? "border-[#004346] bg-[#004346]/5"
-                        : "border-gray-200 hover:border-[#004346]/30"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      checked={goal === g}
-                      onChange={() => setGoal(g)}
-                      className="w-5 h-5 accent-[#004346]"
-                    />
-                    <span
-                      className={`font-medium ${
-                        goal === g ? "text-[#004346]" : "text-gray-700"
-                      }`}
+          <Grid item xs={12} md={6}>
+            <StyledCard>
+              <StyledCardHeader
+                avatar={
+                  <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)" }}>
+                    <Target size={20} />
+                  </Avatar>
+                }
+                title="Health Goals"
+              />
+              <CardContent>
+                <RadioGroup
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                >
+                  {healthGoals.map((g) => (
+                    <Paper
+                      key={g}
+                      elevation={0}
+                      sx={{
+                        p: 2,
+                        mb: 2,
+                        borderRadius: "12px",
+                        border: "1px solid",
+                        borderColor: goal === g ? "#004346" : "#e0e0e0",
+                        backgroundColor:
+                          goal === g ? "rgba(0, 67, 70, 0.05)" : "white",
+                        cursor: "pointer",
+                        transition: "all 0.3s",
+                        "&:hover": {
+                          borderColor: "#004346",
+                        },
+                      }}
+                      onClick={() => setGoal(g)}
                     >
-                      {g}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+                      <FormControlLabel
+                        value={g}
+                        control={
+                          <Radio
+                            sx={{
+                              color: "#004346",
+                              "&.Mui-checked": {
+                                color: "#004346",
+                              },
+                            }}
+                          />
+                        }
+                        label={
+                          <Typography
+                            sx={{
+                              fontWeight: 500,
+                              color: goal === g ? "#004346" : "text.secondary",
+                            }}
+                          >
+                            {g}
+                          </Typography>
+                        }
+                      />
+                    </Paper>
+                  ))}
+                </RadioGroup>
+              </CardContent>
+            </StyledCard>
+          </Grid>
+        </Grid>
 
-        {/* Buttons Side by Side */}
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
-          <button
-            onClick={() => {
-              generatePlan();
-              setShowPlanModal(true);
-            }}
+        {/* Generate Buttons */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 3, mb: 4 }}>
+          <PrimaryButton
+            onClick={generatePlan}
             disabled={loading}
-            className="inline-flex items-center gap-3 bg-[#004346] hover:bg-[#003139] disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none transition-all duration-200"
+            startIcon={<ChefHat size={20} />}
           >
-            <ChefHat className="w-5 h-5" />
             {loading ? "Crafting Your Plan..." : "Generate Meal Plan"}
-          </button>
-          <button
-            onClick={() => {
-              generateRecipe();
-              setShowRecipeModal(true);
-            }}
+          </PrimaryButton>
+          <RecipeButton
+            onClick={generateRecipe}
             disabled={loadingRecipe}
-            className="inline-flex items-center gap-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none transition-all duration-200"
+            startIcon={<ChefHat size={20} />}
           >
-            <ChefHat className="w-5 h-5" />
-            {loadingRecipe
-              ? "Whipping Up Your Recipe..."
-              : "Generate AI Recipe"}
-          </button>
-        </div>
+            {loadingRecipe ? "Whipping Up Recipe..." : "Generate AI Recipe"}
+          </RecipeButton>
+        </Box>
 
         {/* Loading State */}
-        {(loading || loadingRecipe) && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#004346]"></div>
-            <p className="mt-4 text-gray-600">
-              {loading
-                ? "Creating your personalized meal plan..."
-                : "Creating your recipe..."}
-            </p>
-          </div>
-        )}
-
-        {/* Meal Plan Modal */}
-        <Modal
-          open={showPlanModal && plan && !minimizedPlan}
-          onClose={() => {
-            setShowPlanModal(false);
-            setMinimizedPlan(true);
-          }}
-        >
-          <div className="bg-[#004346] px-6 py-4 flex items-center gap-3 rounded-xl mb-4">
-            <Calendar className="w-6 h-6 text-white" />
-            <h2 className="text-2xl font-semibold text-white">
-              Your Weekly Meal Plan
-            </h2>
-            <button
-              onClick={saveMealPlanToProfile}
-              className="ml-auto inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
-            >
-              Save to Profile
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {Object.entries(extractMealsPerDay(plan)).map(([day, meals]) => (
-              <div
-                key={day}
-                className="bg-gray-50 rounded-xl p-6 border border-gray-100 hover:shadow-md transition-shadow duration-200"
-              >
-                <h3 className="text-xl font-bold text-[#004346] mb-4 pb-2 border-b-2 border-[#004346]/20">
-                  {day}
-                </h3>
-                <div className="space-y-3">
-                  {["Breakfast", "Lunch", "Dinner"].map((mealType) =>
-                    meals[mealType] ? (
-                      <div
-                        key={mealType}
-                        className="bg-white rounded-lg p-3 border border-gray-100"
-                      >
-                        <div className="flex items-start gap-2">
-                          <span className="text-sm font-semibold text-[#004346] bg-[#004346]/10 px-2 py-1 rounded-full whitespace-nowrap">
-                            {mealType}
-                          </span>
-                        </div>
-                        <p className="text-gray-700 mt-2 text-sm leading-relaxed">
-                          {meals[mealType]}
-                        </p>
-                      </div>
-                    ) : null
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Modal>
-        {/* Minimized Meal Plan Card */}
-        {minimizedPlan && (
-          <MinimizedCard
-            type="plan"
-            onClick={() => {
-              setShowPlanModal(true);
-              setMinimizedPlan(false);
+        {loading && (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              py: 6,
             }}
-          />
+          >
+            <CircularProgress size={60} sx={{ color: "#004346", mb: 2 }} />
+            <Typography variant="h6" sx={{ color: "#669999" }}>
+              Creating your personalized meal plan...
+            </Typography>
+          </Box>
         )}
 
-        {/* Recipe Modal */}
-        <Modal
-          open={showRecipeModal && recipe && !minimizedRecipe}
-          onClose={() => {
-            setShowRecipeModal(false);
-            setMinimizedRecipe(true);
-          }}
-        >
-          {(() => {
+        {/* Recipe Results */}
+        {recipe &&
+          !loadingRecipe &&
+          (() => {
             const {
               title,
               time,
@@ -589,110 +643,197 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
             } = parseRecipeText(recipe);
 
             return (
-              <div>
-                <div className="bg-[#004346] px-6 py-4 flex items-center gap-3 rounded-xl mb-4">
-                  <ChefHat className="w-6 h-6 text-white" />
-                  <h2 className="text-xl font-semibold text-white">
-                    {title || "Recipe"}
-                  </h2>
-                  <button
-                    onClick={saveRecipeToProfile}
-                    className="ml-auto inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
+              <StyledCard sx={{ mt: 4, maxWidth: "800px", mx: "auto" }}>
+                <StyledCardHeader
+                  title={title || "Recipe"}
+                  action={
+                    <SaveButton
+                      onClick={saveRecipeToProfile}
+                      startIcon={<Check size={18} />}
+                    >
+                      Save Recipe
+                    </SaveButton>
+                  }
+                />
+                <CardContent>
+                  {/* Summary Chips */}
+                  <Box
+                    sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}
                   >
-                    Save Recipe to Profile
-                  </button>
-                </div>
-                <div className="text-gray-800">
-                  {/* Summary */}
-                  <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
                     {time && (
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{time}</span>
-                      </div>
+                      <Chip
+                        icon={<Calendar size={16} />}
+                        label={time}
+                        sx={{ backgroundColor: "#f0f7f7", color: "#004346" }}
+                      />
                     )}
                     {calories && (
-                      <div className="flex items-center gap-1">
-                        <span>🔥</span>
-                        <span>{calories} cal</span>
-                      </div>
+                      <Chip
+                        label={`${calories} calories`}
+                        sx={{ backgroundColor: "#f0f7f7", color: "#004346" }}
+                      />
                     )}
                     {mealType && (
-                      <div className="flex items-center gap-1">
-                        <span>🍽️</span>
-                        <span>{mealType}</span>
-                      </div>
+                      <Chip
+                        label={mealType}
+                        sx={{ backgroundColor: "#f0f7f7", color: "#004346" }}
+                      />
                     )}
-                  </div>
+                  </Box>
 
                   {/* Ingredients */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-[#004346] mb-2">
-                      Ingredients
-                    </h3>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
-                      {ingredients.map((ing, i) => (
-                        <li key={i}>{ing}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  <Accordion defaultExpanded sx={{ mb: 2 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6" sx={{ color: "#004346" }}>
+                        Ingredients
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <List dense>
+                        {ingredients.map((ing, i) => (
+                          <ListItem key={i} sx={{ py: 0.5 }}>
+                            <ListItemIcon sx={{ minWidth: 32 }}>
+                              <Box
+                                sx={{
+                                  width: 8,
+                                  height: 8,
+                                  borderRadius: "50%",
+                                  backgroundColor: "#004346",
+                                }}
+                              />
+                            </ListItemIcon>
+                            <ListItemText primary={ing} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
 
                   {/* Instructions */}
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-[#004346] mb-2">
-                      Instructions
-                    </h3>
-                    <ol className="list-decimal list-inside space-y-2 text-gray-700">
-                      {instructions.map((step, i) => (
-                        <li key={i}>{step}</li>
-                      ))}
-                    </ol>
-                  </div>
+                  <Accordion defaultExpanded sx={{ mb: 2 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6" sx={{ color: "#004346" }}>
+                        Instructions
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <List>
+                        {instructions.map((step, i) => (
+                          <ListItem
+                            key={i}
+                            sx={{ py: 1, alignItems: "flex-start" }}
+                          >
+                            <ListItemText
+                              primary={`${i + 1}. ${step}`}
+                              primaryTypographyProps={{ variant: "body1" }}
+                            />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
 
                   {/* Macros */}
                   {macros && (
-                    <div className="pt-4 border-t border-gray-200 text-sm text-gray-600">
-                      <strong>Macros:</strong> {macros}
-                    </div>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: 2,
+                        mt: 2,
+                        backgroundColor: "#f8faf9",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 600, color: "#004346" }}
+                      >
+                        Nutritional Information
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "#336666" }}>
+                        {macros}
+                      </Typography>
+                    </Paper>
                   )}
-                </div>
-              </div>
+                </CardContent>
+              </StyledCard>
             );
           })()}
-        </Modal>
-        {/* Minimized Recipe Card */}
-        {minimizedRecipe && (
-          <MinimizedCard
-            type="recipe"
-            onClick={() => {
-              setShowRecipeModal(true);
-              setMinimizedRecipe(false);
-            }}
-          />
-        )}
-      </div>
 
-      {/* Minimized Cards Container */}
-      <div className="fixed right-6 z-50 flex flex-col gap-4 items-end">
-        {minimizedPlan && (
-          <MinimizedCard
-            type="plan"
-            onClick={() => {
-              setShowPlanModal(true);
-              setMinimizedPlan(false);
-            }}
-          />
+        {/* Meal Plan Results */}
+        {plan && !loading && (
+          <StyledCard sx={{ mt: 4 }}>
+            <StyledCardHeader
+              title="Your Weekly Meal Plan"
+              avatar={
+                <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)" }}>
+                  <Calendar size={20} />
+                </Avatar>
+              }
+              action={
+                <SaveButton
+                  onClick={saveMealPlanToProfile}
+                  startIcon={<Check size={18} />}
+                >
+                  Save Plan
+                </SaveButton>
+              }
+            />
+            <CardContent>
+              <Grid container spacing={3}>
+                {Object.entries(extractMealsPerDay(plan)).map(
+                  ([day, meals]) => (
+                    <Grid item xs={12} sm={6} md={4} key={day}>
+                      <DayCard>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            color: "#004346",
+                            mb: 2,
+                            pb: 1,
+                            borderBottom: "2px solid rgba(0, 67, 70, 0.1)",
+                          }}
+                        >
+                          {day}
+                        </Typography>
+                        <Box sx={{ mt: 1 }}>
+                          {["Breakfast", "Lunch", "Dinner"].map((mealType) =>
+                            meals[mealType] ? (
+                              <MealItem key={mealType}>
+                                <Typography
+                                  variant="subtitle2"
+                                  sx={{
+                                    color: "white",
+                                    backgroundColor: "#669999",
+                                    display: "inline-block",
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: "12px",
+                                    mb: 1,
+                                    fontSize: "0.75rem",
+                                  }}
+                                >
+                                  {mealType}
+                                </Typography>
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "#336666" }}
+                                >
+                                  {meals[mealType]}
+                                </Typography>
+                              </MealItem>
+                            ) : null
+                          )}
+                        </Box>
+                      </DayCard>
+                    </Grid>
+                  )
+                )}
+              </Grid>
+            </CardContent>
+          </StyledCard>
         )}
-        {minimizedRecipe && (
-          <MinimizedCard
-            type="recipe"
-            onClick={() => {
-              setShowRecipeModal(true);
-              setMinimizedRecipe(false);
-            }}
-          />
-        )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
