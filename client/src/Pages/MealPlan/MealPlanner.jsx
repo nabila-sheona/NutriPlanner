@@ -29,6 +29,27 @@ const dayNames = [
   "Sunday",
 ];
 
+// Simple Modal Component
+function Modal({ open, onClose, children }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div
+        className="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-6 relative"
+        style={{ maxHeight: "80vh", overflow: "auto" }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+        >
+          ×
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function MealPlanner() {
   const [preferences, setPreferences] = useState([]);
   const [goal, setGoal] = useState(healthGoals[0]);
@@ -36,10 +57,16 @@ export default function MealPlanner() {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState("");
   const [loadingRecipe, setLoadingRecipe] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(false);
+  const [showRecipeModal, setShowRecipeModal] = useState(false);
+  const [minimizedPlan, setMinimizedPlan] = useState(false);
+  const [minimizedRecipe, setMinimizedRecipe] = useState(false);
 
   const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
   if (!GEMINI_API_KEY) {
-    console.error("Missing REACT_APP_GEMINI_API_KEY. Set it in client/.env.local and restart.");
+    console.error(
+      "Missing REACT_APP_GEMINI_API_KEY. Set it in client/.env.local and restart."
+    );
   }
   const GEMINI_ENDPOINT =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
@@ -298,6 +325,42 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
     };
   };
 
+  // Minimized Card component
+  function MinimizedCard({ type, onClick }) {
+    return (
+      <div
+        className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-3 flex items-center gap-3"
+        style={{ minWidth: 220 }}
+      >
+        {type === "plan" ? (
+          <>
+            <Calendar className="w-5 h-5 text-[#004346]" />
+            <span className="font-semibold text-[#004346]">Meal Plan</span>
+          </>
+        ) : (
+          <>
+            <ChefHat className="w-5 h-5 text-orange-600" />
+            <span className="font-semibold text-orange-600">Recipe</span>
+          </>
+        )}
+        <div className="ml-auto flex gap-2">
+          <button
+            className="text-xs px-3 py-1 rounded bg-[#004346] text-white hover:bg-[#003139] transition"
+            onClick={onClick}
+          >
+            Expand
+          </button>
+          <button
+            className="text-xs px-3 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400 transition"
+            onClick={() => window.location.reload()}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -403,20 +466,24 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
           </div>
         </div>
 
-        {/* Generate Button */}
-        <div className="text-center mb-8">
+        {/* Buttons Side by Side */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
           <button
-            onClick={generatePlan}
+            onClick={() => {
+              generatePlan();
+              setShowPlanModal(true);
+            }}
             disabled={loading}
             className="inline-flex items-center gap-3 bg-[#004346] hover:bg-[#003139] disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none transition-all duration-200"
           >
             <ChefHat className="w-5 h-5" />
             {loading ? "Crafting Your Plan..." : "Generate Meal Plan"}
           </button>
-        </div>
-        <div className="text-center mt-4">
           <button
-            onClick={generateRecipe}
+            onClick={() => {
+              generateRecipe();
+              setShowRecipeModal(true);
+            }}
             disabled={loadingRecipe}
             className="inline-flex items-center gap-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none transition-all duration-200"
           >
@@ -428,19 +495,89 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
         </div>
 
         {/* Loading State */}
-        {loading && (
+        {(loading || loadingRecipe) && (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#004346]"></div>
             <p className="mt-4 text-gray-600">
-              Creating your personalized meal plan...
+              {loading
+                ? "Creating your personalized meal plan..."
+                : "Creating your recipe..."}
             </p>
           </div>
         )}
 
-        {/* Meal Plan Results */}
-        {recipe &&
-          !loadingRecipe &&
-          (() => {
+        {/* Meal Plan Modal */}
+        <Modal
+          open={showPlanModal && plan && !minimizedPlan}
+          onClose={() => {
+            setShowPlanModal(false);
+            setMinimizedPlan(true);
+          }}
+        >
+          <div className="bg-[#004346] px-6 py-4 flex items-center gap-3 rounded-xl mb-4">
+            <Calendar className="w-6 h-6 text-white" />
+            <h2 className="text-2xl font-semibold text-white">
+              Your Weekly Meal Plan
+            </h2>
+            <button
+              onClick={saveMealPlanToProfile}
+              className="ml-auto inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
+            >
+              Save to Profile
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {Object.entries(extractMealsPerDay(plan)).map(([day, meals]) => (
+              <div
+                key={day}
+                className="bg-gray-50 rounded-xl p-6 border border-gray-100 hover:shadow-md transition-shadow duration-200"
+              >
+                <h3 className="text-xl font-bold text-[#004346] mb-4 pb-2 border-b-2 border-[#004346]/20">
+                  {day}
+                </h3>
+                <div className="space-y-3">
+                  {["Breakfast", "Lunch", "Dinner"].map((mealType) =>
+                    meals[mealType] ? (
+                      <div
+                        key={mealType}
+                        className="bg-white rounded-lg p-3 border border-gray-100"
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-sm font-semibold text-[#004346] bg-[#004346]/10 px-2 py-1 rounded-full whitespace-nowrap">
+                            {mealType}
+                          </span>
+                        </div>
+                        <p className="text-gray-700 mt-2 text-sm leading-relaxed">
+                          {meals[mealType]}
+                        </p>
+                      </div>
+                    ) : null
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Modal>
+        {/* Minimized Meal Plan Card */}
+        {minimizedPlan && (
+          <MinimizedCard
+            type="plan"
+            onClick={() => {
+              setShowPlanModal(true);
+              setMinimizedPlan(false);
+            }}
+          />
+        )}
+
+        {/* Recipe Modal */}
+        <Modal
+          open={showRecipeModal && recipe && !minimizedRecipe}
+          onClose={() => {
+            setShowRecipeModal(false);
+            setMinimizedRecipe(true);
+          }}
+        >
+          {(() => {
             const {
               title,
               time,
@@ -452,20 +589,20 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
             } = parseRecipeText(recipe);
 
             return (
-              <div className="bg-white mt-10 rounded-2xl shadow-lg border border-gray-100 max-w-4xl mx-auto">
-                <div className="bg-[#004346] px-6 py-4 flex items-center gap-3">
+              <div>
+                <div className="bg-[#004346] px-6 py-4 flex items-center gap-3 rounded-xl mb-4">
                   <ChefHat className="w-6 h-6 text-white" />
                   <h2 className="text-xl font-semibold text-white">
                     {title || "Recipe"}
                   </h2>
                   <button
                     onClick={saveRecipeToProfile}
-                    className="mt-4 inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
+                    className="ml-auto inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
                   >
                     Save Recipe to Profile
                   </button>
                 </div>
-                <div className="p-6 text-gray-800">
+                <div className="text-gray-800">
                   {/* Summary */}
                   <div className="flex flex-wrap gap-4 mb-6 text-sm text-gray-600">
                     {time && (
@@ -522,61 +659,38 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
               </div>
             );
           })()}
+        </Modal>
+        {/* Minimized Recipe Card */}
+        {minimizedRecipe && (
+          <MinimizedCard
+            type="recipe"
+            onClick={() => {
+              setShowRecipeModal(true);
+              setMinimizedRecipe(false);
+            }}
+          />
+        )}
+      </div>
 
-        {plan && !loading && (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="bg-[#004346] px-6 py-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-2xl font-semibold text-white">
-                  Your Weekly Meal Plan
-                </h2>
-                <button
-                  onClick={saveMealPlanToProfile}
-                  className="mt-4 inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition-all"
-                >
-                  Save to Profile
-                </button>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {Object.entries(extractMealsPerDay(plan)).map(
-                  ([day, meals]) => (
-                    <div
-                      key={day}
-                      className="bg-gray-50 rounded-xl p-6 border border-gray-100 hover:shadow-md transition-shadow duration-200"
-                    >
-                      <h3 className="text-xl font-bold text-[#004346] mb-4 pb-2 border-b-2 border-[#004346]/20">
-                        {day}
-                      </h3>
-                      <div className="space-y-3">
-                        {["Breakfast", "Lunch", "Dinner"].map((mealType) =>
-                          meals[mealType] ? (
-                            <div
-                              key={mealType}
-                              className="bg-white rounded-lg p-3 border border-gray-100"
-                            >
-                              <div className="flex items-start gap-2">
-                                <span className="text-sm font-semibold text-[#004346] bg-[#004346]/10 px-2 py-1 rounded-full whitespace-nowrap">
-                                  {mealType}
-                                </span>
-                              </div>
-                              <p className="text-gray-700 mt-2 text-sm leading-relaxed">
-                                {meals[mealType]}
-                              </p>
-                            </div>
-                          ) : null
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          </div>
+      {/* Minimized Cards Container */}
+      <div className="fixed right-6 z-50 flex flex-col gap-4 items-end">
+        {minimizedPlan && (
+          <MinimizedCard
+            type="plan"
+            onClick={() => {
+              setShowPlanModal(true);
+              setMinimizedPlan(false);
+            }}
+          />
+        )}
+        {minimizedRecipe && (
+          <MinimizedCard
+            type="recipe"
+            onClick={() => {
+              setShowRecipeModal(true);
+              setMinimizedRecipe(false);
+            }}
+          />
         )}
       </div>
     </div>
