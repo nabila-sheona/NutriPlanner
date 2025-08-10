@@ -126,7 +126,10 @@ const Navbar = ({ title, children }) => {
               { label: "Home", path: "/" },
               { label: "Community", path: "/community" },
               { label: "My Recipes", path: "/myrecipes" },
-              { label: "Contact", path: "/contact" },
+
+              /* label: "Contact", path: "/contact" */
+
+              { label: "Mood Meal", path: "/moodtracker" },
               { label: "Meal Planner", path: "/mealplanner" },
             ].map((link) => (
               <Button
@@ -149,7 +152,8 @@ const Navbar = ({ title, children }) => {
                   link.path === "/community" ||
                   link.path === "/profile" ||
                   link.path === "/myrecipes" ||
-                  link.path === "/mealplanner"
+                  link.path === "/mealplanner" ||
+                  link.path === "/moodtracker"
                     ? handleRestrictedNavigation(link.path)
                     : navigate(link.path)
                 }
