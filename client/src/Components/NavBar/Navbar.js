@@ -106,11 +106,11 @@ const Navbar = ({ title, children }) => {
                   <Box
                     component="span"
                     sx={{
-                      border: "2px solid #1de9b6",
+                      border: "2px solid #669999",
                       borderRadius: "4px",
                       padding: "0px 4px",
                       marginLeft: "4px",
-                      color: "#1de9b6",
+                      color: "#669999",
                     }}
                   >
                     Planner
