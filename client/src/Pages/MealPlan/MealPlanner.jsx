@@ -9,7 +9,6 @@ import {
   CardContent,
   Checkbox,
   CircularProgress,
-  Divider,
   FormControlLabel,
   Grid,
   List,
@@ -69,19 +68,6 @@ const PrimaryButton = styled(Button)(({ theme }) => ({
   },
   "&:disabled": {
     backgroundColor: theme.palette.grey[400],
-  },
-}));
-
-const SecondaryButton = styled(Button)(({ theme }) => ({
-  backgroundColor: "#669999",
-  color: "white",
-  padding: "12px 24px",
-  borderRadius: "12px",
-  fontWeight: 600,
-  textTransform: "none",
-  "&:hover": {
-    backgroundColor: "#336666",
-    boxShadow: theme.shadows[4],
   },
 }));
 
@@ -288,7 +274,7 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
   const saveMealPlanToProfile = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:4000/mealplans/save",
         {
           planText: plan,
