@@ -1,210 +1,182 @@
-import React, { useState } from "react";
-import food from "./images/homemain.jpeg";
+import React, { useState, useMemo, useEffect } from "react";
+import { useSpring, animated } from "@react-spring/web";
+import food from "./images/food.png";
 import { useNavigate } from "react-router-dom";
-import { Box, Grid, Typography, Button, Modal } from "@mui/material";
-import { motion } from "framer-motion";
-import RamenDiningIcon from "@mui/icons-material/RamenDining";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { RamenDining, PeopleAlt } from "@mui/icons-material";
 
-const HomeLandingContainer = (props) => {
+const moods = [
+  { mood: "Happy", color: "bg-yellow-400", icon: "😊" },
+  { mood: "Tired", color: "bg-indigo-500", icon: "😴" },
+  { mood: "Stressed", color: "bg-red-400", icon: "😌" },
+  { mood: "Adventurous", color: "bg-green-500", icon: "🤩" },
+];
+
+export default function HomeLandingContainer({ description }) {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [spinFade, api] = useSpring(() => ({
+    rotateZ: 0,
+    opacity: 1,
+  }));
 
-  const scrollToTop = () => {
-    window.scrollTo(0, 0);
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY;
+      api.start({
+        rotateZ: scrollPos / 10, // slow rotation (increase divisor for even slower)
+        opacity: Math.max(1 - scrollPos / 400, 0), // fade out over ~400px scroll
+        config: { tension: 60, friction: 20 },
+      });
+    };
 
-  const handleDietPlan = () => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [api]);
+
+  const { scrollY } = useScroll();
+  const yImage = useTransform(scrollY, [0, 300], [0, 50]); // background layer
+  const yText = useTransform(scrollY, [0, 300], [0, -30]); // foreground layer
+
+  const userName = useMemo(() => {
+    if (!currentUser) return "";
+    if (currentUser.username) return currentUser.username.split(" ")[0];
+    if (currentUser.email) return currentUser.email.split("@")[0];
+    return "";
+  }, [currentUser]);
+
+  const goTo = (path) => {
     if (currentUser) {
-      navigate("/mealplanner");
-      scrollToTop();
+      navigate(path);
+      window.scrollTo(0, 0);
     } else {
       setIsModalOpen(true);
     }
-  };
-
-  const handleExploreRecipes = () => {
-    if (currentUser) {
-      navigate("/community");
-      scrollToTop();
-    } else {
-      setIsModalOpen(true);
-    }
-  };
-
-  const closeModal = () => {
-    navigate("/login");
-    setIsModalOpen(false);
-  };
-
-  const close = () => {
-    setIsModalOpen(false);
   };
 
   return (
-    <Box
-      sx={{
-        ml: "2%",
-        display: "flex",
-        padding: "2rem",
-        backgroundColor: "#f9f9f9",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <Grid container spacing={4} alignItems="center">
-        {/* Left Section */}
-        <Grid item md={6}>
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Typography
-              variant="h1"
-              sx={{
-                fontWeight: "bold",
-                marginBottom: "1rem",
-                fontSize: { xs: "2rem", md: "3.5rem" },
-                color: "#004346",
-              }}
-            >
-              Your Heath
-              <br />
-              Is Always
-              <br />
-              Our Top Priority
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: "#666", marginBottom: "2rem" }}
-            >
-              {props.description}
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {/* Adopt Button */}
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleDietPlan}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  padding: "0.85rem 2rem",
-                  fontWeight: "bold",
-                  backgroundColor: "#004346",
-                  fontSize: "1.1rem",
-                  textTransform: "none",
-                  borderRadius: "30px",
-                  boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    backgroundColor: "#006064",
-                    transform: "scale(1.05)",
-                  },
-                }}
-                startIcon={<RamenDiningIcon />}
-              >
-                Diet plan
-              </Button>
+    <div className="flex flex-col-reverse md:flex-row items-center bg-white shadow-lg rounded-xl p-6 md:p-10 gap-10">
+      {/* Left Text */}
+      <motion.div style={{ y: yText }} className="flex-1">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 80 }}
+          className="text-3xl md:text-5xl font-bold text-[#004346] leading-tight mb-4"
+        >
+          {userName
+            ? `Hi ${userName},`
+            : "Your Health is Always Our Top Priority"}
+        </motion.h1>
 
-              {/* Services Button */}
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={handleExploreRecipes}
-                sx={{
-                  padding: "0.85rem 2rem",
-                  fontWeight: "bold",
-                  borderColor: "#004346",
-                  color: "#004346",
-                  fontSize: "1.1rem",
-                  textTransform: "none",
-                  borderRadius: "30px",
-                  boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.1)",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    borderColor: "#006064",
-                    backgroundColor: "#599ba3",
-                    transform: "scale(1.05)",
-                  },
-                }}
-                startIcon={<RamenDiningIcon />}
-              >
-                Explore Recipes
-              </Button>
-            </Box>
-          </motion.div>
-        </Grid>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, type: "spring", stiffness: 80 }}
+          className="text-gray-600 mb-6 text-lg"
+        >
+          {description ||
+            "Plan meals, explore recipes, connect with our community, and discover mood-based meals tailored for you."}
+        </motion.p>
 
-        {/* Right Section */}
-        <Grid item xs={12} md={6} display={"flex"}>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+        {/* Buttons */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { delayChildren: 0.4, staggerChildren: 0.15 },
+            },
+          }}
+          className="flex flex-col sm:flex-row gap-4"
+        >
+          <motion.button
+            whileHover={{ scale: 1.08, y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="flex items-center justify-center gap-2 bg-[#004346] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#006064] transition-all"
+            onClick={() => goTo("/mealplanner")}
           >
-            <Box sx={{ textAlign: "center" }}>
-              <img
-                src={food}
-                alt="food"
-                style={{
-                  width: "100%",
-                  maxWidth: "500px",
-                  borderRadius: "8px",
-                  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+            <RamenDining /> Start My Meal Plan
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.08, y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="flex items-center justify-center gap-2 border-2 border-[#004346] text-[#004346] px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#e0f7fa] transition-all"
+            onClick={() => goTo("/community")}
+          >
+            <PeopleAlt /> Join Community
+          </motion.button>
+        </motion.div>
+
+        {/* Mood Selector Pills */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { delayChildren: 0.8, staggerChildren: 0.1 },
+            },
+          }}
+          className="mt-6"
+        >
+          <p className="font-semibold mb-2">How are you feeling today?</p>
+          <div className="flex flex-wrap gap-2">
+            {moods.map((m) => (
+              <motion.div
+                key={m.mood}
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
                 }}
-              />
-            </Box>
-          </motion.div>
-        </Grid>
-      </Grid>
+                whileHover={{ scale: 1.1 }}
+                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer`}
+              >
+                {m.icon} {m.mood}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </motion.div>
+
+      {/* Right Image */}
+      <animated.div style={spinFade} className="flex-1 flex justify-center">
+        <img
+          src={food}
+          alt="NutriPlanner"
+          className="rounded-xl max-w-md w-full" // slightly smaller
+        />
+      </animated.div>
 
       {/* Modal */}
-      <Modal open={isModalOpen} onClose={close}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            borderRadius: "8px",
-            boxShadow: 24,
-            p: 4,
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Please log in to adopt a pet.
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={closeModal}
-            sx={{
-              marginTop: "1rem",
-              width: "100%",
-              backgroundColor: "#121858",
-              fontSize: "1rem",
-              fontWeight: "bold",
-              textTransform: "none",
-              borderRadius: "30px",
-              boxShadow: "0px 6px 15px rgba(0, 0, 0, 0.2)",
-              "&:hover": {
-                backgroundColor: "#0e1142",
-                transform: "scale(1.05)",
-              },
-            }}
-          >
-            Go to Login
-          </Button>
-        </Box>
-      </Modal>
-    </Box>
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
+            <h2 className="text-lg font-semibold mb-4">
+              Please log in to continue
+            </h2>
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-[#004346] text-white px-6 py-2 rounded-full font-semibold shadow-md hover:bg-[#006064] transform hover:scale-105 transition-all w-full"
+            >
+              Go to Login
+            </button>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-3 text-gray-500 hover:underline text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
-};
-
-export default HomeLandingContainer;
+}
