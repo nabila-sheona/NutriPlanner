@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/NavBar/Navbar";
 import Home from "./Components/Home/Home";
 import Profile from "./Components/Profile/Profile.jsx";
@@ -13,8 +13,7 @@ import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
 
 import MoodTracker from "./Components/moodtracker/MoodTracker";
-import MoodRecipeHistory from './Components/moodtracker/MoodRecipeHistory';
-
+import MoodRecipeHistory from "./Components/moodtracker/MoodRecipeHistory";
 
 import "./App.css";
 
@@ -122,7 +121,6 @@ const App = () => {
           }
         />
         <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
-
       </Routes>
     </Router>
   );
