@@ -457,10 +457,10 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
 
       <Box sx={{ maxWidth: "lg", mx: "auto", px: 3, py: 4 }}>
         {/* Configuration Cards */}
-        <Grid container spacing={4} sx={{ mb: 4 }}>
+        <Grid container spacing={4} sx={{ mb: 4 }} alignItems="stretch">
           {/* Dietary Preferences Card */}
-          <Grid item xs={12} md={6}>
-            <StyledCard>
+          <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+            <StyledCard sx={{ flex: 1 }}>
               <StyledCardHeader
                 avatar={
                   <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)" }}>
@@ -527,8 +527,8 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
           </Grid>
 
           {/* Health Goals Card */}
-          <Grid item xs={12} md={6}>
-            <StyledCard>
+          <Grid item xs={12} md={6} sx={{ display: "flex" }}>
+            <StyledCard sx={{ flex: 1 }}>
               <StyledCardHeader
                 avatar={
                   <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)" }}>
