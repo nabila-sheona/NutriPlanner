@@ -16,17 +16,20 @@ export default function HomeLandingContainer({ description }) {
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [spinFade, api] = useSpring(() => ({
+  const [spinFadeScale, api] = useSpring(() => ({
     rotateZ: 0,
     opacity: 1,
+    scale: 1,
   }));
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY;
+
       api.start({
-        rotateZ: scrollPos / 10, // slow rotation (increase divisor for even slower)
-        opacity: Math.max(1 - scrollPos / 400, 0), // fade out over ~400px scroll
+        rotateZ: scrollPos / 10, // slow rotation
+        opacity: Math.max(1 - scrollPos / 400, 0), // fade out by 400px scroll
+        scale: Math.max(1 - scrollPos / 1000, 0.7), // shrink to 70% size
         config: { tension: 60, friction: 20 },
       });
     };
@@ -147,11 +150,14 @@ export default function HomeLandingContainer({ description }) {
       </motion.div>
 
       {/* Right Image */}
-      <animated.div style={spinFade} className="flex-1 flex justify-center">
+      <animated.div
+        style={spinFadeScale}
+        className="flex-1 flex justify-center"
+      >
         <img
           src={food}
           alt="NutriPlanner"
-          className="rounded-xl max-w-md w-full" // slightly smaller
+          className="rounded-xl max-w-md w-full"
         />
       </animated.div>
 
