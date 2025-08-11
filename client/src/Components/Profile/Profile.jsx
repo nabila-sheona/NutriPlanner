@@ -782,7 +782,7 @@ const Profile = () => {
                       {plan.title || `Meal Plan ${index + 1}`}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      {plan.description || "No description provided"}
+                      {plan.goal || "No description provided"}
                     </Typography>
                   </Box>
 
