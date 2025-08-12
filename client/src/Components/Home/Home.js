@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Divider } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import HomeLandingContainer from "./HomeLandingContainer";
 import DietAndMoodFAQ from "./DietAndMoodFAQ";
 import FeatureCard from "./FeatureCard";
@@ -30,22 +31,39 @@ const features = [
     title: "AI-Powered Meal Planner",
     description:
       "Get customized meals based on your mood, dietary preferences, and health goals.",
+    path: "/mealplanner",
   },
   {
     image: communityImg,
     title: "Join the Community",
     description:
       "Share recipes, like dishes, and connect with other food lovers.",
+    path: "/community",
   },
   {
     image: recipesImg,
     title: "Save & Share Recipes",
     description:
       "Add recipes to your profile and inspire others with your creations.",
+    path: "/myrecipes",
   },
 ];
 
 export default function Home(props) {
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+  const handleCardClick = (path) => {
+    if (currentUser) {
+      navigate(path);
+      window.scrollTo(0, 0);
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+
   return (
     <Box
       sx={{
