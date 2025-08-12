@@ -10,6 +10,8 @@ import CardBelowHome from "./CardBelowHome";
 import mealPlannerImg from "./images/mealplanner.jpg";
 import communityImg from "./images/community.jpg";
 import recipesImg from "./images/recipes.jpg";
+import saladImg from "./images/salad.png";
+import grilledFishImg from "./images/grilledfish.png";
 
 const features = [
   {
@@ -60,13 +62,13 @@ export default function Home(props) {
 
       {/* Parallax Sections */}
       <ParallaxFood
-        image="/images/salad.jpg"
+        image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
       />
       <Divider sx={{ my: 6 }} />
       <ParallaxFood
-        image="/images/grilledfish.jpg"
+        image={grilledFishImg}
         title="Health Goal Tracking"
         text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
         reverse
