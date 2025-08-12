@@ -59,7 +59,7 @@ export default function HomeLandingContainer({ description }) {
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row items-center bg-white shadow-lg rounded-xl p-6 md:p-10 gap-10">
+    <div className="flex flex-col-reverse md:flex-row items-center bg-white shadow-lg rounded-xl p-6 md:p-10 gap-10 max-w-7xl mx-auto">
       {/* Left Text */}
       <motion.div style={{ y: yText }} className="flex-1">
         <motion.h1
