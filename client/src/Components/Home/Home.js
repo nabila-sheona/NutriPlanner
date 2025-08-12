@@ -6,7 +6,9 @@ import FeatureCard from "./FeatureCard";
 import ParallaxFood from "./ParallaxFood";
 import MoodToMeal from "./MoodToMeal";
 import CardBelowHome from "./CardBelowHome";
+import BackgroundParallax from "./BackgroundParallax";
 
+// === Images ===
 import mealPlannerImg from "./images/mealplanner.jpg";
 import communityImg from "./images/community.jpg";
 import recipesImg from "./images/recipes.jpg";
@@ -16,6 +18,11 @@ import happyMeal from "./images/happymeal.jpg";
 import tiredMeal from "./images/tiredmeal.jpg";
 import stressedMeal from "./images/stressedmeal.jpg";
 import adventurousMeal from "./images/adventurousmeal.jpg";
+
+// Background decoration images
+import applePng from "./images/apple.png";
+import saladLeafPng from "./images/saladleaf.png";
+import spoonForkPng from "./images/spoonfork.png";
 
 const features = [
   {
@@ -47,11 +54,41 @@ export default function Home(props) {
         minHeight: "100vh",
         px: 3,
         py: 2,
+        position: "relative",
+        overflow: "hidden", // so parallax backgrounds don’t break layout
       }}
     >
+      {/* Background Decorations */}
+      <BackgroundParallax
+        image={applePng}
+        speed={0.2}
+        size="180px"
+        top="15%"
+        left="5%"
+        opacity={0.05}
+      />
+      <BackgroundParallax
+        image={saladLeafPng}
+        speed={0.4}
+        size="220px"
+        top="55%"
+        left="80%"
+        opacity={0.07}
+      />
+      <BackgroundParallax
+        image={spoonForkPng}
+        speed={0.3}
+        size="150px"
+        top="120%"
+        left="15%"
+        opacity={0.06}
+      />
+
       {/* Hero Section */}
       <HomeLandingContainer description={props.description} />
       <Divider sx={{ my: 6 }} />
+
+      {/* Card Below Hero */}
       <CardBelowHome />
       <Divider sx={{ my: 6 }} />
 
@@ -80,7 +117,6 @@ export default function Home(props) {
 
       <Divider sx={{ my: 6 }} />
 
-      {/* Mood-to-Meal Interactive Demo */}
       {/* Mood-to-Meal Interactive Demo */}
       <MoodToMeal
         moods={[
