@@ -111,16 +111,17 @@ export default function Home(props) {
       <Divider sx={{ my: 6 }} />
 
       {/* Feature Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {features.map((f, i) => (
-          <div
-            key={i}
-            onClick={() => handleCardClick(f.path)}
-            style={{ cursor: "pointer" }}
-          >
-            <FeatureCard {...f} />
-          </div>
-        ))}
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f, i) => (
+            <FeatureCard
+              key={i}
+              {...f}
+              delay={i * 0.3}
+              onClick={() => navigate(f.path)}
+            />
+          ))}
+        </div>
       </div>
 
       <Divider sx={{ my: 6 }} />
