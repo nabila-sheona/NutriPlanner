@@ -1,19 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-const moods = [
-  { name: "Happy", emoji: "😊", meal: "/images/happymeal.jpg" },
-  { name: "Tired", emoji: "😴", meal: "/images/tiredmeal.jpg" },
-  { name: "Stressed", emoji: "😌", meal: "/images/stressedmeal.jpg" },
-  { name: "Adventurous", emoji: "🤩", meal: "/images/adventurousmeal.jpg" },
-];
-
-export default function MoodToMeal() {
+export default function MoodToMeal({ moods }) {
   const [selected, setSelected] = useState(moods[0]);
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4 justify-center">
         {moods.map((m) => (
           <motion.button
             key={m.name}

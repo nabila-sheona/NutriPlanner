@@ -12,6 +12,10 @@ import communityImg from "./images/community.jpg";
 import recipesImg from "./images/recipes.jpg";
 import saladImg from "./images/salad.png";
 import grilledFishImg from "./images/grilledfish.png";
+import happyMeal from "./images/happymeal.jpg";
+import tiredMeal from "./images/tiredmeal.jpg";
+import stressedMeal from "./images/stressedmeal.jpg";
+import adventurousMeal from "./images/adventurousmeal.jpg";
 
 const features = [
   {
@@ -77,7 +81,15 @@ export default function Home(props) {
       <Divider sx={{ my: 6 }} />
 
       {/* Mood-to-Meal Interactive Demo */}
-      <MoodToMeal />
+      {/* Mood-to-Meal Interactive Demo */}
+      <MoodToMeal
+        moods={[
+          { name: "Happy", emoji: "😊", meal: happyMeal },
+          { name: "Tired", emoji: "😴", meal: tiredMeal },
+          { name: "Stressed", emoji: "😌", meal: stressedMeal },
+          { name: "Adventurous", emoji: "🤩", meal: adventurousMeal },
+        ]}
+      />
 
       <Divider sx={{ my: 6 }} />
 
