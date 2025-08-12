@@ -67,39 +67,39 @@ export default function Home(props) {
   return (
     <Box
       sx={{
+        position: "relative",
         backgroundColor: "background.default",
         color: "#004346",
         minHeight: "100vh",
         px: 3,
         py: 2,
-        position: "relative",
         overflow: "hidden", // so parallax backgrounds don’t break layout
       }}
     >
       {/* Background Decorations */}
       <BackgroundParallax
         image={applePng}
-        speed={0.2}
+        speed={0.5}
         size="180px"
         top="15%"
         left="5%"
-        opacity={0.05}
+        opacity={0.3}
       />
       <BackgroundParallax
         image={saladLeafPng}
-        speed={0.4}
+        speed={0.5}
         size="220px"
         top="55%"
         left="80%"
-        opacity={0.07}
+        opacity={0.3}
       />
       <BackgroundParallax
         image={spoonForkPng}
-        speed={0.3}
+        speed={0.5}
         size="150px"
         top="120%"
         left="15%"
-        opacity={0.06}
+        opacity={0.3}
       />
 
       {/* Hero Section */}
