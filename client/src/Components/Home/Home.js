@@ -113,7 +113,13 @@ export default function Home(props) {
       {/* Feature Cards */}
       <div className="grid gap-6 md:grid-cols-3">
         {features.map((f, i) => (
-          <FeatureCard key={i} {...f} />
+          <div
+            key={i}
+            onClick={() => handleCardClick(f.path)}
+            style={{ cursor: "pointer" }}
+          >
+            <FeatureCard {...f} />
+          </div>
         ))}
       </div>
 
