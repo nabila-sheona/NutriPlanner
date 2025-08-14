@@ -129,3 +129,129 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 │ ├── Routes/ # API routes
 │ └── utils/ # Utility functions
 └── .env # Environment variables
+
+## 🏏 Contributors
+
+- [Nusrat Siddique Tuli](https://github.com/ns-tuli)
+- [Namisa Najah](https://github.com/N4M154)
+- [Nazifa Tasneem](https://github.com/nazifatasneem13)
+- [Nabila Islam](https://github.com/nabila-sheona)
+
+## 🔐 Environment Variables
+
+This project requires **two** `.env` files — one for the backend (`server/.env`) and one for the frontend (`client/.env`).  
+**⚠ Do not commit your real keys.** Use placeholders instead.
+
+---
+
+### **`server/.env`**
+
+```env
+PORT=4000
+MONGODB_URI=your_mongodb_connection_string
+JWT_KEY=your_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+---
+
+### **`client/.env`**
+
+```env
+REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_firebase_project_id
+REACT_APP_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+REACT_APP_FIREBASE_APP_ID=your_firebase_app_id
+REACT_APP_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id
+REACT_APP_GEMINI_API_KEY=your_gemini_api_key
+REACT_APP_API_BASE_URL=http://localhost:4000
+```
+
+### Installation
+
+# 1) Clone
+
+git clone https://github.com/nabila-sheona/NutriPlanner.git
+cd NutriPlanner
+
+# 2) Server deps
+
+cd server
+npm install
+
+# 3) Client deps
+
+cd client
+npm install
+
+# 4) Root deps.
+
+npm install
+
+▶️ Running the Application
+
+# In server/
+
+cd server
+nodemon server.js
+
+# In client/
+
+cd client
+npm start
+
+Open the client URL printed in your terminal (commonly http://localhost:3000 for CRA).
+
+## 🛠 Installation
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/nabila-sheona/NutriPlanner.git
+cd NutriPlanner
+```
+
+### 2️⃣ Install backend dependencies
+
+```bash
+cd server
+npm install
+```
+
+### 3️⃣ Install frontend dependencies
+
+```bash
+cd ../client
+npm install
+```
+
+### 4️⃣ Install root dependencies (if any)
+
+```bash
+cd ..
+npm install
+```
+
+### ▶️ Running the Application
+
+Start the backend (server)
+
+```bash
+cd server
+nodemon server.js
+```
+
+Start the frontend (client)
+
+```bash
+cd client
+npm start
+```
+
+Once running, open the client URL printed in your terminal
+(usually http://localhost:3000 for Create React App).
