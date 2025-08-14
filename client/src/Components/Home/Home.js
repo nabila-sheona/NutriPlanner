@@ -124,23 +124,21 @@ export default function Home(props) {
         </div>
       </div>
 
-      <Divider sx={{ my: 6 }} />
-
       {/* Parallax Sections */}
       <ParallaxFood
         image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
+        delay={0} // first image enters immediately
       />
-      <Divider sx={{ my: 6 }} />
+
       <ParallaxFood
         image={grilledFishImg}
         title="Health Goal Tracking"
         text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
         reverse
+        delay={0.5} // second image comes slightly later
       />
-
-      <Divider sx={{ my: 6 }} />
 
       {/* Mood-to-Meal Interactive Demo */}
       <MoodToMeal
