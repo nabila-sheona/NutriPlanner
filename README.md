@@ -142,8 +142,6 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 This project requires **two** `.env` files — one for the backend (`server/.env`) and one for the frontend (`client/.env`).  
 **⚠ Do not commit your real keys.** Use placeholders instead.
 
----
-
 ### **`server/.env`**
 
 ```env
@@ -155,8 +153,6 @@ CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 GEMINI_API_KEY=your_gemini_api_key
 ```
-
----
 
 ### **`client/.env`**
 
@@ -171,41 +167,6 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id
 REACT_APP_GEMINI_API_KEY=your_gemini_api_key
 REACT_APP_API_BASE_URL=http://localhost:4000
 ```
-
-### Installation
-
-# 1) Clone
-
-git clone https://github.com/nabila-sheona/NutriPlanner.git
-cd NutriPlanner
-
-# 2) Server deps
-
-cd server
-npm install
-
-# 3) Client deps
-
-cd client
-npm install
-
-# 4) Root deps.
-
-npm install
-
-▶️ Running the Application
-
-# In server/
-
-cd server
-nodemon server.js
-
-# In client/
-
-cd client
-npm start
-
-Open the client URL printed in your terminal (commonly http://localhost:3000 for CRA).
 
 ## 🛠 Installation
 
@@ -237,16 +198,16 @@ cd ..
 npm install
 ```
 
-### ▶️ Running the Application
+## ▶️ Running the Application
 
-Start the backend (server)
+### Start the backend (server)
 
 ```bash
 cd server
 nodemon server.js
 ```
 
-Start the frontend (client)
+### Start the frontend (client)
 
 ```bash
 cd client
@@ -255,3 +216,8 @@ npm start
 
 Once running, open the client URL printed in your terminal
 (usually http://localhost:3000 for Create React App).
+
+## 🌟 Motivation
+
+NutriPlanner was created to make healthy eating **simple, enjoyable, and personalized**.  
+By combining **mood tracking** with **AI-powered recipe recommendations**, it helps users make better food choices consistently while discovering meals that match their emotions and lifestyle.
