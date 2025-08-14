@@ -1,124 +1,69 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import HomeDarkCardLeftPic from "./images/misssion1.png";
 import HomeDarkCardRightPic from "./images/mission2.png";
 
 const CardBelowHome = () => {
   return (
-    <Box
-      sx={{
-        justifyContent: "center",
-        maxWidth: "100%",
-        backgroundColor: "#004346",
-        width: "80%",
-        minheight: "50vh",
-        margin: "auto",
-        padding: "10px",
-        marginTop: "30px",
-        borderRadius: "40px 50px 20px 20px",
-        display: "flex",
-
-        alignItems: "center",
-        color: "#4aedc4",
-      }}
+    <div
+      className="relative flex flex-col md:flex-row items-center 
+    bg-[#b2e0d8] text-[#023e3c] 
+    rounded-[40px_50px_20px_20px] 
+    w-[90%] max-w-[1400px] mx-auto mt-12 
+    p-12 md:p-16 overflow-visible"
     >
-      {/* Left Image (corresponds to .left-pic) */}
-      <Box
-        sx={{
-          position: "relative",
-          bottom: "50px",
-          width: "16vw",
+      {/* Left Image */}
+      <motion.img
+        src={HomeDarkCardLeftPic}
+        alt="Playful cat"
+        className="h-44 md:h-52 object-cover rounded-2xl shadow-sm"
+        animate={{ y: [0, -10, 0] }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "loop",
+          ease: "easeInOut",
         }}
-      >
-        <Box
-          component="img"
-          src={HomeDarkCardLeftPic}
-          alt="Playful cat"
-          sx={{
-            height: 220,
-            marginLeft: "30px",
-          }}
-        />
-      </Box>
+      />
 
-      {/* Middle Text (corresponds to .right-para / .we-do) */}
-      <Box
-        sx={{
-          minwidth: "flex",
-          ml: 1,
-
-          // If you had a custom CSS variable for --textGrey, replace it with your desired color
-          color: "var(--textGrey)",
-
-          paddingRight: "30px",
-          paddingLeft: "150px",
-        }}
-      >
-        <Box
-          sx={{
-            minwidth: "flex",
-            ml: 1,
-
-            // If you had a custom CSS variable for --textGrey, replace it with your desired color
-            color: "var(--textGrey)",
-            fontSize: "22px",
-            fontWeight: 500,
-            fontFamily: '"Montserrat", sans-serif',
-            lineHeight: 1.2,
-            textAlign: "left",
-            paddingRight: "30px",
-            paddingLeft: "10px",
-          }}
+      {/* Middle Text */}
+      <div className="flex-1 text-left px-4 md:px-8">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 80 }}
+          className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight font-serif"
         >
-          <Typography
-            sx={{
-              fontSize: "28px",
-              fontWeight: 500,
-              color: "#ffffff",
-              marginBottom: "10px",
-            }}
-          >
-            OUR MISSION
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            minwidth: "flex",
-            ml: 1,
-            color: "var(--textGrey)",
-            fontSize: "22px",
-            fontWeight: 500,
-            fontFamily: '"Montserrat", sans-serif',
-            lineHeight: 1.2,
-            textAlign: "left",
-            paddingRight: "30px",
-            paddingLeft: "10px",
-          }}
+          OUR MISSION
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 80 }}
+          className="text-lg md:text-xl leading-relaxed font-sans text-[#064c47]"
         >
-          <Typography
-            sx={{
-              color: "#ffffff",
-              marginBottom: "10px",
-            }}
-          >
-            We specialize in connecting the perfect diet for users, that will
-            spread joy and cultivate love.
-          </Typography>
-        </Box>
-      </Box>
-      {/* Right Image (corresponds to .right-pic) */}
-      <Box
-        sx={{
-          "& img": {
-            height: "170px",
-            position: "relative",
-            bottom: "15px",
-          },
+          We specialize in connecting the perfect diet for users that will
+          spread joy and cultivate love. Our goal is to make healthy eating
+          intuitive, enjoyable, and accessible for everyone.
+        </motion.p>
+      </div>
+
+      {/* Right Image */}
+      <motion.img
+        src={HomeDarkCardRightPic}
+        alt="Happy"
+        className="h-44 md:h-52 object-cover rounded-2xl shadow-sm"
+        animate={{ y: [0, -12, 0] }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          repeatType: "loop",
+          ease: "easeInOut",
         }}
-      >
-        <img src={HomeDarkCardRightPic} alt="Happy " />
-      </Box>
-    </Box>
+      />
+    </div>
   );
 };
 
