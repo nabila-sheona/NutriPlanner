@@ -8,6 +8,7 @@ import ParallaxFood from "./ParallaxFood";
 import MoodToMeal from "./MoodToMeal";
 import CardBelowHome from "./CardBelowHome";
 import BackgroundParallax from "./BackgroundParallax";
+import { motion } from "framer-motion";
 
 // === Images ===
 import mealPlannerImg from "./images/mealplanner.jpg";
@@ -111,15 +112,18 @@ export default function Home(props) {
       <Divider sx={{ my: 6 }} />
 
       {/* Feature Cards */}
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f, i) => (
-            <FeatureCard
+            <motion.div
               key={i}
-              {...f}
-              delay={i * 0.3}
-              onClick={() => navigate(f.path)}
-            />
+              initial={{ opacity: 0, y: 40 }} // moderate slide
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }} // faster but still smooth
+            >
+              <FeatureCard {...f} onClick={() => navigate(f.path)} />
+            </motion.div>
           ))}
         </div>
       </div>

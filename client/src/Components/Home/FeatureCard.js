@@ -10,12 +10,11 @@ export default function FeatureCard({
 }) {
   return (
     <motion.div
-      onClick={onClick}
-      className="bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer flex flex-col max-w-sm mx-auto" // wider than before
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, ease: "easeOut", delay }} // slower animation
+      className="bg-white rounded-2xl overflow-hidden cursor-pointer flex flex-col max-w-sm mx-auto shadow-md"
+      variants={{
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0 },
+      }}
       whileHover={{
         scale: 1.05,
         boxShadow: "0px 15px 35px rgba(0,0,0,0.15)",
@@ -26,7 +25,7 @@ export default function FeatureCard({
         src={image}
         alt={title}
         className="w-full h-56 object-cover"
-        initial={{ scale: 1.08 }}
+        initial={{ scale: 1.05 }}
         whileHover={{ scale: 1.12 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       />
