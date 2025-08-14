@@ -94,6 +94,7 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 
 ## 📁 File Structure Highlights
 
+```
 ├── README.md
 ├── .gitignore
 ├── client/ # Frontend (React)
@@ -129,6 +130,7 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 │ ├── Routes/ # API routes
 │ └── utils/ # Utility functions
 └── .env # Environment variables
+```
 
 ## 🏏 Contributors
 
