@@ -1,39 +1,82 @@
 - .gitignore
 - client
+  - .env
   - package-lock.json
   - package.json
   - postcss.config.js
   - public
+    - 1cdd36b1a7a2a1e0310307c4da04c713.jpg
+    - 46d91c4ff2737d795485e085c7f70356.jpg
+    - 4c4d3d1f77d6825175739fd7a832acbc.jpg
+    - c068dd47d23b030d4656bf6d3f597b82.jpg
+    - e4db6bbe378736c5de4b51ffb09e3bfa.jpg
+    - e6453d84f4b216684ae078b4e30ae53e.jpg
+    - fb98673269ad59df52df20c6bb4f86b1.jpg
     - icon.png
     - index.html
     - manifest.json
   - src
-    - .env
     - App.css
     - App.js
     - App.test.js
+    - assets
+      - pinterest-calm.jpg
+      - pinterest-energetic.jpg
+      - pinterest-happy.jpg
+      - pinterest-sad.jpg
+      - pinterest-stressed.jpg
     - Components
+      - community
+        - AddRecipeDialog.js
+        - CommunityRecipes.js
+        - MealPlanCard.js
+        - MyRecipes.js
+        - ViewRecipeDialog.js
       - Footer
         - Footer.js
         - images
           - logo.png
+      - Heatmap
+        - heatmapcolor.css
+        - RecipeUploadsHeatmap.js
       - Home
+        - BackgroundParallax.js
         - Card.js
         - cardbelowhome.css
         - CardBelowHome.js
         - CarouselPetViewer.jsx
         - DietAndMoodFAQ.js
+        - FeatureCard.js
         - Home.js
         - HomeLandingContainer.js
         - images
+          - adventurousmeal.jpg
+          - apple.png
+          - community.jpg
+          - food.png
+          - grilledfish.png
+          - happymeal.jpg
           - homemain.jpeg
+          - mealplanner.jpg
           - mission2.png
           - misssion1.png
+          - recipes.jpg
+          - salad.png
+          - saladleaf.png
+          - spoonfork.png
+          - stressedmeal.jpg
+          - tiredmeal.jpg
+        - MoodToMeal.js
+        - ParallaxFood.js
+      - MealPlan
+        - MealPlanCard.jsx
+        - MealPlanRecipeCard.jsx
       - MessageModal
         - MessageModal.js
         - MessageModal.scss
-      - Namisa
-        - MealPlanCard.jsx
+      - moodtracker
+        - MoodRecipeHistory.jsx
+        - MoodTracker.js
       - NavBar
         - images
           - logo.jpeg
@@ -55,7 +98,7 @@
       - login
         - Login.jsx
         - signup.jpeg
-      - Namisa
+      - MealPlan
         - MealPlanner.jsx
       - register
         - loginpage.jpeg
@@ -65,6 +108,7 @@
     - utils
       - axiosInstance.js
       - fetchUserProfile.js
+      - gemini.js
       - getCurrentUser.js
       - getNearbyVets.js
       - newRequest.js
@@ -79,8 +123,10 @@
   - Controller
     - auth.controller.js
     - like.controller.js
+    - mood.controller.js
     - profilecontroller.js
     - recipe.controller.js
+    - recipe.controller2.js
     - user.controller.js
   - images
     - homemain.jpeg
@@ -90,10 +136,13 @@
     - misssion1.png
     - signup.jpeg
   - middleware
+    - auth.js
     - jwt.js
   - Model
     - like.model.js
+    - mood.model.js
     - recipe.model.js
+    - recipe2.model.js
     - user.model.js
   - Namisa
     - Controller
@@ -109,9 +158,12 @@
   - package.json
   - Routes
     - auth.route.js
+    - mood.routes.js
     - profileroute.js
     - recipe.route.js
+    - recipe2.routes.js
     - user.route.js
   - server.js
   - utils
     - createError.js
+    - gemini.js
