@@ -48,6 +48,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
     "react-tooltip": "^5.29.1",
+    "recharts": "^3.1.2",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
     "resolve-url-loader": "^5.0.0",

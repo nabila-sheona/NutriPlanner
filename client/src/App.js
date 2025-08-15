@@ -14,6 +14,8 @@ import { Box } from "@mui/material";
 
 import MoodTracker from "./Components/moodtracker/MoodTracker";
 import MoodRecipeHistory from "./Components/moodtracker/MoodRecipeHistory";
+import MoodGraph from './Components/moodtracker/MoodGraph.jsx';
+
 
 import "./App.css";
 
@@ -121,6 +123,8 @@ const App = () => {
           }
         />
         <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
+        <Route path="/moodgraph" element={<MoodGraph />} />
+
       </Routes>
     </Router>
   );
