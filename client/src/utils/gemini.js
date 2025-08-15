@@ -3,7 +3,7 @@ export const generateRecipes = async (mood) => {
     const key = process.env.REACT_APP_GEMINI_API_KEY;
     if (!key) throw new Error("API key missing. Check your environment variables.");
 
-    const prompt = `Generate 3 recipes for someone feeling ${mood}. 
+    const prompt = `Generate 3 recipes for someone feeling ${mood}. Try to generate innovative and unique recipes every time you generate recipes for even the same mood. Don't repeat recipe for same mood again and again.
       Return ONLY a JSON array in this exact format:
       [{
         "title": "Recipe Name",
