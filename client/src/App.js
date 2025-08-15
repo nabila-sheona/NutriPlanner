@@ -19,7 +19,6 @@ import MoodGraph from './Components/moodtracker/MoodGraph.jsx';
 
 import "./App.css";
 
-// Layout Component without Sidebar
 const Layout = ({ children }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>

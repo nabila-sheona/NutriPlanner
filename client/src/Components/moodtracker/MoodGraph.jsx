@@ -74,7 +74,7 @@ const MoodGraph = () => {
         const points = [];
 
         moodsData.forEach(({ mood, date }) => {
-          if (!mood || !date) return; // skip invalid entries
+          if (!mood || !date) return; 
           const moodDate = new Date(date);
           const diffMs = now - moodDate.getTime();
           if (diffMs <= 24 * 60 * 60 * 1000) {
@@ -89,7 +89,7 @@ const MoodGraph = () => {
       } catch (error) {
         console.error("Failed to fetch mood graph data:", error);
 
-        // Show detailed error for debugging
+        
         const serverMessage =
           error.response?.data?.message || error.message || "Unknown error";
         setErrorMessage(`Error fetching mood graph data: ${serverMessage}`);
@@ -142,7 +142,7 @@ const MoodGraph = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Header */}
+      
       <Typography variant="h3" gutterBottom sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1 }}>
         Mood Tracker Overview
       </Typography>
@@ -150,7 +150,7 @@ const MoodGraph = () => {
         Your mood patterns over the last 24 hours.
       </Typography>
 
-      {/* Summary Cards */}
+      
       <Grid container spacing={2} sx={{ mb: 4 }}>
         {moodCounts.map((m) => (
           <Grid item xs={6} sm={4} md={2} key={m.mood}>
@@ -165,7 +165,7 @@ const MoodGraph = () => {
         ))}
       </Grid>
 
-      {/* Chart */}
+   
       <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 3 }}>
         <ResponsiveContainer width="100%" height={400}>
           <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -187,7 +187,7 @@ const MoodGraph = () => {
         </ResponsiveContainer>
       </Paper>
 
-      {/* Explanation */}
+     
       <Paper sx={{ mt: 3, p: 3, borderRadius: 3, backgroundColor: "#f9f9f9" }}>
         <Typography variant="h6" gutterBottom>Understanding the Chart</Typography>
         <Typography variant="body2" sx={{ mb: 1 }}>Each dot corresponds to a mood entry recorded during the past 24 hours.</Typography>

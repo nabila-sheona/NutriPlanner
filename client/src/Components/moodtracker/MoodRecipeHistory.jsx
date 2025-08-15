@@ -124,15 +124,24 @@ const MoodRecipeHistory = () => {
       background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
       minHeight: '100vh'
     }}>
-      <Button 
-        variant="contained" 
-        startIcon={<ArrowBack />}
-        sx={{ mb: 4 }}
-        onClick={() => navigate('/moodtracker')}
-      >
-        Back to Mood Tracker
-      </Button>
-      
+      <Button
+                  variant="contained"
+                  onClick={() => navigate("/moodtracker")}
+                  sx={{
+                    minWidth: 180,
+                    height: 48,
+                    alignSelf: "flex-start",
+                    backgroundColor: "#004346",
+                    color: "#ffffff",
+                    marginBottom: 3,
+                    "&:hover": {
+                      backgroundColor: "#00332e",
+                    },
+                  }}
+                >
+                  Back to MoodTracker
+                </Button>
+
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between',

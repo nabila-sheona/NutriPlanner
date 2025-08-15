@@ -33,13 +33,11 @@ export const generateRecipes = async (mood) => {
     const textResponse = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!textResponse) throw new Error("No valid response from Gemini");
 
-    // Extract JSON (handles cases where Gemini adds extra text)
     const jsonStart = textResponse.indexOf('[');
     const jsonEnd = textResponse.lastIndexOf(']') + 1;
     const jsonString = textResponse.slice(jsonStart, jsonEnd);
     const recipes = JSON.parse(jsonString);
 
-    // Validate structure
     if (!Array.isArray(recipes)) throw new Error("Response was not an array");
     return recipes;
 

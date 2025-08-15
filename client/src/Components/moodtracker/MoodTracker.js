@@ -123,7 +123,6 @@ const MoodTracker = () => {
           How are you feeling today?
         </Typography>
 
-        {/* Buttons wrapper to fix gap */}
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <Button
             variant="contained"

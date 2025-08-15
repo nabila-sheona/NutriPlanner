@@ -49,14 +49,12 @@ app.use('/api/mood', moodRoutes);
 app.use('/api/recipes', recipeRoutes);
 
 
-// Debug all registered routes
 console.log('\n=== REGISTERED ROUTES ===');
 app._router.stack.forEach((layer) => {
   if (layer.route) {
     const methods = Object.keys(layer.route.methods).map(method => method.toUpperCase()).join(', ');
     console.log(`${methods} ${layer.route.path}`);
   } else if (layer.name === 'router') {
-    // For router middleware
     console.log(`\nMountpoint: ${layer.regexp}`);
     layer.handle.stack.forEach((sublayer) => {
       if (sublayer.route) {

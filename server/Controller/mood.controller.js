@@ -1,4 +1,3 @@
-// server/Controller/mood.controller.js
 const Mood = require('../Model/mood.model.js');
 const Recipe = require('../Model/recipe2.model.js');
 const { generateRecipes } = require('../utils/gemini.js');
@@ -44,10 +43,8 @@ exports.generateMoodRecipes = async (req, res) => {
     }
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });
 
-    // Generate recipes using Gemini API
     const generatedRecipes = await generateRecipes(mood);
 
-    // Save generated recipes to database and compute isLiked for current user
     const savedRecipes = await Promise.all(
       generatedRecipes.map(async (recipe) => {
         const newRecipe = new Recipe({
@@ -58,7 +55,6 @@ exports.generateMoodRecipes = async (req, res) => {
           generatedBy: userId // mark who generated (or store 'Gemini' if you prefer)
         });
         const saved = await newRecipe.save();
-        // add isLiked flag based on current user
         const obj = saved.toObject();
         obj.isLiked = (saved.likes || []).some((id) => id.toString() === userId.toString());
         return obj;
@@ -68,13 +64,11 @@ exports.generateMoodRecipes = async (req, res) => {
     return res.status(200).json(savedRecipes);
   } catch (error) {
     console.error('generateMoodRecipes error:', error);
-    // return the error message to client for debugging but consider hiding in production
     return res.status(500).json({ message: 'Error generating recipes', error: error.message });
   }
 };
 
 
-// Controller: MoodController.js
 exports.getMoodGraphData = async (req, res, next) => {
   console.log('[MoodController] getMoodGraphData called');
 

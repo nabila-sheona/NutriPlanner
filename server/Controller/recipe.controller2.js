@@ -1,4 +1,3 @@
-// server/Controller/recipe.controller2.js
 const Recipe = require('../Model/recipe2.model.js');
 
 const likeRecipe = async (req, res) => {
@@ -12,7 +11,6 @@ const likeRecipe = async (req, res) => {
       return res.status(404).json({ message: 'Recipe not found' });
     }
 
-    // Check if user already liked the recipe
     if (recipe.likes.some((id) => id.toString() === userId.toString())) {
       return res.status(400).json({ message: 'Recipe already liked' });
     }
@@ -44,7 +42,6 @@ const getLikedRecipes = async (req, res) => {
 };
 
 
-// Make sure this is exported as a named export
 const getRecipeHistory = async (req, res) => {
   try {
     console.log('getRecipeHistory called');

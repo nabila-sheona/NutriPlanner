@@ -26,17 +26,14 @@ const generateRecipes = async (mood) => {
       }
     );
 
-    // Extract the response text
     const textResponse = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!textResponse) throw new Error("Gemini didn't return valid content");
 
-    // Parse JSON (Gemini sometimes adds extra text)
     const jsonStart = textResponse.indexOf('[');
     const jsonEnd = textResponse.lastIndexOf(']') + 1;
     const jsonString = textResponse.slice(jsonStart, jsonEnd);
     const recipes = JSON.parse(jsonString);
 
-    // Validate structure
     if (!Array.isArray(recipes)) throw new Error("Response was not an array");
     return recipes.map(recipe => ({
       title: recipe.title || "Untitled Recipe",
