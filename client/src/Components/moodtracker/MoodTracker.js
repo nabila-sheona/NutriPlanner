@@ -138,6 +138,22 @@ const MoodTracker = () => {
         >
           View Recipe History
         </Button>
+        <Button
+      variant="contained"
+      onClick={() => navigate("/moodgraph")}
+      sx={{
+        minWidth: 180,
+        height: 48,
+        alignSelf: "flex-start",
+        backgroundColor: "#004346",
+        color: "#ffffff",
+        "&:hover": {
+          backgroundColor: "#00332e",
+        },
+      }}
+    >
+      View Mood Graph
+    </Button>
       </Box>
 
       <Stack
