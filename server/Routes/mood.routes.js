@@ -9,4 +9,9 @@ router.post('/moods', auth, logMood);
 router.get('/history', auth, getMoodHistory);
 router.post('/recipes/generate', auth, generateMoodRecipes);
 
+router.get('/moods/graph', auth, (req, res, next) => {
+  console.log('[MoodRoutes] /moods/graph route called');
+  getMoodGraphData(req, res, next);
+});
+
 module.exports = router;
