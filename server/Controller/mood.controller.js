@@ -74,29 +74,33 @@ exports.generateMoodRecipes = async (req, res) => {
 };
 
 
+// Controller: MoodController.js
 exports.getMoodGraphData = async (req, res, next) => {
   console.log('[MoodController] getMoodGraphData called');
+
   try {
-    const { mood } = req.body;
     const userId = req.user?.id;
+    console.log('[MoodController] req.user:', req.user);
 
-    console.log('[MoodController] userId:', userId);
+    if (!userId) {
+      console.log('[MoodController] No user ID found in request');
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
+    }
 
-    // Example: find moods from last 24h
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    console.log('[MoodController] fetching moods since:', since);
+    console.log('[MoodController] Fetching moods since:', since);
 
     const moods = await Mood.find({
       userId,
       date: { $gte: since },
     }).sort({ date: 1 });
 
-    console.log('[MoodController] moods fetched:', moods.length);
+    console.log('[MoodController] moods fetched:', moods);
 
     res.status(200).json(moods);
   } catch (error) {
     console.error('[MoodController] Error fetching mood graph data:', error);
-    next(error);
+    console.error('[MoodController] Error stack:', error.stack);
+    res.status(500).json({ message: 'Server error fetching mood graph data', error: error.message });
   }
 };
-
