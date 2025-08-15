@@ -2,7 +2,7 @@
 const express = require('express');
 const { logMood, getMoodHistory, generateMoodRecipes } = require('../Controller/mood.controller.js');
 const auth = require('../middleware/auth');
-const { getMoodGraphData } = require("../controllers/mood.controller");
+const { getMoodGraphData } = require("../Controller/mood.controller");
 
 
 const router = express.Router();
