@@ -122,38 +122,43 @@ const MoodTracker = () => {
         <Typography variant="h4" gutterBottom>
           How are you feeling today?
         </Typography>
-        <Button
-          variant="contained"
-          onClick={() => navigate("/moodrecipehistory")}
-          sx={{
-            minWidth: 180,
-            height: 48,
-            alignSelf: "flex-start",
-            backgroundColor: "#004346",
-            color: "#ffffff",
-            "&:hover": {
-              backgroundColor: "#00332e",
-            },
-          }}
-        >
-          View Recipe History
-        </Button>
-        <Button
-      variant="contained"
-      onClick={() => navigate("/moodgraph")}
-      sx={{
-        minWidth: 180,
-        height: 48,
-        alignSelf: "flex-start",
-        backgroundColor: "#004346",
-        color: "#ffffff",
-        "&:hover": {
-          backgroundColor: "#00332e",
-        },
-      }}
-    >
-      View Mood Graph
-    </Button>
+
+        {/* Buttons wrapper to fix gap */}
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+          <Button
+            variant="contained"
+            onClick={() => navigate("/moodrecipehistory")}
+            sx={{
+              minWidth: 180,
+              height: 48,
+              alignSelf: "flex-start",
+              backgroundColor: "#004346",
+              color: "#ffffff",
+              "&:hover": {
+                backgroundColor: "#00332e",
+              },
+            }}
+          >
+            View Recipe History
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => navigate("/moodgraph")}
+            sx={{
+              minWidth: 180,
+              height: 48,
+              alignSelf: "flex-start",
+              backgroundColor: "#004346",
+              color: "#ffffff",
+              "&:hover": {
+                backgroundColor: "#00332e",
+              },
+            }}
+          >
+            View Mood Graph
+          </Button>
+        </Box>
       </Box>
 
       <Stack
