@@ -107,10 +107,36 @@ export default function Home(props) {
       <HomeLandingContainer description={props.description} />
       <Divider sx={{ my: 6 }} />
 
-      {/* Card Below Hero */}
+      {/* Card Below Hero 
       <CardBelowHome />
       <Divider sx={{ my: 6 }} />
+    */}
 
+      {/* Feature Cards 
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40 }} // moderate slide
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }} // faster but still smooth
+            >
+              <FeatureCard {...f} onClick={() => navigate(f.path)} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+          */}
+
+      {/* Parallax Sections */}
+      <ParallaxFood
+        image={saladImg}
+        title="Eat for Your Mood"
+        text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
+        delay={0} // first image enters immediately
+      />
       {/* Feature Cards */}
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,15 +153,6 @@ export default function Home(props) {
           ))}
         </div>
       </div>
-
-      {/* Parallax Sections */}
-      <ParallaxFood
-        image={saladImg}
-        title="Eat for Your Mood"
-        text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
-        delay={0} // first image enters immediately
-      />
-
       <ParallaxFood
         image={grilledFishImg}
         title="Health Goal Tracking"
@@ -155,8 +172,10 @@ export default function Home(props) {
       />
 
       <Divider sx={{ my: 6 }} />
-
-      {/* FAQ */}
+      {/* Card Below Hero */}
+      <CardBelowHome />
+      <Divider sx={{ my: 6 }} />
+      {/* FAQ  */}
       <DietAndMoodFAQ />
     </Box>
   );

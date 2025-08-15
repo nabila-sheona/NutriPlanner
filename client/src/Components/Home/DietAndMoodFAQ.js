@@ -45,64 +45,65 @@ const DietAndMoodFAQ = () => {
   ];
 
   return (
-    <Container maxWidth="md">
-      <Card
+    //<Container maxWidth="md">
+
+    //<Card
+    // sx={{
+    //  padding: "2rem",
+    // backgroundColor: "#fff",
+    // borderRadius: "12px",
+    //  boxShadow: 4,
+    // }}
+
+    <CardContent>
+      <Typography
+        variant="h4"
         sx={{
-          padding: "2rem",
-          backgroundColor: "#fff",
-          borderRadius: "12px",
-          boxShadow: 4,
+          fontWeight: "bold",
+          marginBottom: "1rem",
+          textAlign: "center",
+          color: "#337f83",
         }}
       >
-        <CardContent>
-          <Typography
-            variant="h4"
+        Frequently Asked Questions
+      </Typography>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        {faqData.map((faq, index) => (
+          <Accordion
+            key={index}
             sx={{
-              fontWeight: "bold",
-              marginBottom: "1rem",
-              textAlign: "center",
-              color: "#337f83",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "8px",
+              boxShadow: "none",
+              "&:before": { display: "none" },
+              "&:hover": { backgroundColor: "#e8e8e8" },
             }}
           >
-            Frequently Asked Questions
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {faqData.map((faq, index) => (
-              <Accordion
-                key={index}
-                sx={{
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "8px",
-                  boxShadow: "none",
-                  "&:before": { display: "none" },
-                  "&:hover": { backgroundColor: "#e8e8e8" },
-                }}
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon sx={{ color: "#555" }} />}
-                  aria-controls={`panel${index + 1}-content`}
-                  id={`panel${index + 1}-header`}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontWeight: "bold",
-                    color: "#333",
-                  }}
-                >
-                  {faq.icon}
-                  <Typography variant="h6">{faq.title}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Typography variant="body1" sx={{ color: "#666" }}>
-                    {faq.description}
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            ))}
-          </Box>
-        </CardContent>
-      </Card>
-    </Container>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: "#555" }} />}
+              aria-controls={`panel${index + 1}-content`}
+              id={`panel${index + 1}-header`}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                fontWeight: "bold",
+                color: "#333",
+              }}
+            >
+              {faq.icon}
+              <Typography variant="h6">{faq.title}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body1" sx={{ color: "#666" }}>
+                {faq.description}
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
+    </CardContent>
+    // </Card>
+    // </Container>
   );
 };
 
