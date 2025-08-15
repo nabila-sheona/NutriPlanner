@@ -72,3 +72,31 @@ exports.generateMoodRecipes = async (req, res) => {
     return res.status(500).json({ message: 'Error generating recipes', error: error.message });
   }
 };
+
+
+exports.getMoodGraphData = async (req, res, next) => {
+  console.log('[MoodController] getMoodGraphData called');
+  try {
+    const { mood } = req.body;
+    const userId = req.user?.id;
+
+    console.log('[MoodController] userId:', userId);
+
+    // Example: find moods from last 24h
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    console.log('[MoodController] fetching moods since:', since);
+
+    const moods = await Mood.find({
+      userId,
+      date: { $gte: since },
+    }).sort({ date: 1 });
+
+    console.log('[MoodController] moods fetched:', moods.length);
+
+    res.status(200).json(moods);
+  } catch (error) {
+    console.error('[MoodController] Error fetching mood graph data:', error);
+    next(error);
+  }
+};
+
