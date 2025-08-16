@@ -1,6 +1,6 @@
 # NutriPlan - Recipe & Meal Planning Application
 
-![NutriPlan Banner](https://via.placeholder.com/1200x400?text=NutriPlan+Banner) <!-- Replace with actual banner image -->
+![NutriPlan Banner](https://via.placeholder.com/1200x400?text=NutriPlan+Banner) 
 
 NutriPlan is a full-stack web application designed for food enthusiasts to create, share, and discover recipes, generate AI-powered meal plans, track mood-based recipe recommendations, and visualize recipe upload streaks via a GitHub-like heatmap.
 
@@ -48,7 +48,7 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 ### Frontend
 
 - React.js (Functional components, Hooks)
-- Material-UI (MUI) for UI components
+- Material-UI (MUI) and TailwindCSS for UI components
 - D3.js & react-calendar-heatmap for visualization
 - React Router for navigation
 - Axios for API calls
@@ -135,7 +135,7 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 ## 🏏 Contributors
 
 - [Nusrat Siddique Tuli](https://github.com/ns-tuli)
-- [Namisa Najah](https://github.com/N4M154)
+- [Namisa Najah Raisa](https://github.com/N4M154)
 - [Nazifa Tasneem](https://github.com/nazifatasneem13)
 - [Nabila Islam](https://github.com/nabila-sheona)
 
@@ -189,7 +189,7 @@ npm install
 ### 3️⃣ Install frontend dependencies
 
 ```bash
-cd ../client
+cd client
 npm install
 ```
 
