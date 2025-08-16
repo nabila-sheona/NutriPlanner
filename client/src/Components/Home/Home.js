@@ -263,6 +263,8 @@ export default function Home(props) {
         </div>
       </div>
           */}
+
+      <Divider sx={{ my: 6 }} />
       {/* Parallax Sections */}
       <ParallaxFood
         image={saladImg}
@@ -270,7 +272,7 @@ export default function Home(props) {
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
         delay={0} // first image enters immediately
       />
-
+      <Divider sx={{ my: 6 }} />
       {/* Your Personal Recipe Collection Section */}
       <Box
         sx={{
@@ -345,7 +347,7 @@ export default function Home(props) {
           />
         </Box>
       </Box>
-
+      <Divider sx={{ my: 6 }} />
       <ParallaxFood
         image={grilledFishImg}
         title="Health Goal Tracking"
@@ -353,7 +355,7 @@ export default function Home(props) {
         reverse
         delay={0.2} // second image comes slightly later
       />
-
+      <Divider sx={{ my: 6 }} />
       {/* Have a Specific Plan Section */}
       <Box
         sx={{
@@ -434,7 +436,7 @@ export default function Home(props) {
           </button>
         </Box>
       </Box>
-
+      <Divider sx={{ my: 6 }} />
       <ParallaxFood
         image={fruitbowl} // any image you want
         title="Explore New Recipes"
@@ -478,6 +480,7 @@ export default function Home(props) {
           ))}
         </div>
       </div>
+      <Divider sx={{ my: 6 }} />
     </Box>
   );
 }
