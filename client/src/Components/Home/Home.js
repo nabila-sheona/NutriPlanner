@@ -20,17 +20,30 @@ import happyMeal from "./images/happymeal.jpg";
 import tiredMeal from "./images/tiredmeal.jpg";
 import stressedMeal from "./images/stressedmeal.jpg";
 import adventurousMeal from "./images/adventurousmeal.jpg";
-
+import calmMeal from "./images/calmmeal.JPG"; // add an image for Calm mood
 // Background decoration images
 import applePng from "./images/apple.png";
 import saladLeafPng from "./images/saladleaf.png";
 import spoonForkPng from "./images/spoonfork.png";
-const moods = [
+const mood = [
   { mood: "Happy", color: "bg-yellow-400", icon: "😊" },
   { mood: "Tired", color: "bg-indigo-500", icon: "😴" },
   { mood: "Stressed", color: "bg-red-400", icon: "😌" },
   { mood: "Energetic", color: "bg-green-500", icon: "🤩" },
   { mood: "Calm", color: "bg-blue-400", icon: "🌿" }, // new mood
+];
+
+const moods = [
+  { mood: "Happy", color: "bg-yellow-400", icon: "😊", meal: happyMeal },
+  { mood: "Tired", color: "bg-indigo-500", icon: "😴", meal: tiredMeal },
+  { mood: "Stressed", color: "bg-red-400", icon: "😌", meal: stressedMeal },
+  {
+    mood: "Energetic",
+    color: "bg-green-500",
+    icon: "🤩",
+    meal: adventurousMeal,
+  },
+  { mood: "Calm", color: "bg-blue-400", icon: "🌿", meal: calmMeal },
 ];
 
 const features = [
@@ -60,6 +73,7 @@ const features = [
 export default function Home(props) {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMood, setSelectedMood] = useState(moods[0]); // default: Happy
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -120,10 +134,11 @@ export default function Home(props) {
     */}
 
       {/* How Are You Feeling Today Section */}
+      {/* How Are You Feeling Today Section */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 2 columns on medium+, 1 on mobile
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
           gap: 6,
           my: 10,
@@ -160,6 +175,7 @@ export default function Home(props) {
               <motion.div
                 key={m.mood}
                 whileHover={{ scale: 1.1 }}
+                onClick={() => setSelectedMood(m)} // ✅ set mood on click
                 className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
               >
                 {m.icon} {m.mood}
@@ -188,24 +204,21 @@ export default function Home(props) {
               (e.currentTarget.style.backgroundColor = "#004346")
             }
           >
-            Find My Mood Recipe
+            Find Recipe
           </button>
         </Box>
 
-        {/* Right side (animated image) */}
+        {/* Right side (changes per mood) */}
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <motion.img
-            src={happyMeal} // swap with any mood-related image
-            alt="Mood Recipe"
+            key={selectedMood.mood} // 🔑 triggers re-animation when mood changes
+            src={selectedMood.meal}
+            alt={`${selectedMood.mood} Meal`}
             className="rounded-2xl shadow-lg"
             style={{ width: "100%", maxWidth: "400px" }}
-            initial={{ y: 0 }}
-            animate={{ y: [0, -15, 0] }} // floating effect
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
           />
         </Box>
       </Box>
