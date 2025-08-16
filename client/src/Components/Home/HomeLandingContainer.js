@@ -95,14 +95,13 @@ export default function HomeLandingContainer({ description }) {
               transition: { delayChildren: 0.4, staggerChildren: 0.15 },
             },
           }}
-          className="flex flex-col sm:flex-row gap-4"
+          className="flex flex-col gap-4 w-full max-w-xs"
         >
           <motion.button
             whileHover={{ scale: 1.08, y: -3 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="flex items-center justify-center gap-2 bg-[#004346] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#006064] transition-all"
-            onClick={() => goTo("/mealplanner")}
+            className="flex items-center justify-center gap-2 bg-[#004346] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#006064] transition-all w-full" // Added w-full
           >
             <RamenDining /> Start My Meal Plan
           </motion.button>
@@ -110,14 +109,12 @@ export default function HomeLandingContainer({ description }) {
             whileHover={{ scale: 1.08, y: -3 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="flex items-center justify-center gap-2 border-2 border-[#004346] text-[#004346] px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#e0f7fa] transition-all"
-            onClick={() => goTo("/community")}
+            className="flex items-center justify-center gap-2 border-2 border-[#004346] text-[#004346] px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#e0f7fa] transition-all w-full" // Added w-full
           >
             <PeopleAlt /> Join Community
           </motion.button>
         </motion.div>
-
-        {/* Mood Selector Pills */}
+        {/* Mood Selector Pills 
         <motion.div
           initial="hidden"
           animate="visible"
@@ -147,6 +144,7 @@ export default function HomeLandingContainer({ description }) {
             ))}
           </div>
         </motion.div>
+        */}
       </motion.div>
 
       {/* Right Image */}
