@@ -11,6 +11,7 @@ export default function FeatureCard({
   return (
     <motion.div
       className="bg-white rounded-2xl overflow-hidden cursor-pointer flex flex-col max-w-sm mx-auto shadow-md"
+      onClick={onClick} // ✅ attach the click handler here
       variants={{
         hidden: { opacity: 0, y: 50 },
         visible: { opacity: 1, y: 0 },
