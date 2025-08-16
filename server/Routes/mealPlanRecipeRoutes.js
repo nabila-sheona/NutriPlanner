@@ -1,7 +1,7 @@
 // backend/Routes/mealPlanRecipeRoutes.js
 const express = require("express");
 const router = express.Router();
-const { verifyToken } = require("../../middleware/jwt.js");
+const { verifyToken } = require("../middleware/jwt.js");
 const mealPlanRecipeController = require("../Controller/mealPlanRecipeController.js");
 
 router.post("/save", verifyToken, mealPlanRecipeController.saveRecipe);

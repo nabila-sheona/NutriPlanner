@@ -1,7 +1,7 @@
 // backend/Controller/mealPlanRecipeController.js
 const Recipe = require("../Model/MealPlanRecipe.js");
-const User = require("../../Model/user.model.js");
-const createError = require("../../utils/createError.js");
+const User = require("../Model/user.model.js");
+const createError = require("../utils/createError.js");
 
 // Save a new recipe
 const saveRecipe = async (req, res) => {

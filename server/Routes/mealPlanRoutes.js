@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { verifyToken } = require("../../middleware/jwt.js");
+const { verifyToken } = require("../middleware/jwt.js");
 const {
   saveMealPlan,
   getMealPlans,
