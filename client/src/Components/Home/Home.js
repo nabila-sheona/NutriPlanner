@@ -9,7 +9,7 @@ import MoodToMeal from "./MoodToMeal";
 import CardBelowHome from "./CardBelowHome";
 import BackgroundParallax from "./BackgroundParallax";
 import { motion } from "framer-motion";
-
+import NutriPlanFAQ from "./NutriPlanFAQ";
 // === Images ===
 import mealPlannerImg from "./images/mealplanner.jpg";
 import communityImg from "./images/community.jpg";
@@ -460,8 +460,10 @@ export default function Home(props) {
       <CardBelowHome />*/}
       <Divider sx={{ my: 6 }} />
       {/* FAQ  */}
+      {/*
       <DietAndMoodFAQ />
-
+*/}
+      <NutriPlanFAQ />
       <Divider sx={{ my: 6 }} />
       {/* Feature Cards */}
 
