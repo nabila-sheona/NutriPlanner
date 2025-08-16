@@ -25,6 +25,13 @@ import adventurousMeal from "./images/adventurousmeal.jpg";
 import applePng from "./images/apple.png";
 import saladLeafPng from "./images/saladleaf.png";
 import spoonForkPng from "./images/spoonfork.png";
+const moods = [
+  { mood: "Happy", color: "bg-yellow-400", icon: "😊" },
+  { mood: "Tired", color: "bg-indigo-500", icon: "😴" },
+  { mood: "Stressed", color: "bg-red-400", icon: "😌" },
+  { mood: "Energetic", color: "bg-green-500", icon: "🤩" },
+  { mood: "Calm", color: "bg-blue-400", icon: "🌿" }, // new mood
+];
 
 const features = [
   {
@@ -111,6 +118,97 @@ export default function Home(props) {
       <CardBelowHome />
       <Divider sx={{ my: 6 }} />
     */}
+
+      {/* How Are You Feeling Today Section */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 2 columns on medium+, 1 on mobile
+          alignItems: "center",
+          gap: 6,
+          my: 10,
+        }}
+      >
+        {/* Left side (text + moods + button) */}
+        <Box>
+          <h2
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              marginBottom: "1rem",
+            }}
+          >
+            How are you feeling today?
+          </h2>
+
+          <p
+            style={{
+              fontSize: "1.1rem",
+              marginBottom: "1.5rem",
+              color: "#333",
+            }}
+          >
+            No matter how you’re feeling, we want every meal to bring you
+            comfort and joy. Our smart mood-based recipe feature helps you
+            discover the perfect dish that matches your emotions and boosts your
+            day.
+          </p>
+
+          {/* Mood chips */}
+          <div className="flex flex-wrap gap-3 mb-6">
+            {moods.map((m) => (
+              <motion.div
+                key={m.mood}
+                whileHover={{ scale: 1.1 }}
+                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
+              >
+                {m.icon} {m.mood}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* CTA button */}
+          <button
+            onClick={() => navigate("/moodtracker")}
+            style={{
+              padding: "12px 24px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              backgroundColor: "#004346",
+              color: "#fff",
+              border: "none",
+              borderRadius: "12px",
+              cursor: "pointer",
+              transition: "0.3s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#00695c")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#004346")
+            }
+          >
+            Find My Mood Recipe
+          </button>
+        </Box>
+
+        {/* Right side (animated image) */}
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <motion.img
+            src={happyMeal} // swap with any mood-related image
+            alt="Mood Recipe"
+            className="rounded-2xl shadow-lg"
+            style={{ width: "100%", maxWidth: "400px" }}
+            initial={{ y: 0 }}
+            animate={{ y: [0, -15, 0] }} // floating effect
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        </Box>
+      </Box>
 
       {/* Feature Cards 
       <div className="max-w-6xl mx-auto px-4">

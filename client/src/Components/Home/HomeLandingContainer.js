@@ -117,7 +117,7 @@ export default function HomeLandingContainer({ description }) {
           </motion.button>
         </motion.div>
 
-        {/* Mood Selector Pills */}
+        {/* Mood Selector Pills 
         <motion.div
           initial="hidden"
           animate="visible"
@@ -147,6 +147,7 @@ export default function HomeLandingContainer({ description }) {
             ))}
           </div>
         </motion.div>
+        */}
       </motion.div>
 
       {/* Right Image */}
