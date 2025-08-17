@@ -1,6 +1,6 @@
 # NutriPlan - Recipe & Meal Planning Application
 
-![NutriPlan Banner](https://via.placeholder.com/1200x400?text=NutriPlan+Banner) 
+![NutriPlan Banner](https://via.placeholder.com/1200x400?text=NutriPlan+Banner)
 
 NutriPlan is a full-stack web application designed for food enthusiasts to create, share, and discover recipes, generate AI-powered meal plans, track mood-based recipe recommendations, and visualize recipe upload streaks via a GitHub-like heatmap.
 
@@ -168,6 +168,7 @@ REACT_APP_FIREBASE_APP_ID=your_firebase_app_id
 REACT_APP_FIREBASE_MEASUREMENT_ID=your_firebase_measurement_id
 REACT_APP_GEMINI_API_KEY=your_gemini_api_key
 REACT_APP_API_BASE_URL=http://localhost:4000
+REACT_APP_YOUTUBE_API_KEY=your_youtube_api_key
 ```
 
 ## 🛠 Installation
