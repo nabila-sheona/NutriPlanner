@@ -13,9 +13,12 @@ import {
   Paper,
   Alert,
   Collapse,
-  IconButton
+  IconButton,
+  Container,
+  CssBaseline
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from '@mui/icons-material/Search';
 
 const YouTubeRecipeSearch = () => {
   const [query, setQuery] = useState("");
@@ -31,10 +34,7 @@ const YouTubeRecipeSearch = () => {
     setDebugInfo(null);
     
     try {
-      // Construct the API URL for debugging
       const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query + " recipe")}&type=video&maxResults=12&key=${process.env.REACT_APP_YOUTUBE_API_KEY}`;
-      
-      console.log("Attempting API call to:", apiUrl); // Debug log
       
       const res = await axios.get(apiUrl, {
         params: {
@@ -46,8 +46,6 @@ const YouTubeRecipeSearch = () => {
           safeSearch: 'none'
         }
       });
-
-      console.log("API Response:", res); // Debug log
       
       setVideos(res.data.items);
       setDebugInfo({
@@ -57,17 +55,9 @@ const YouTubeRecipeSearch = () => {
       });
 
     } catch (error) {
-      console.error("Full error object:", error); // Debug log
-      
       let errorMessage = 'Failed to search videos';
       if (error.response) {
-        // Server responded with a status code outside 2xx
-        console.error("Error response data:", error.response.data); // Debug log
-        console.error("Error status:", error.response.status); // Debug log
-        console.error("Error headers:", error.response.headers); // Debug log
-        
         errorMessage += ` (Status: ${error.response.status})`;
-        
         setDebugInfo({
           status: error.response.status,
           data: error.response.data,
@@ -75,12 +65,8 @@ const YouTubeRecipeSearch = () => {
           headers: error.response.headers
         });
       } else if (error.request) {
-        // No response received
-        console.error("No response received:", error.request); // Debug log
         errorMessage += " (No response from server)";
       } else {
-        // Something happened in setting up the request
-        console.error("Request setup error:", error.message); // Debug log
         errorMessage += ` (${error.message})`;
       }
       
@@ -91,86 +77,240 @@ const YouTubeRecipeSearch = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        YouTube Recipe Search
-      </Typography>
-
-      {/* Search Interface */}
-      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-        <TextField
-          fullWidth
-          label="Search recipes"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-        />
-        <Button
-          variant="contained"
-          onClick={handleSearch}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} /> : 'Search'}
-        </Button>
-      </Box>
-
-      {/* Error Display */}
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-          <Button 
-            size="small" 
-            onClick={() => setShowDebug(!showDebug)}
-            sx={{ ml: 2 }}
-          >
-            {showDebug ? 'Hide' : 'Show'} Debug Info
-          </Button>
-        </Alert>
-      )}
-
-      {/* Debug Information */}
-      <Collapse in={showDebug}>
-        <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.paper' }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">Debug Information</Typography>
-            <IconButton size="small" onClick={() => setShowDebug(false)}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
+    <>
+      <CssBaseline />
+      <Box sx={{ 
+        minHeight: '100vh',
+        background: 'linear-gradient(to bottom, #ffebee, #ffffff)',
+        py: 6
+      }}>
+        <Container maxWidth="md">
+          {/* Header */}
+          <Box sx={{ 
+            textAlign: 'center', 
+            mb: 6,
+            animation: 'fadeIn 1s ease-in'
+          }}>
+            <Typography 
+              variant="h2" 
+              component="h1" 
+              sx={{ 
+                fontWeight: 'bold',
+                color: '#d32f2f',
+                mb: 2,
+                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              Recipe Explorer
+            </Typography>
+            <Typography 
+              variant="subtitle1" 
+              sx={{ 
+                color: '#5f5f5f',
+                maxWidth: '600px',
+                mx: 'auto'
+              }}
+            >
+              Discover delicious recipes from YouTube's best creators
+            </Typography>
           </Box>
-          <pre style={{ overflowX: 'auto', fontSize: '0.8rem' }}>
-            {JSON.stringify(debugInfo, null, 2)}
-          </pre>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            API Key: {process.env.REACT_APP_YOUTUBE_API_KEY ? '****' + process.env.REACT_APP_YOUTUBE_API_KEY.slice(-4) : 'Not set'}
-          </Typography>
-        </Paper>
-      </Collapse>
 
-      {/* Results Display */}
-      <Grid container spacing={3}>
-        {videos.map(video => (
-          <Grid item xs={12} sm={6} md={4} key={video.id.videoId}>
-            <Card>
-              <CardMedia
-                component="iframe"
-                height="200"
-                src={`https://www.youtube.com/embed/${video.id.videoId}`}
-                title={video.snippet.title}
-                allowFullScreen
+          {/* Search Section */}
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 3, 
+              mb: 6,
+              borderRadius: '16px',
+              backgroundColor: 'white',
+              maxWidth: '700px',
+              mx: 'auto'
+            }}
+          >
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              gap: 2
+            }}>
+              <TextField
+                fullWidth
+                label="Search recipes..."
+                variant="outlined"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '12px',
+                    '& fieldset': {
+                      borderColor: '#d32f2f',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#d32f2f',
+                    },
+                  },
+                }}
+                InputProps={{
+                  startAdornment: <SearchIcon sx={{ color: '#d32f2f', mr: 1 }} />
+                }}
               />
-              <CardContent>
-                <Typography gutterBottom variant="h6">
-                  {video.snippet.title}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {video.snippet.channelTitle}
-                </Typography>
-              </CardContent>
-            </Card>
+              <Button
+                variant="contained"
+                onClick={handleSearch}
+                disabled={loading}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: '12px',
+                  backgroundColor: '#d32f2f',
+                  '&:hover': {
+                    backgroundColor: '#b71c1c',
+                  },
+                  minWidth: '120px'
+                }}
+              >
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
+              </Button>
+            </Box>
+          </Paper>
+
+          {/* Error Display */}
+          {error && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: 3,
+                borderRadius: '12px',
+                maxWidth: '700px',
+                mx: 'auto'
+              }}
+              action={
+                <Button 
+                  size="small" 
+                  onClick={() => setShowDebug(!showDebug)}
+                  sx={{ color: 'white' }}
+                >
+                  {showDebug ? 'Hide' : 'Details'}
+                </Button>
+              }
+            >
+              {error}
+            </Alert>
+          )}
+
+          {/* Debug Information */}
+          <Collapse in={showDebug}>
+            <Paper sx={{ 
+              p: 3, 
+              mb: 4, 
+              backgroundColor: '#f5f5f5',
+              borderRadius: '12px',
+              maxWidth: '700px',
+              mx: 'auto'
+            }}>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography variant="h6" sx={{ color: '#d32f2f' }}>Debug Information</Typography>
+                <IconButton size="small" onClick={() => setShowDebug(false)}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+              <pre style={{ 
+                overflowX: 'auto', 
+                fontSize: '0.8rem',
+                backgroundColor: 'white',
+                padding: '16px',
+                borderRadius: '8px'
+              }}>
+                {JSON.stringify(debugInfo, null, 2)}
+              </pre>
+            </Paper>
+          </Collapse>
+
+          {/* Results Section */}
+          {videos.length > 0 && (
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <Typography 
+                variant="h5" 
+                sx={{ 
+                  color: '#d32f2f',
+                  fontWeight: 'bold',
+                  mb: 3
+                }}
+              >
+                Found {videos.length} Recipe Videos
+              </Typography>
+            </Box>
+          )}
+
+          <Grid container spacing={4}>
+            {videos.map(video => (
+              <Grid item xs={12} sm={6} md={4} key={video.id.videoId}>
+                <Card sx={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.12)'
+                  }
+                }}>
+                  <CardMedia
+                    component="iframe"
+                    height="200"
+                    src={`https://www.youtube.com/embed/${video.id.videoId}?autoplay=0`}
+                    title={video.snippet.title}
+                    allowFullScreen
+                    sx={{ border: 'none' }}
+                  />
+                  <CardContent sx={{ 
+                    flexGrow: 1,
+                    backgroundColor: 'white'
+                  }}>
+                    <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        color: '#333',
+                        mb: 1
+                      }}
+                    >
+                      {video.snippet.title}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: '#d32f2f',
+                        fontWeight: '500'
+                      }}
+                    >
+                      {video.snippet.channelTitle}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-    </Box>
+
+          {videos.length === 0 && !loading && (
+            <Box sx={{ 
+              textAlign: 'center', 
+              mt: 10,
+              opacity: 0.7
+            }}>
+              <SearchIcon sx={{ fontSize: '60px', color: '#d32f2f', mb: 2 }} />
+              <Typography variant="h6" sx={{ color: '#5f5f5f' }}>
+                Search for recipes to get started
+              </Typography>
+            </Box>
+          )}
+        </Container>
+      </Box>
+    </>
   );
 };
 
