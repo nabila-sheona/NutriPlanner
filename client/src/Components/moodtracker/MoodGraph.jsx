@@ -140,7 +140,12 @@ const MoodGraph = () => {
       {/* Back Button */}
       <Button
         variant="contained"
-        sx={{ mb: 3, backgroundColor: "#1976d2", "&:hover": { backgroundColor: "#115293" } }}
+        sx={{
+            backgroundColor: "#004346",
+            color: "#fff",
+            marginBottom: 3,
+            '&:hover': { backgroundColor: "#00332e" }
+          }}
         onClick={() => navigate("/moodtracker")}
       >
         Back to Mood Tracker
