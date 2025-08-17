@@ -158,104 +158,20 @@ export default function Home(props) {
       <CardBelowHome />
       <Divider sx={{ my: 6 }} />
 
-      {/* How Are You Feeling Today Section */}
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 2 columns on medium+, 1 on mobile
-          alignItems: "center",
-          gap: 6,
-          my: 10,
-        }}
-      >
-        {/* Left side (text + moods + button) */}
-        <Box>
-          <h2
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              marginBottom: "1rem",
-            }}
-          >
-            How are you feeling today?
-          </h2>
-
-          <p
-            style={{
-              fontSize: "1.1rem",
-              marginBottom: "1.5rem",
-              color: "#333",
-            }}
-          >
-            No matter how you’re feeling, we want every meal to bring you
-            comfort and joy. Our smart mood-based recipe feature helps you
-            discover the perfect dish that matches your emotions and boosts your
-            day.
-          </p>
-
-          {/* Mood chips */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {moods.map((m) => (
-              <motion.div
-                key={m.mood}
-                whileHover={{ scale: 1.1 }}
-                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
-              >
-                {m.icon} {m.mood}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* CTA button */}
-          <button
-            onClick={() => navigate("/moodtracker")}
-            style={{
-              padding: "12px 24px",
-              fontSize: "1rem",
-              fontWeight: "600",
-              backgroundColor: "#004346",
-              color: "#fff",
-              border: "none",
-              borderRadius: "12px",
-              cursor: "pointer",
-              transition: "0.3s ease",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#00695c")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#004346")
-            }
-          >
-            Find Recipe
-          </button>
-        </Box>
-
-        {/* Right side (animated image) */}
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <motion.img
-            src={happyMeal} // swap with any mood-related image
-            alt="Mood Recipe"
-            className="rounded-2xl shadow-lg"
-            style={{ width: "100%", maxWidth: "400px" }}
-            initial={{ y: 0 }}
-            animate={{ y: [0, -15, 0] }} // floating effect
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </Box>
-      </Box>
-
-      <Divider sx={{ my: 6 }} />
       {/* Parallax Sections */}
       <ParallaxFood
         image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
         delay={0} // first image enters immediately
+      />
+      <Divider sx={{ my: 6 }} />
+      <ParallaxFood
+        image={grilledFishImg}
+        title="Health Goal Tracking"
+        text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
+        reverse
+        delay={0.2} // second image comes slightly later
       />
       <Divider sx={{ my: 6 }} />
       {/* Your Personal Recipe Collection Section */}
@@ -333,14 +249,7 @@ export default function Home(props) {
         </Box>
       </Box>
       <Divider sx={{ my: 6 }} />
-      <ParallaxFood
-        image={grilledFishImg}
-        title="Health Goal Tracking"
-        text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
-        reverse
-        delay={0.2} // second image comes slightly later
-      />
-      <Divider sx={{ my: 6 }} />
+
       {/* How Are You Feeling Today Section */}
       <Box
         sx={{
