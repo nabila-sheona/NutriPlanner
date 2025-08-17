@@ -157,6 +157,23 @@ const MoodTracker = () => {
           >
             View Mood Graph
           </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => navigate("/searchrecipes")}
+            sx={{
+              minWidth: 180,
+              height: 48,
+              alignSelf: "flex-start",
+              backgroundColor: "#004346",
+              color: "#ffffff",
+              "&:hover": {
+                backgroundColor: "#00332e",
+              },
+            }}
+          >
+            Search Recipes
+          </Button>
         </Box>
       </Box>
 
@@ -339,3 +356,5 @@ const MoodTracker = () => {
 };
 
 export default MoodTracker;
+
+

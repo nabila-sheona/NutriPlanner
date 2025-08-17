@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
   Typography,
-  CardMedia,
+  CardActionArea,
   CircularProgress,
   Paper,
   Chip,
@@ -16,13 +16,15 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { grey, red } from '@mui/material/colors';
+import { useNavigate } from 'react-router-dom';
 
 const YouTubeRecipeSearch = () => {
   const [query, setQuery] = useState("");
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const navigate = useNavigate();
 
-  // Popular recipe categories
   const categories = [
     'Desserts', 'Quick Meals', 'Vegetarian', 
     'Keto', 'Italian', 'Asian', 'Baking',
@@ -43,6 +45,7 @@ const YouTubeRecipeSearch = () => {
         }
       });
       setVideos(res.data.items);
+      setSelectedVideo(null); // Reset selected video on new search
     } catch (error) {
       console.error('Search error:', error);
     } finally {
@@ -50,14 +53,30 @@ const YouTubeRecipeSearch = () => {
     }
   };
 
+  const openVideo = (videoId) => {
+    setSelectedVideo(videoId);
+    window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+  };
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* Back Button */}
+      <Box sx={{ mb: 3 }}>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/moodtracker")}
+          sx={{
+            backgroundColor: "#004346",
+            color: "#fff",
+            '&:hover': { backgroundColor: "#00332e" }
+          }}
+        >
+          Back to Mood Tracker
+        </Button>
+      </Box>
+
       {/* Search Header */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center',
-        mb: 4
-      }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
         <Paper elevation={0} sx={{
           width: '100%',
           maxWidth: 800,
@@ -134,66 +153,81 @@ const YouTubeRecipeSearch = () => {
               borderRadius: 2,
               overflow: 'hidden',
               transition: 'transform 0.2s',
-              '&:hover': {
-                transform: 'translateY(-4px)'
-              }
+              '&:hover': { transform: 'translateY(-4px)' }
             }}>
-              <CardMedia
-                component="img"
-                height="180"
-                image={video.snippet.thumbnails.medium.url}
-                alt={video.snippet.title}
-                sx={{ 
-                  borderRadius: 1,
-                  objectFit: 'cover'
-                }}
-              />
-              <CardContent sx={{ p: 1 }}>
-                <Typography 
-                  variant="subtitle2" 
-                  sx={{ 
-                    fontWeight: 500,
-                    mb: 0.5,
-                    lineHeight: 1.3,
-                    height: '2.6em',
-                    overflow: 'hidden',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical'
-                  }}
-                >
-                  {video.snippet.title}
-                </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: grey[600],
-                    display: 'block'
-                  }}
-                >
-                  {video.snippet.channelTitle}
-                </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: grey[500],
-                    fontSize: '0.7rem'
-                  }}
-                >
-                  123K views • 2 weeks ago
-                </Typography>
-              </CardContent>
+              <CardActionArea onClick={() => openVideo(video.id.videoId)}>
+                <Box sx={{ 
+                  position: 'relative',
+                  paddingTop: '56.25%',
+                  overflow: 'hidden'
+                }}>
+                  <Box
+                    component="img"
+                    src={video.snippet.thumbnails.medium.url}
+                    alt={video.snippet.title}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                  <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 64,
+                    height: 64,
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Box sx={{
+                      width: 0,
+                      height: 0,
+                      borderTop: '12px solid transparent',
+                      borderLeft: '24px solid' + red[600],
+                      borderBottom: '12px solid transparent',
+                      marginLeft: 4
+                    }} />
+                  </Box>
+                </Box>
+                <CardContent sx={{ p: 2 }}>
+                  <Typography 
+                    variant="subtitle2" 
+                    sx={{ 
+                      fontWeight: 500,
+                      mb: 0.5,
+                      lineHeight: 1.3,
+                      height: '2.6em',
+                      overflow: 'hidden',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical'
+                    }}
+                  >
+                    {video.snippet.title}
+                  </Typography>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ color: grey[600], display: 'block' }}
+                  >
+                    {video.snippet.channelTitle}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
             </Card>
           </Grid>
         ))}
       </Grid>
 
       {videos.length === 0 && !loading && (
-        <Box sx={{ 
-          textAlign: 'center', 
-          mt: 10,
-          color: grey[500]
-        }}>
+        <Box sx={{ textAlign: 'center', mt: 10, color: grey[500] }}>
           <SearchIcon sx={{ fontSize: 60, mb: 2 }} />
           <Typography variant="h6">Search for recipe videos</Typography>
           <Typography variant="body2">Try "pasta", "dessert", or "quick meals"</Typography>
