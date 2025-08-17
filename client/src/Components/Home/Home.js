@@ -350,6 +350,88 @@ export default function Home(props) {
 
       <Divider sx={{ my: 6 }} />
 
+      {/* Have a Specific Plan Section */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          alignItems: "center",
+          gap: 6,
+          my: 10,
+        }}
+      >
+        {/* Left side (image) */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            order: { xs: 2, md: 1 },
+          }}
+        >
+          <motion.img
+            src={mealPlannerImg}
+            alt="Meal Plan"
+            className="rounded-2xl shadow-lg"
+            style={{ width: "100%", maxWidth: "400px" }}
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          />
+        </Box>
+
+        {/* Right side (text + button) */}
+        <Box sx={{ order: { xs: 1, md: 2 } }}>
+          <h2
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              marginBottom: "1rem",
+            }}
+          >
+            Have a specific plan in mind?
+          </h2>
+
+          <p
+            style={{
+              fontSize: "1.1rem",
+              marginBottom: "1.5rem",
+              color: "#333",
+            }}
+          >
+            Whether you're following keto, vegan, or just want balanced
+            nutrition, our AI-powered meal planner creates customized weekly
+            plans tailored to your dietary needs and preferences. Get started in
+            seconds!
+          </p>
+
+          {/* CTA button */}
+          <button
+            onClick={() => navigate("/mealplanner")}
+            style={{
+              padding: "12px 24px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              backgroundColor: "#004346",
+              color: "#fff",
+              border: "none",
+              borderRadius: "12px",
+              cursor: "pointer",
+              transition: "0.3s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#00695c")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#004346")
+            }
+          >
+            Generate Meal Plan
+          </button>
+        </Box>
+      </Box>
+      <Divider sx={{ my: 6 }} />
+
       <NutriPlanFAQ />
       <Divider sx={{ my: 6 }} />
       {/* Feature Cards */}
