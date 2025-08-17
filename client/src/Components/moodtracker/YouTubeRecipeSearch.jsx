@@ -11,32 +11,28 @@ import {
   CardMedia,
   CircularProgress,
   Paper,
-  Alert,
-  Collapse,
-  IconButton,
-  Container,
-  CssBaseline
+  Chip,
+  Container
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import SearchIcon from '@mui/icons-material/Search';
+import { grey, red } from '@mui/material/colors';
 
 const YouTubeRecipeSearch = () => {
   const [query, setQuery] = useState("");
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [debugInfo, setDebugInfo] = useState(null);
-  const [showDebug, setShowDebug] = useState(false);
+
+  // Popular recipe categories
+  const categories = [
+    'Desserts', 'Quick Meals', 'Vegetarian', 
+    'Keto', 'Italian', 'Asian', 'Baking',
+    'Healthy', 'Comfort Food', 'Vegan'
+  ];
 
   const handleSearch = async () => {
     setLoading(true);
-    setError(null);
-    setDebugInfo(null);
-    
     try {
-      const apiUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query + " recipe")}&type=video&maxResults=12&key=${process.env.REACT_APP_YOUTUBE_API_KEY}`;
-      
-      const res = await axios.get(apiUrl, {
+      const res = await axios.get('https://www.googleapis.com/youtube/v3/search', {
         params: {
           key: process.env.REACT_APP_YOUTUBE_API_KEY,
           part: 'snippet',
@@ -46,271 +42,164 @@ const YouTubeRecipeSearch = () => {
           safeSearch: 'none'
         }
       });
-      
       setVideos(res.data.items);
-      setDebugInfo({
-        status: res.status,
-        config: res.config,
-        dataCount: res.data.items.length
-      });
-
     } catch (error) {
-      let errorMessage = 'Failed to search videos';
-      if (error.response) {
-        errorMessage += ` (Status: ${error.response.status})`;
-        setDebugInfo({
-          status: error.response.status,
-          data: error.response.data,
-          config: error.config,
-          headers: error.response.headers
-        });
-      } else if (error.request) {
-        errorMessage += " (No response from server)";
-      } else {
-        errorMessage += ` (${error.message})`;
-      }
-      
-      setError(errorMessage);
+      console.error('Search error:', error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <CssBaseline />
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      {/* Search Header */}
       <Box sx={{ 
-        minHeight: '100vh',
-        background: 'linear-gradient(to bottom, #ffebee, #ffffff)',
-        py: 6
+        display: 'flex', 
+        justifyContent: 'center',
+        mb: 4
       }}>
-        <Container maxWidth="md">
-          {/* Header */}
-          <Box sx={{ 
-            textAlign: 'center', 
-            mb: 6,
-            animation: 'fadeIn 1s ease-in'
-          }}>
-            <Typography 
-              variant="h2" 
-              component="h1" 
-              sx={{ 
-                fontWeight: 'bold',
-                color: '#d32f2f',
-                mb: 2,
-                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+        <Paper elevation={0} sx={{
+          width: '100%',
+          maxWidth: 800,
+          p: 2,
+          borderRadius: 2,
+          bgcolor: grey[50]
+        }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Search recipes..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                  bgcolor: 'white'
+                }
+              }}
+              InputProps={{
+                startAdornment: <SearchIcon sx={{ color: grey[500], mr: 1 }} />
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleSearch}
+              disabled={loading}
+              sx={{
+                px: 4,
+                borderRadius: 1,
+                bgcolor: red[600],
+                '&:hover': { bgcolor: red[700] }
               }}
             >
-              Recipe Explorer
-            </Typography>
-            <Typography 
-              variant="subtitle1" 
-              sx={{ 
-                color: '#5f5f5f',
-                maxWidth: '600px',
-                mx: 'auto'
-              }}
-            >
-              Discover delicious recipes from YouTube's best creators
-            </Typography>
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
+            </Button>
           </Box>
+        </Paper>
+      </Box>
 
-          {/* Search Section */}
-          <Paper 
-            elevation={3} 
-            sx={{ 
-              p: 3, 
-              mb: 6,
-              borderRadius: '16px',
-              backgroundColor: 'white',
-              maxWidth: '700px',
-              mx: 'auto'
-            }}
-          >
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              gap: 2
+      {/* Categories */}
+      <Box sx={{ mb: 4, textAlign: 'center' }}>
+        <Typography variant="subtitle1" sx={{ mb: 2, color: grey[600] }}>
+          Popular Categories
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 1 }}>
+          {categories.map(category => (
+            <Chip 
+              key={category}
+              label={category}
+              onClick={() => {
+                setQuery(category);
+                handleSearch();
+              }}
+              sx={{ 
+                borderRadius: 1,
+                cursor: 'pointer',
+                '&:hover': { bgcolor: red[50] }
+              }}
+            />
+          ))}
+        </Box>
+      </Box>
+
+      {/* Video Results */}
+      <Grid container spacing={3}>
+        {videos.map(video => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={video.id.videoId}>
+            <Card sx={{ 
+              border: 'none',
+              boxShadow: 'none',
+              borderRadius: 2,
+              overflow: 'hidden',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'translateY(-4px)'
+              }
             }}>
-              <TextField
-                fullWidth
-                label="Search recipes..."
-                variant="outlined"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '12px',
-                    '& fieldset': {
-                      borderColor: '#d32f2f',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#d32f2f',
-                    },
-                  },
-                }}
-                InputProps={{
-                  startAdornment: <SearchIcon sx={{ color: '#d32f2f', mr: 1 }} />
+              <CardMedia
+                component="img"
+                height="180"
+                image={video.snippet.thumbnails.medium.url}
+                alt={video.snippet.title}
+                sx={{ 
+                  borderRadius: 1,
+                  objectFit: 'cover'
                 }}
               />
-              <Button
-                variant="contained"
-                onClick={handleSearch}
-                disabled={loading}
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: '12px',
-                  backgroundColor: '#d32f2f',
-                  '&:hover': {
-                    backgroundColor: '#b71c1c',
-                  },
-                  minWidth: '120px'
-                }}
-              >
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Search'}
-              </Button>
-            </Box>
-          </Paper>
-
-          {/* Error Display */}
-          {error && (
-            <Alert 
-              severity="error" 
-              sx={{ 
-                mb: 3,
-                borderRadius: '12px',
-                maxWidth: '700px',
-                mx: 'auto'
-              }}
-              action={
-                <Button 
-                  size="small" 
-                  onClick={() => setShowDebug(!showDebug)}
-                  sx={{ color: 'white' }}
+              <CardContent sx={{ p: 1 }}>
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    fontWeight: 500,
+                    mb: 0.5,
+                    lineHeight: 1.3,
+                    height: '2.6em',
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical'
+                  }}
                 >
-                  {showDebug ? 'Hide' : 'Details'}
-                </Button>
-              }
-            >
-              {error}
-            </Alert>
-          )}
-
-          {/* Debug Information */}
-          <Collapse in={showDebug}>
-            <Paper sx={{ 
-              p: 3, 
-              mb: 4, 
-              backgroundColor: '#f5f5f5',
-              borderRadius: '12px',
-              maxWidth: '700px',
-              mx: 'auto'
-            }}>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6" sx={{ color: '#d32f2f' }}>Debug Information</Typography>
-                <IconButton size="small" onClick={() => setShowDebug(false)}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Box>
-              <pre style={{ 
-                overflowX: 'auto', 
-                fontSize: '0.8rem',
-                backgroundColor: 'white',
-                padding: '16px',
-                borderRadius: '8px'
-              }}>
-                {JSON.stringify(debugInfo, null, 2)}
-              </pre>
-            </Paper>
-          </Collapse>
-
-          {/* Results Section */}
-          {videos.length > 0 && (
-            <Box sx={{ mb: 4, textAlign: 'center' }}>
-              <Typography 
-                variant="h5" 
-                sx={{ 
-                  color: '#d32f2f',
-                  fontWeight: 'bold',
-                  mb: 3
-                }}
-              >
-                Found {videos.length} Recipe Videos
-              </Typography>
-            </Box>
-          )}
-
-          <Grid container spacing={4}>
-            {videos.map(video => (
-              <Grid item xs={12} sm={6} md={4} key={video.id.videoId}>
-                <Card sx={{ 
-                  height: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 8px 25px rgba(0,0,0,0.12)'
-                  }
-                }}>
-                  <CardMedia
-                    component="iframe"
-                    height="200"
-                    src={`https://www.youtube.com/embed/${video.id.videoId}?autoplay=0`}
-                    title={video.snippet.title}
-                    allowFullScreen
-                    sx={{ border: 'none' }}
-                  />
-                  <CardContent sx={{ 
-                    flexGrow: 1,
-                    backgroundColor: 'white'
-                  }}>
-                    <Typography 
-                      gutterBottom 
-                      variant="h6" 
-                      sx={{ 
-                        fontWeight: 'bold',
-                        color: '#333',
-                        mb: 1
-                      }}
-                    >
-                      {video.snippet.title}
-                    </Typography>
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        color: '#d32f2f',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {video.snippet.channelTitle}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                  {video.snippet.title}
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: grey[600],
+                    display: 'block'
+                  }}
+                >
+                  {video.snippet.channelTitle}
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: grey[500],
+                    fontSize: '0.7rem'
+                  }}
+                >
+                  123K views • 2 weeks ago
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
+        ))}
+      </Grid>
 
-          {videos.length === 0 && !loading && (
-            <Box sx={{ 
-              textAlign: 'center', 
-              mt: 10,
-              opacity: 0.7
-            }}>
-              <SearchIcon sx={{ fontSize: '60px', color: '#d32f2f', mb: 2 }} />
-              <Typography variant="h6" sx={{ color: '#5f5f5f' }}>
-                Search for recipes to get started
-              </Typography>
-            </Box>
-          )}
-        </Container>
-      </Box>
-    </>
+      {videos.length === 0 && !loading && (
+        <Box sx={{ 
+          textAlign: 'center', 
+          mt: 10,
+          color: grey[500]
+        }}>
+          <SearchIcon sx={{ fontSize: 60, mb: 2 }} />
+          <Typography variant="h6">Search for recipe videos</Typography>
+          <Typography variant="body2">Try "pasta", "dessert", or "quick meals"</Typography>
+        </Box>
+      )}
+    </Container>
   );
 };
 
