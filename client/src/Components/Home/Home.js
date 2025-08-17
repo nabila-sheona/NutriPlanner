@@ -160,12 +160,20 @@ export default function Home(props) {
 
       {/* Parallax Sections */}
       <ParallaxFood
+        image={fruitbowl} // any image you want
+        title="Explore New Recipes"
+        text="Discover thousands of recipes shared by our community and save your favorites for easy access."
+        delay={0.3} // small delay for smooth entrance
+        reverse
+      />
+
+      <ParallaxFood
         image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
         delay={0} // first image enters immediately
       />
-      <Divider sx={{ my: 6 }} />
+
       <ParallaxFood
         image={grilledFishImg}
         title="Health Goal Tracking"
@@ -286,12 +294,13 @@ export default function Home(props) {
           </p>
 
           {/* Mood chips */}
+          {/* Mood chips */}
           <div className="flex flex-wrap gap-3 mb-6">
             {moods.map((m) => (
               <motion.div
                 key={m.mood}
                 whileHover={{ scale: 1.1 }}
-                onClick={() => setSelectedMood(m)} // ✅ set mood on click
+                onClick={() => setSelectedMood(m)} // change selected mood
                 className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
               >
                 {m.icon} {m.mood}
@@ -324,29 +333,20 @@ export default function Home(props) {
           </button>
         </Box>
 
-        {/* Right side (changes per mood) */}
+        {/* Right side (animated image) */}
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <motion.img
-            key={selectedMood.mood} // 🔑 triggers re-animation when mood changes
+            key={selectedMood.mood} // ensures smooth transition when image changes
             src={selectedMood.meal}
             alt={`${selectedMood.mood} Meal`}
             className="rounded-2xl shadow-lg"
             style={{ width: "100%", maxWidth: "400px" }}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           />
         </Box>
       </Box>
-
-      <Divider sx={{ my: 6 }} />
-      <ParallaxFood
-        image={fruitbowl} // any image you want
-        title="Explore New Recipes"
-        text="Discover thousands of recipes shared by our community and save your favorites for easy access."
-        delay={0.3} // small delay for smooth entrance
-        reverse
-      />
 
       <Divider sx={{ my: 6 }} />
 
