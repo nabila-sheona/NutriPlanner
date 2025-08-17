@@ -17,7 +17,11 @@ import MoodRecipeHistory from "./Components/moodtracker/MoodRecipeHistory";
 import MoodGraph from './Components/moodtracker/MoodGraph.jsx';
 
 
+
 import "./App.css";
+//import YouTubeAuthWrapper from "./Components/moodtracker/YouTubeAuthWrapper";
+import YouTubeRecipeSearch from "./Components/moodtracker/YouTubeRecipeSearch.jsx";
+
 
 const Layout = ({ children }) => {
   return (
@@ -123,6 +127,14 @@ const App = () => {
         />
         <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
         <Route path="/moodgraph" element={<MoodGraph />} />
+        <Route 
+          path="/searchrecipes" 
+          element={
+            
+              <YouTubeRecipeSearch />
+            
+          } 
+        />
 
       </Routes>
     </Router>
