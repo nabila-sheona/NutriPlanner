@@ -1,3 +1,5 @@
+// server/models/recipe2.model.js
+
 const mongoose = require('mongoose');
 
 const recipeSchema = new mongoose.Schema({

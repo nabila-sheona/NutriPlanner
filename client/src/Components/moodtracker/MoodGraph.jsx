@@ -8,6 +8,8 @@ import {
   Grid,
   Card,
   CardContent,
+  Button,
+  Divider,
 } from "@mui/material";
 import {
   ScatterChart,
@@ -18,7 +20,13 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
 } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:4000";
 
@@ -52,6 +60,8 @@ const MoodGraph = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -63,8 +73,6 @@ const MoodGraph = () => {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
 
-        console.log("Server response:", res);
-
         if (!res.data || !Array.isArray(res.data)) {
           throw new Error("Invalid data format received from server");
         }
@@ -74,7 +82,7 @@ const MoodGraph = () => {
         const points = [];
 
         moodsData.forEach(({ mood, date }) => {
-          if (!mood || !date) return; 
+          if (!mood || !date) return;
           const moodDate = new Date(date);
           const diffMs = now - moodDate.getTime();
           if (diffMs <= 24 * 60 * 60 * 1000) {
@@ -88,8 +96,6 @@ const MoodGraph = () => {
         setData(points);
       } catch (error) {
         console.error("Failed to fetch mood graph data:", error);
-
-        
         const serverMessage =
           error.response?.data?.message || error.message || "Unknown error";
         setErrorMessage(`Error fetching mood graph data: ${serverMessage}`);
@@ -103,12 +109,7 @@ const MoodGraph = () => {
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="70vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="70vh">
         <CircularProgress />
       </Box>
     );
@@ -116,13 +117,7 @@ const MoodGraph = () => {
 
   if (errorMessage) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="70vh"
-        textAlign="center"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="70vh" textAlign="center">
         <Typography variant="h6" color="error">
           {errorMessage}
         </Typography>
@@ -141,60 +136,181 @@ const MoodGraph = () => {
   }));
 
   return (
-    <Box sx={{ p: 3 }}>
-      
-      <Typography variant="h3" gutterBottom sx={{ fontWeight: "bold", display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={{ p: { xs: 2, md: 4 } }}>
+      {/* Back Button */}
+      <Button
+        variant="contained"
+        sx={{ mb: 3, backgroundColor: "#1976d2", "&:hover": { backgroundColor: "#115293" } }}
+        onClick={() => navigate("/moodtracker")}
+      >
+        Back to Mood Tracker
+      </Button>
+
+      {/* Header */}
+      <Typography
+        variant="h3"
+        gutterBottom
+        sx={{ fontWeight: "bold", mb: 1 }}
+      >
         Mood Tracker Overview
       </Typography>
-      <Typography variant="subtitle1" sx={{ mb: 3, color: "text.secondary" }}>
-        Your mood patterns over the last 24 hours.
+      <Typography variant="subtitle1" sx={{ mb: 4, color: "text.secondary" }}>
+        Visual representation of your mood patterns over the last 24 hours.
       </Typography>
 
-      
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+      {/* Mood Cards */}
+      <Grid container spacing={2} sx={{ mb: 5 }}>
         {moodCounts.map((m) => (
           <Grid item xs={6} sm={4} md={2} key={m.mood}>
-            <Card sx={{ backgroundColor: `${moodColors[m.mood]}20`, border: `1px solid ${moodColors[m.mood]}`, borderRadius: 3, boxShadow: 2 }}>
+            <Card
+              sx={{
+                backgroundColor: `${moodColors[m.mood]}20`,
+                border: `1px solid ${moodColors[m.mood]}`,
+                borderRadius: 3,
+                boxShadow: 3,
+                transition: "transform 0.3s",
+                "&:hover": { transform: "scale(1.05)" },
+              }}
+            >
               <CardContent sx={{ textAlign: "center" }}>
-                <Typography variant="h6" sx={{ color: moodColors[m.mood] }}>{m.mood}</Typography>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>{m.count}</Typography>
-                <Typography variant="caption" color="text.secondary">entries</Typography>
+                <Typography variant="h6" sx={{ color: moodColors[m.mood], fontWeight: "bold" }}>
+                  {m.mood}
+                </Typography>
+                <Typography variant="h4" sx={{ fontWeight: "bold", my: 1 }}>
+                  {m.count}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  entries
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
 
-   
-      <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 3 }}>
-        <ResponsiveContainer width="100%" height={400}>
-          <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" dataKey="x" domain={["dataMin", "dataMax"]} tickFormatter={xTickFormatter} name="Time" tick={{ fontSize: 12 }} scale="time" />
-            <YAxis type="number" dataKey="y" domain={[0, 4]} ticks={[0, 1, 2, 3, 4]} tickFormatter={yTickFormatter} name="Mood" tick={{ fontSize: 14, fontWeight: "bold" }} />
-            <Tooltip
-              formatter={(value, name) => {
-                if (name === "y") return yToMood[value];
-                if (name === "x") return new Date(value).toLocaleString();
-                return value;
-              }}
-            />
-            <Legend />
-            {moods.map((mood) => (
-              <Scatter key={mood} name={mood} data={data.filter((p) => p.y === moodToY[mood])} fill={moodColors[mood]} line={{ stroke: moodColors[mood], strokeWidth: 2 }} />
-            ))}
-          </ScatterChart>
-        </ResponsiveContainer>
-      </Paper>
+      <Grid container spacing={4}>
+        {/* Scatter Chart */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 5 }}>
+            <Typography variant="h6" gutterBottom>
+              Mood Scatter Chart
+            </Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  type="number"
+                  dataKey="x"
+                  domain={["dataMin", "dataMax"]}
+                  tickFormatter={xTickFormatter}
+                  name="Time"
+                  tick={{ fontSize: 12, fill: "#555" }}
+                  scale="time"
+                />
+                <YAxis
+                  type="number"
+                  dataKey="y"
+                  domain={[0, 4]}
+                  ticks={[0, 1, 2, 3, 4]}
+                  tickFormatter={yTickFormatter}
+                  name="Mood"
+                  tick={{ fontSize: 14, fontWeight: "bold", fill: "#555" }}
+                />
+                <Tooltip
+                  cursor={{ strokeDasharray: "3 3" }}
+                  formatter={(value, name) => {
+                    if (name === "y") return yToMood[value];
+                    if (name === "x") return new Date(value).toLocaleString();
+                    return value;
+                  }}
+                />
+                <Legend />
+                {moods.map((mood) => (
+                  <Scatter
+                    key={mood}
+                    name={mood}
+                    data={data.filter((p) => p.y === moodToY[mood])}
+                    fill={moodColors[mood]}
+                    line={{ stroke: moodColors[mood], strokeWidth: 2 }}
+                  />
+                ))}
+              </ScatterChart>
+            </ResponsiveContainer>
 
-     
-      <Paper sx={{ mt: 3, p: 3, borderRadius: 3, backgroundColor: "#f9f9f9" }}>
-        <Typography variant="h6" gutterBottom>Understanding the Chart</Typography>
-        <Typography variant="body2" sx={{ mb: 1 }}>Each dot corresponds to a mood entry recorded during the past 24 hours.</Typography>
-        <Typography variant="body2" sx={{ mb: 1 }}>The vertical axis (Y-axis) categorizes moods from Calm at the bottom to Happy at the top.</Typography>
-        <Typography variant="body2" sx={{ mb: 1 }}>The horizontal axis (X-axis) represents the time of day when each mood was logged.</Typography>
-        <Typography variant="body2">Use this chart to identify mood patterns and trends throughout your day.</Typography>
-      </Paper>
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="body2" color="text.secondary">
+              The scatter chart shows your mood entries over time in the past 24 hours. Each dot represents a mood recorded at a specific time. Use it to spot patterns in mood fluctuations during the day.
+            </Typography>
+          </Paper>
+        </Grid>
+
+        {/* Pie Chart */}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 5 }}>
+            <Typography variant="h6" gutterBottom>
+              Mood Distribution (Pie Chart)
+            </Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={moodCounts}
+                  dataKey="count"
+                  nameKey="mood"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={140}
+                  fill="#8884d8"
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
+                >
+                  {moodCounts.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={moodColors[entry.mood]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip formatter={(value, name) => [value, name]} />
+              </PieChart>
+            </ResponsiveContainer>
+
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="body2" color="text.secondary">
+              The pie chart represents the proportion of each mood recorded in the last 24 hours. It helps you quickly identify which moods dominate your day.
+            </Typography>
+          </Paper>
+        </Grid>
+
+        {/* Vertical Bar Chart */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 5 }}>
+            <Typography variant="h6" gutterBottom>
+              Mood Frequency (Vertical Bar)
+            </Typography>
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart
+                data={moodCounts}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="mood" tick={{ fontSize: 14, fontWeight: "bold" }} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                  {moodCounts.map((entry, index) => (
+                    <Cell key={`cell-bar-${index}`} fill={moodColors[entry.mood]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+
+            <Divider sx={{ my: 2 }} />
+            <Typography variant="body2" color="text.secondary">
+              The vertical bar chart shows the frequency of each mood recorded in the last 24 hours. Use it to compare how often each mood occurs and detect trends.
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
