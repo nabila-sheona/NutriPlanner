@@ -248,23 +248,6 @@ export default function Home(props) {
           />
         </Box>
       </Box>
-      {/* Feature Cards 
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 40 }} // moderate slide
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }} // faster but still smooth
-            >
-              <FeatureCard {...f} onClick={() => navigate(f.path)} />
-            </motion.div>
-          ))}
-        </div>
-      </div>
-          */}
 
       <Divider sx={{ my: 6 }} />
       {/* Parallax Sections */}
@@ -456,24 +439,8 @@ export default function Home(props) {
         reverse
       />
 
-      {/* Mood-to-Meal Interactive Demo 
-      <MoodToMeal
-        moods={[
-          { name: "Happy", emoji: "😊", meal: happyMeal },
-          { name: "Tired", emoji: "😴", meal: tiredMeal },
-          { name: "Stressed", emoji: "😌", meal: stressedMeal },
-          { name: "Adventurous", emoji: "🤩", meal: adventurousMeal },
-        ]}
-      />*/}
-
-      {/*  <Divider sx={{ my: 6 }} />
-      Card Below Hero 
-      <CardBelowHome />*/}
       <Divider sx={{ my: 6 }} />
-      {/* FAQ  */}
-      {/*
-      <DietAndMoodFAQ />
-*/}
+
       <NutriPlanFAQ />
       <Divider sx={{ my: 6 }} />
       {/* Feature Cards */}
