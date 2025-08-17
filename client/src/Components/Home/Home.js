@@ -27,7 +27,7 @@ import fruitbowl from "./images/fruitbowl.jpeg";
 import applePng from "./images/apple.png";
 import saladLeafPng from "./images/saladleaf.png";
 import spoonForkPng from "./images/spoonfork.png";
-const mood = [
+const md = [
   { mood: "Happy", color: "bg-yellow-400", icon: "😊" },
   { mood: "Tired", color: "bg-indigo-500", icon: "😴" },
   { mood: "Stressed", color: "bg-red-400", icon: "😌" },
@@ -47,6 +47,7 @@ const moods = [
   },
   { mood: "Calm", color: "bg-blue-400", icon: "🌿", meal: calmMeal },
 ];
+
 const features = [
   {
     image: mealPlannerImg,
@@ -98,7 +99,8 @@ const ft = [
 export default function Home(props) {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMood, setSelectedMood] = useState(moods[0]); // default: Happy
+  // put this near top of Home component
+  const [selectedMood, setSelectedMood] = useState(moods[0]);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
@@ -356,7 +358,7 @@ export default function Home(props) {
         delay={0.2} // second image comes slightly later
       />
       <Divider sx={{ my: 6 }} />
-      {/* Have a Specific Plan Section */}
+      {/* How Are You Feeling Today Section */}
       <Box
         sx={{
           display: "grid",
@@ -366,28 +368,8 @@ export default function Home(props) {
           my: 10,
         }}
       >
-        {/* Left side (image) */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            order: { xs: 2, md: 1 },
-          }}
-        >
-          <motion.img
-            src={mealPlannerImg}
-            alt="Meal Plan"
-            className="rounded-2xl shadow-lg"
-            style={{ width: "100%", maxWidth: "400px" }}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          />
-        </Box>
-
-        {/* Right side (text + button) */}
-        <Box sx={{ order: { xs: 1, md: 2 } }}>
+        {/* Left side (text + moods + button) */}
+        <Box>
           <h2
             style={{
               fontSize: "2rem",
@@ -395,7 +377,7 @@ export default function Home(props) {
               marginBottom: "1rem",
             }}
           >
-            Have a specific plan in mind?
+            How are you feeling today?
           </h2>
 
           <p
@@ -405,15 +387,29 @@ export default function Home(props) {
               color: "#333",
             }}
           >
-            Whether you're following keto, vegan, or just want balanced
-            nutrition, our AI-powered meal planner creates customized weekly
-            plans tailored to your dietary needs and preferences. Get started in
-            seconds!
+            No matter how you’re feeling, we want every meal to bring you
+            comfort and joy. Our smart mood-based recipe feature helps you
+            discover the perfect dish that matches your emotions and boosts your
+            day.
           </p>
+
+          {/* Mood chips */}
+          <div className="flex flex-wrap gap-3 mb-6">
+            {moods.map((m) => (
+              <motion.div
+                key={m.mood}
+                whileHover={{ scale: 1.1 }}
+                onClick={() => setSelectedMood(m)} // ✅ set mood on click
+                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
+              >
+                {m.icon} {m.mood}
+              </motion.div>
+            ))}
+          </div>
 
           {/* CTA button */}
           <button
-            onClick={() => navigate("/mealplanner")}
+            onClick={() => navigate("/moodtracker")}
             style={{
               padding: "12px 24px",
               fontSize: "1rem",
@@ -432,10 +428,25 @@ export default function Home(props) {
               (e.currentTarget.style.backgroundColor = "#004346")
             }
           >
-            Find Meal Plan
+            Find Recipe
           </button>
         </Box>
+
+        {/* Right side (changes per mood) */}
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <motion.img
+            key={selectedMood.mood} // 🔑 triggers re-animation when mood changes
+            src={selectedMood.meal}
+            alt={`${selectedMood.mood} Meal`}
+            className="rounded-2xl shadow-lg"
+            style={{ width: "100%", maxWidth: "400px" }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+        </Box>
       </Box>
+
       <Divider sx={{ my: 6 }} />
       <ParallaxFood
         image={fruitbowl} // any image you want
