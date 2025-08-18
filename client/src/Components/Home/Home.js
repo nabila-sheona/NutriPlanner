@@ -163,7 +163,7 @@ export default function Home(props) {
         image={fruitbowl} // any image you want
         title="Explore New Recipes"
         text="Discover thousands of recipes shared by our community and save your favorites for easy access."
-        delay={0.3} // small delay for smooth entrance
+        delay={0.2} // small delay for smooth entrance
         reverse
       />
 
@@ -171,7 +171,7 @@ export default function Home(props) {
         image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
-        delay={0} // first image enters immediately
+        delay={0.1} // first image enters immediately
       />
 
       <ParallaxFood
@@ -179,7 +179,7 @@ export default function Home(props) {
         title="Health Goal Tracking"
         text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
         reverse
-        delay={0.2} // second image comes slightly later
+        delay={0.1} // second image comes slightly later
       />
       <Divider sx={{ my: 6 }} />
 
@@ -192,7 +192,7 @@ export default function Home(props) {
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
           gap: 6,
-          my: 10,
+          my: 6,
         }}
       >
         {/* Left side (text + button) */}
@@ -261,6 +261,90 @@ export default function Home(props) {
       </Box>
       <Divider sx={{ my: 6 }} />
 
+      {/* Have a Specific Plan Section */}
+      <Box
+        sx={{
+          maxWidth: "1200px", // 👈 ensures same width constraint
+          mx: "auto", // 👈 keeps it centered like others
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+          alignItems: "center",
+          gap: 6,
+          my: 6,
+        }}
+      >
+        {/* Left side (image) */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            order: { xs: 2, md: 1 },
+          }}
+        >
+          <motion.img
+            src={mealPlannerImg}
+            alt="Meal Plan"
+            className="rounded-2xl shadow-lg"
+            style={{ width: "100%", maxWidth: "400px" }}
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          />
+        </Box>
+
+        {/* Right side (text + button) */}
+        <Box sx={{ order: { xs: 1, md: 2 } }}>
+          <h2
+            style={{
+              fontSize: "2rem",
+              fontWeight: "bold",
+              marginBottom: "1rem",
+            }}
+          >
+            Have a specific plan in mind?
+          </h2>
+
+          <p
+            style={{
+              fontSize: "1.1rem",
+              marginBottom: "1.5rem",
+              color: "#333",
+            }}
+          >
+            Whether you're following keto, vegan, or just want balanced
+            nutrition, our AI-powered meal planner creates customized weekly
+            plans tailored to your dietary needs and preferences. Get started in
+            seconds!
+          </p>
+
+          {/* CTA button */}
+          <button
+            onClick={() => navigate("/mealplanner")}
+            style={{
+              padding: "12px 24px",
+              fontSize: "1rem",
+              fontWeight: "600",
+              backgroundColor: "#004346",
+              color: "#fff",
+              border: "none",
+              borderRadius: "12px",
+              cursor: "pointer",
+              transition: "0.3s ease",
+            }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#00695c")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#004346")
+            }
+          >
+            Generate Meal Plan
+          </button>
+        </Box>
+      </Box>
+      <Divider sx={{ my: 6 }} />
+
       {/* How Are You Feeling Today Section */}
       <Box
         sx={{
@@ -270,7 +354,7 @@ export default function Home(props) {
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
           gap: 6,
-          my: 10,
+          my: 6,
         }}
       >
         {/* Left side (text + moods + button) */}
@@ -352,90 +436,6 @@ export default function Home(props) {
         </Box>
       </Box>
 
-      <Divider sx={{ my: 6 }} />
-
-      {/* Have a Specific Plan Section */}
-      <Box
-        sx={{
-          maxWidth: "1200px", // 👈 ensures same width constraint
-          mx: "auto", // 👈 keeps it centered like others
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          alignItems: "center",
-          gap: 6,
-          my: 10,
-        }}
-      >
-        {/* Left side (image) */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            order: { xs: 2, md: 1 },
-          }}
-        >
-          <motion.img
-            src={mealPlannerImg}
-            alt="Meal Plan"
-            className="rounded-2xl shadow-lg"
-            style={{ width: "100%", maxWidth: "400px" }}
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          />
-        </Box>
-
-        {/* Right side (text + button) */}
-        <Box sx={{ order: { xs: 1, md: 2 } }}>
-          <h2
-            style={{
-              fontSize: "2rem",
-              fontWeight: "bold",
-              marginBottom: "1rem",
-            }}
-          >
-            Have a specific plan in mind?
-          </h2>
-
-          <p
-            style={{
-              fontSize: "1.1rem",
-              marginBottom: "1.5rem",
-              color: "#333",
-            }}
-          >
-            Whether you're following keto, vegan, or just want balanced
-            nutrition, our AI-powered meal planner creates customized weekly
-            plans tailored to your dietary needs and preferences. Get started in
-            seconds!
-          </p>
-
-          {/* CTA button */}
-          <button
-            onClick={() => navigate("/mealplanner")}
-            style={{
-              padding: "12px 24px",
-              fontSize: "1rem",
-              fontWeight: "600",
-              backgroundColor: "#004346",
-              color: "#fff",
-              border: "none",
-              borderRadius: "12px",
-              cursor: "pointer",
-              transition: "0.3s ease",
-            }}
-            onMouseOver={(e) =>
-              (e.currentTarget.style.backgroundColor = "#00695c")
-            }
-            onMouseOut={(e) =>
-              (e.currentTarget.style.backgroundColor = "#004346")
-            }
-          >
-            Generate Meal Plan
-          </button>
-        </Box>
-      </Box>
       <Divider sx={{ my: 6 }} />
 
       <NutriPlanFAQ />
