@@ -158,9 +158,9 @@ export default function MealPlanner() {
     );
   };
 
-  useEffect(() => {
-    console.log("API Key:", process.env.REACT_APP_GEMINI_API_KEY);
-  }, []);
+  // useEffect(() => {
+  //   console.log("API Key:", process.env.REACT_APP_GEMINI_API_KEY);
+  // }, []);
 
   const generateRecipe = async () => {
     setLoadingRecipe(true);

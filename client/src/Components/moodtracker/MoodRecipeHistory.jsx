@@ -139,7 +139,7 @@ const MoodRecipeHistory = () => {
         // background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
         //backgroundColor: "#f5f9f9",
         background:
-          "linear-gradient(to bottom right, #f5f9f9, #d9e9e9, #c3dfe0)",
+          "linear-gradient(to bottom right, #f5f9f9,rgb(235, 244, 244),rgb(237, 246, 246))",
         minHeight: "100vh",
       }}
     >
