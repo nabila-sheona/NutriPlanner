@@ -64,8 +64,9 @@ const chatWithAI = async (req, res) => {
 
     const data = await response.json();
 
+    // Extract text properly from Gemini API
     const reply =
-      data.candidates?.[0]?.content?.[0]?.text ||
+      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
       "🤔 Sorry, I couldn't understand that.";
 
     // Optional: suggested buttons
