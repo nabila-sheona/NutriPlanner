@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useSpring, animated } from "@react-spring/web";
+// Import the background image
+import bgImage from "./images/bg.png";
 
 export default function ParallaxFood({
   image,
@@ -36,57 +38,76 @@ export default function ParallaxFood({
 
   return (
     <div
-      ref={ref}
-      className={`flex flex-col ${
-        reverse ? "md:flex-row-reverse" : "md:flex-row"
-      } items-center gap-6 w-[85%] max-w-[1100px] mx-auto my-0`}
+      className="relative w-full py-16"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
     >
-      {/* Image */}
-      <motion.div
-        initial={{ x: initialX, opacity: 0 }}
-        animate={{ x: inView ? 0 : initialX, opacity: inView ? 1 : 0 }}
-        transition={{
-          x: { type: "spring", stiffness: 50, damping: 18, delay },
-          opacity: { duration: 1.2, delay },
+      {/* Gradient overlay to blend edges */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.3) 70%, rgba(255,255,255,0.8) 100%)',
         }}
-        className="flex-1 flex justify-center"
+      />
+      {/* Content container */}
+      <div
+        ref={ref}
+        className={`flex flex-col ${
+          reverse ? "md:flex-row-reverse" : "md:flex-row"
+        } items-center gap-6 w-[85%] max-w-[1100px] mx-auto my-0 relative z-10`}
       >
-        <animated.img
-          src={image}
-          alt={title}
-          style={styles}
-          className="rounded-xl max-w-sm md:max-w-md w-full object-cover"
-        />
-      </motion.div>
+        {/* Image */}
+        <motion.div
+          initial={{ x: initialX, opacity: 0 }}
+          animate={{ x: inView ? 0 : initialX, opacity: inView ? 1 : 0 }}
+          transition={{
+            x: { type: "spring", stiffness: 50, damping: 18, delay },
+            opacity: { duration: 1.2, delay },
+          }}
+          className="flex-1 flex justify-center"
+        >
+          <animated.img
+            src={image}
+            alt={title}
+            style={styles}
+            className="rounded-xl max-w-sm md:max-w-md w-full object-cover"
+          />
+        </motion.div>
 
-      {/* Text */}
-      <div className="flex-1 text-left px-2 md:px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
-          transition={{
-            type: "spring",
-            stiffness: 80,
-            damping: 15,
-            delay: delay + 0.2,
-          }}
-          className="text-3xl md:text-4xl font-extrabold text-[#023e3c] mb-3 tracking-tight font-serif drop-shadow-md"
-        >
-          {title}
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
-          transition={{
-            type: "spring",
-            stiffness: 80,
-            damping: 15,
-            delay: delay + 0.3,
-          }}
-          className="text-lg md:text-xl leading-relaxed text-[#04534d] font-sans tracking-wide"
-        >
-          {text}
-        </motion.p>
+        {/* Text */}
+        <div className="flex-1 text-left px-2 md:px-6">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
+            transition={{
+              type: "spring",
+              stiffness: 80,
+              damping: 15,
+              delay: delay + 0.2,
+            }}
+            className="text-3xl md:text-4xl font-extrabold text-[#023e3c] mb-3 tracking-tight font-serif drop-shadow-md"
+          >
+            {title}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
+            transition={{
+              type: "spring",
+              stiffness: 80,
+              damping: 15,
+              delay: delay + 0.3,
+            }}
+            className="text-lg md:text-xl leading-relaxed text-[#04534d] font-sans tracking-wide"
+          >
+            {text}
+          </motion.p>
+        </div>
       </div>
     </div>
   );
