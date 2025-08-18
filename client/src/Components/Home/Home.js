@@ -182,9 +182,12 @@ export default function Home(props) {
         delay={0.2} // second image comes slightly later
       />
       <Divider sx={{ my: 6 }} />
+
       {/* Your Personal Recipe Collection Section */}
       <Box
         sx={{
+          maxWidth: "1200px", // 👈 limits width
+          mx: "auto", // 👈 centers horizontally
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
@@ -261,6 +264,8 @@ export default function Home(props) {
       {/* How Are You Feeling Today Section */}
       <Box
         sx={{
+          maxWidth: "1200px", // 👈 limits width
+          mx: "auto", // 👈 centers horizontally
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
@@ -293,7 +298,6 @@ export default function Home(props) {
             day.
           </p>
 
-          {/* Mood chips */}
           {/* Mood chips */}
           <div className="flex flex-wrap gap-3 mb-6">
             {moods.map((m) => (
@@ -353,6 +357,8 @@ export default function Home(props) {
       {/* Have a Specific Plan Section */}
       <Box
         sx={{
+          maxWidth: "1200px", // 👈 ensures same width constraint
+          mx: "auto", // 👈 keeps it centered like others
           display: "grid",
           gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
