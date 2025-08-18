@@ -27,6 +27,7 @@ import MealPlanCard from "../MealPlan/MealPlanCard.jsx";
 import ViewRecipeDialog from "../community/ViewRecipeDialog";
 import MealPlanRecipeDialog from "../community/MealPlanCard";
 import MealPlanRecipeCard from "../MealPlan/MealPlanRecipeCard.jsx";
+import { Sparkles } from "lucide-react";
 import RecipeUploadsHeatmap from "../Heatmap/RecipeUploadsHeatmap";
 
 const Profile = () => {
@@ -670,29 +671,13 @@ const Profile = () => {
           )}
 
           {/* Dialog for viewing meal plan recipe */}
-          <Dialog
-            open={!!selectedMealPlanRecipe}
-            onClose={() => setSelectedMealPlanRecipe(null)}
-            maxWidth="md"
-            fullWidth
-          >
-            <DialogTitle>
-              {selectedMealPlanRecipe?.title || "Meal Plan Recipe"}
-            </DialogTitle>
-            <DialogContent>
-              {selectedMealPlanRecipe && (
-                <MealPlanRecipeCard recipe={selectedMealPlanRecipe} />
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => setSelectedMealPlanRecipe(null)}
-                sx={{ color: "#004346" }}
-              >
-                Close
-              </Button>
-            </DialogActions>
-          </Dialog>
+          {selectedMealPlanRecipe && (
+            <MealPlanRecipeDialog
+              open={!!selectedMealPlanRecipe}
+              onClose={() => setSelectedMealPlanRecipe(null)}
+              recipe={selectedMealPlanRecipe}
+            />
+          )}
         </Box>
       )}
 
