@@ -125,17 +125,17 @@ const App = () => {
             </Layout>
           }
         />
-        <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
-        <Route path="/moodgraph" element={<MoodGraph />} />
+
+<Route path="/moodrecipehistory" element={<Layout><MoodRecipeHistory /></Layout>} />
+        <Route path="/moodgraph" element={<Layout><MoodGraph /></Layout>} />
         <Route 
           path="/searchrecipes" 
           element={
-            
-              <YouTubeRecipeSearch />
+            <Layout>
+              <YouTubeRecipeSearch /></Layout>
             
           } 
         />
-
       </Routes>
     </Router>
   );
