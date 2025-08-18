@@ -48,7 +48,11 @@ export default function Chatbot() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, context: currentPage }),
+          body: JSON.stringify({
+            message,
+            context: currentPage,
+            messages: [...messages, newMessage], // Send full conversation history
+          }),
         }
       );
 
