@@ -1,14 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { IconButton, Paper } from "@mui/material";
-import {
-  MainContainer,
-  ChatContainer,
-  MessageList,
-  Message,
-  MessageInput,
-} from "@chatscope/chat-ui-kit-react";
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
@@ -17,6 +9,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState([
     {
       message: "👋 Hi! I'm your NutriPlan Assistant. How can I help you today?",
@@ -29,17 +22,25 @@ export default function Chatbot() {
     },
   ]);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
   const location = useLocation();
   const currentPage = location.pathname;
 
-  // Auto-scroll to bottom of messages
+  // Auto-scroll to bottom of messages and focus input
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [messages, open]);
 
-  const handleSend = async (message) => {
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
+
+    const message = inputValue.trim();
     const newMessage = { message, sender: "user" };
     setMessages((prev) => [...prev, newMessage]);
+    setInputValue("");
 
     try {
       const res = await fetch(
@@ -73,8 +74,18 @@ export default function Chatbot() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   const handleSuggestionClick = (suggestion) => {
-    handleSend(suggestion);
+    setInputValue(suggestion);
+    setTimeout(() => {
+      handleSend();
+    }, 100);
   };
 
   return (
@@ -114,80 +125,83 @@ export default function Chatbot() {
                 </IconButton>
               </div>
 
-              {/* Chat */}
-              <MainContainer className="bg-transparent">
-                <ChatContainer className="bg-transparent">
-                  <MessageList
-                    className="px-4 py-2 custom-scrollbar"
-                    autoScrollToBottom
-                  >
-                    {messages.map((m, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
+              {/* Custom Chat Container */}
+              <div className="flex flex-col flex-1 overflow-hidden">
+                {/* Message List */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                  {messages.map((m, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`max-w-[85%] ${
+                        m.sender === "user" ? "ml-auto" : "mr-auto"
+                      }`}
+                    >
+                      {/* Message Bubble */}
+                      <div
+                        className={`px-4 py-3 rounded-2xl ${
+                          m.sender === "user"
+                            ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none"
+                            : "bg-white text-gray-800 border border-gray-200 rounded-bl-none"
+                        } shadow-sm`}
                       >
-                        <Message
-                          model={{
-                            message: m.message,
-                            sender: m.sender,
-                            direction:
-                              m.sender === "user" ? "outgoing" : "incoming",
-                            position: "single",
-                            type: "text",
-                          }}
-                          className={
-                            m.sender === "AI"
-                              ? "cs-message-incoming"
-                              : "cs-message-outgoing"
-                          }
-                        />
-                        {m.suggestions && m.suggestions.length > 0 && (
-                          <div className="flex flex-wrap gap-2 p-2 pb-4">
-                            {m.suggestions.map((sugg, idx) => (
-                              <motion.button
-                                key={idx}
-                                onClick={() => handleSuggestionClick(sugg)}
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.98 }}
-                                className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm px-3 py-2 rounded-full hover:shadow-md transition-all flex items-center gap-1"
-                              >
-                                <AutoAwesomeIcon fontSize="small" />
-                                {sugg}
-                              </motion.button>
-                            ))}
-                          </div>
-                        )}
-                      </motion.div>
-                    ))}
-                    <div ref={messagesEndRef} />
-                  </MessageList>
-                  <div className="cs-message-input-container">
-                    <MessageInput
+                        {m.message}
+                      </div>
+
+                      {/* Suggestions */}
+                      {m.suggestions && m.suggestions.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {m.suggestions.map((sugg, idx) => (
+                            <motion.button
+                              key={idx}
+                              onClick={() => handleSuggestionClick(sugg)}
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm px-3 py-1.5 rounded-full hover:shadow-md transition-all flex items-center gap-1"
+                            >
+                              <AutoAwesomeIcon fontSize="small" />
+                              {sugg}
+                            </motion.button>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area - Custom and Visible */}
+                <div className="border-t border-gray-200 bg-white p-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={handleKeyPress}
                       placeholder="Ask about nutrition, diets, or meal plans..."
-                      onSend={handleSend}
-                      attachButton={false}
-                      sendButton={false}
-                      className="custom-message-input"
+                      className="flex-1 bg-gray-100 rounded-full py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-300"
                     />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <IconButton
-                        size="small"
-                        className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-md"
-                      >
-                        <SendIcon fontSize="small" />
-                      </IconButton>
-                    </div>
+                    <IconButton
+                      size="small"
+                      onClick={handleSend}
+                      disabled={!inputValue.trim()}
+                      className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-md"
+                      style={{ minWidth: "40px", minHeight: "40px" }}
+                    >
+                      <SendIcon fontSize="small" />
+                    </IconButton>
                   </div>
-                </ChatContainer>
-              </MainContainer>
+                </div>
+              </div>
             </Paper>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating button - fixed position */}
+      {/* Floating button */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -202,7 +216,12 @@ export default function Chatbot() {
         }}
       >
         <IconButton
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            setOpen(!open);
+            if (!open) {
+              setTimeout(() => inputRef.current?.focus(), 300);
+            }
+          }}
           style={{
             background: "linear-gradient(45deg, #6366f1, #8b5cf6)",
             color: "#fff",
@@ -216,41 +235,6 @@ export default function Chatbot() {
 
       {/* Custom styles */}
       <style jsx>{`
-        .cs-message-input-container {
-          border-top: 1px solid #e5e7eb !important;
-          background: white !important;
-          padding: 12px 16px !important;
-        }
-
-        .cs-message-input__content-editor {
-          background: white !important;
-          border: 1px solid #e5e7eb !important;
-          border-radius: 20px !important;
-          padding: 10px 16px !important;
-          padding-right: 40px !important;
-          min-height: 44px !important;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .cs-message-input__content-editor[data-placeholder]:empty:before {
-          color: #6b7280 !important;
-          font-size: 0.9rem;
-        }
-
-        .cs-message-outgoing .cs-message__content {
-          background: linear-gradient(45deg, #6366f1, #8b5cf6) !important;
-          color: white !important;
-          border-radius: 18px 4px 18px 18px !important;
-        }
-
-        .cs-message-incoming .cs-message__content {
-          background: white !important;
-          color: #374151 !important;
-          border: 1px solid #e5e7eb !important;
-          border-radius: 4px 18px 18px 18px !important;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
