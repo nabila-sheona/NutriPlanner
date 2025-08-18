@@ -19,6 +19,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Favorite, FavoriteBorder, Add, Search } from "@mui/icons-material";
+import { Sparkles } from "lucide-react";
 import AddRecipeDialog from "./AddRecipeDialog";
 import ViewRecipeDialog from "./ViewRecipeDialog";
 import MealPlanCard from "./MealPlanCard";
@@ -415,6 +416,24 @@ const CommunityRecipes = () => {
                     Category: {recipe.mealType}
                   </Typography>
                 )}
+                                 {recipe.isMealPlan && (
+                   <Box sx={{ mt: 1 }}>
+                     <Chip
+                       icon={<Sparkles size={16} color="white" />}
+                       label="AI Generated"
+                       size="small"
+                       variant="filled"
+                       sx={{ 
+                         background: "linear-gradient(135deg,rgb(188, 210, 206) 0%, #004346 100%)",
+                         color: "#ffffff",
+                         fontWeight: "bold",
+                         "& .MuiChip-icon": {
+                           color: "#ffffff"
+                         }
+                       }}
+                     />
+                   </Box>
+                 )}
                 <Box
                   sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 0.5 }}
                 >
