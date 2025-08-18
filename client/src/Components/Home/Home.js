@@ -181,7 +181,7 @@ export default function Home(props) {
         reverse
         delay={0.1} // second image comes slightly later
       />
-      <Divider sx={{ my: 6 }} />
+      <Divider sx={{ my: 2 }} />
 
       {/* Your Personal Recipe Collection Section */}
       <Box
