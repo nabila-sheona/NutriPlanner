@@ -14,8 +14,9 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const createError = require("./utils/createError");
 
-const moodRoutes = require('./Routes/mood.routes');
-const recipeRoutes = require('./Routes/recipe2.routes');
+const moodRoutes = require("./Routes/mood.routes");
+const recipeRoutes = require("./Routes/recipe2.routes");
+const chatRoutes = require("./Routes/chat.js");
 
 const app = express();
 
@@ -39,32 +40,35 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/api/chat", chatRoutes);
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/recipes", recipeRoute);
 app.use("/mealplans", mealplanRoute);
 app.use("/mealplanrecipes", mealplanrecipeRoute);
 
-app.use('/api/mood', moodRoutes);
-app.use('/api/recipes', recipeRoutes);
+app.use("/api/mood", moodRoutes);
+app.use("/api/recipes", recipeRoutes);
 
-
-console.log('\n=== REGISTERED ROUTES ===');
+console.log("\n=== REGISTERED ROUTES ===");
 app._router.stack.forEach((layer) => {
   if (layer.route) {
-    const methods = Object.keys(layer.route.methods).map(method => method.toUpperCase()).join(', ');
+    const methods = Object.keys(layer.route.methods)
+      .map((method) => method.toUpperCase())
+      .join(", ");
     console.log(`${methods} ${layer.route.path}`);
-  } else if (layer.name === 'router') {
+  } else if (layer.name === "router") {
     console.log(`\nMountpoint: ${layer.regexp}`);
     layer.handle.stack.forEach((sublayer) => {
       if (sublayer.route) {
-        const methods = Object.keys(sublayer.route.methods).map(method => method.toUpperCase()).join(', ');
+        const methods = Object.keys(sublayer.route.methods)
+          .map((method) => method.toUpperCase())
+          .join(", ");
         console.log(`  ${methods} ${sublayer.route.path}`);
       }
     });
   }
 });
-
 
 mongoose
   .connect(process.env.MONGODB_URI, {})
@@ -81,7 +85,7 @@ mongoose
 app.all("*", (req, res, next) => {
   next(createError(404, `Cannot find ${req.originalUrl} on this server!`));
 });
-
+console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
 app.use((err, req, res, next) => {
   console.error(err.stack);
 

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^2.1.1",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.0",
@@ -39,6 +41,7 @@
     "postcss-loader": "^8.1.1",
     "react": "^18.2.0",
     "react-calendar-heatmap": "^1.10.0",
+    "react-chatbot-kit": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
     "react-dropzone": "^14.3.5",

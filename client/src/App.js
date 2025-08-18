@@ -11,17 +11,14 @@ import MyRecipes from "./Components/community/MyRecipes";
 import RecipeUploadsHeatmap from "./Components/Heatmap/RecipeUploadsHeatmap";
 import Footer from "./Components/Footer/Footer";
 import { Box } from "@mui/material";
-
+import Chatbot from "./Components/Chatbot/Chatbot.jsx";
 import MoodTracker from "./Components/moodtracker/MoodTracker";
 import MoodRecipeHistory from "./Components/moodtracker/MoodRecipeHistory";
-import MoodGraph from './Components/moodtracker/MoodGraph.jsx';
-
-
+import MoodGraph from "./Components/moodtracker/MoodGraph.jsx";
 
 import "./App.css";
 //import YouTubeAuthWrapper from "./Components/moodtracker/YouTubeAuthWrapper";
 import YouTubeRecipeSearch from "./Components/moodtracker/YouTubeRecipeSearch.jsx";
-
 
 const Layout = ({ children }) => {
   return (
@@ -42,6 +39,17 @@ const Layout = ({ children }) => {
         >
           {children}
         </Box>
+      </Box>
+
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          zIndex: 1500, // keeps it above other content
+        }}
+      >
+        <Chatbot />
       </Box>
 
       <Footer title="NutriPlanner" />
@@ -127,15 +135,7 @@ const App = () => {
         />
         <Route path="/moodrecipehistory" element={<MoodRecipeHistory />} />
         <Route path="/moodgraph" element={<MoodGraph />} />
-        <Route 
-          path="/searchrecipes" 
-          element={
-            
-              <YouTubeRecipeSearch />
-            
-          } 
-        />
-
+        <Route path="/searchrecipes" element={<YouTubeRecipeSearch />} />
       </Routes>
     </Router>
   );
