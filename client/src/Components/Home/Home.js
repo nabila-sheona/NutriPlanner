@@ -157,8 +157,6 @@ export default function Home(props) {
       {/* Card Below Hero   */}
       <CardBelowHome />
       <Divider sx={{ my: 6 }} />
-
-      {/* Parallax Sections */}
       <ParallaxFood
         image={fruitbowl} // any image you want
         title="Explore New Recipes"
@@ -166,14 +164,23 @@ export default function Home(props) {
         delay={0.2} // small delay for smooth entrance
         reverse
       />
-
+      <Divider sx={{ my: 6 }} />
+      {/* Parallax Sections 
+      <ParallaxFood
+        image={fruitbowl} // any image you want
+        title="Explore New Recipes"
+        text="Discover thousands of recipes shared by our community and save your favorites for easy access."
+        delay={0.2} // small delay for smooth entrance
+        reverse
+      />
+      <Divider sx={{ my: 6 }} />
       <ParallaxFood
         image={saladImg}
         title="Eat for Your Mood"
         text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
         delay={0.1} // first image enters immediately
       />
-
+      <Divider sx={{ my: 6 }} />
       <ParallaxFood
         image={grilledFishImg}
         title="Health Goal Tracking"
@@ -182,6 +189,7 @@ export default function Home(props) {
         delay={0.1} // second image comes slightly later
       />
       <Divider sx={{ my: 2 }} />
+      */}
 
       {/* Your Personal Recipe Collection Section */}
       <Box
@@ -260,7 +268,14 @@ export default function Home(props) {
         </Box>
       </Box>
       <Divider sx={{ my: 6 }} />
-
+      <ParallaxFood
+        image={grilledFishImg}
+        title="Health Goal Tracking"
+        text="Whether you want to lose weight, gain muscle, or improve heart health, our plans adapt to you."
+        reverse
+        delay={0.1} // second image comes slightly later
+      />
+      <Divider sx={{ my: 6 }} />
       {/* Have a Specific Plan Section */}
       <Box
         sx={{
@@ -344,7 +359,13 @@ export default function Home(props) {
         </Box>
       </Box>
       <Divider sx={{ my: 6 }} />
-
+      <ParallaxFood
+        image={saladImg}
+        title="Eat for Your Mood"
+        text="Select your current mood, and we'll create meals designed to lift your spirits and keep you energized."
+        delay={0.1} // first image enters immediately
+      />
+      <Divider sx={{ my: 6 }} />
       {/* How Are You Feeling Today Section */}
       <Box
         sx={{
@@ -389,7 +410,7 @@ export default function Home(props) {
                 key={m.mood}
                 whileHover={{ scale: 1.1 }}
                 onClick={() => setSelectedMood(m)} // change selected mood
-                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
+                className={${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md}
               >
                 {m.icon} {m.mood}
               </motion.div>
@@ -426,7 +447,7 @@ export default function Home(props) {
           <motion.img
             key={selectedMood.mood} // ensures smooth transition when image changes
             src={selectedMood.meal}
-            alt={`${selectedMood.mood} Meal`}
+            alt={${selectedMood.mood} Meal}
             className="rounded-2xl shadow-lg"
             style={{ width: "100%", maxWidth: "400px" }}
             initial={{ opacity: 0, y: 20 }}
