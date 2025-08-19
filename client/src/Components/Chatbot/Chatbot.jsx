@@ -205,7 +205,7 @@ export default function Chatbot() {
         )}
       </AnimatePresence>
 
-      {/* Floating button */}
+      {/* Floating button 
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -236,7 +236,40 @@ export default function Chatbot() {
           {open ? <CloseIcon /> : <ChatIcon />}
         </IconButton>
       </motion.div>
+      
+      */}
 
+      {/* Floating button - Only show when chat is closed */}
+      {!open && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="shadow-lg rounded-full"
+          style={{
+            position: "fixed",
+            bottom: "24px",
+            right: "24px",
+            zIndex: 50,
+          }}
+        >
+          <IconButton
+            onClick={() => {
+              setOpen(true);
+              setTimeout(() => inputRef.current?.focus(), 300);
+            }}
+            style={{
+              background: "linear-gradient(45deg, #6366f1, #8b5cf6)",
+              color: "#fff",
+              boxShadow: "0 4px 20px rgba(99, 102, 241, 0.4)",
+            }}
+            size="large"
+          >
+            <ChatIcon />
+          </IconButton>
+        </motion.div>
+      )}
       {/* Custom styles */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
