@@ -410,7 +410,7 @@ export default function Home(props) {
                 key={m.mood}
                 whileHover={{ scale: 1.1 }}
                 onClick={() => setSelectedMood(m)} // change selected mood
-                className={${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md}
+                className={`${m.color} text-white px-4 py-2 rounded-full cursor-pointer shadow-md`}
               >
                 {m.icon} {m.mood}
               </motion.div>
@@ -447,7 +447,7 @@ export default function Home(props) {
           <motion.img
             key={selectedMood.mood} // ensures smooth transition when image changes
             src={selectedMood.meal}
-            alt={${selectedMood.mood} Meal}
+            alt={`${selectedMood.mood} Meal`}
             className="rounded-2xl shadow-lg"
             style={{ width: "100%", maxWidth: "400px" }}
             initial={{ opacity: 0, y: 20 }}
