@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -10,55 +10,26 @@ import {
 } from "@mui/material";
 import logo from "./images/logo.png";
 import MessageModal from "../MessageModal/MessageModal";
+import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = ({ title, children }) => {
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser"))
-  );
+  const { user, logout } = useContext(AuthContext); // use AuthContext
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleRestrictedNavigation = (path) => {
-    if (currentUser) {
+    if (user) {
       navigate(path);
     } else {
       setIsModalOpen(true);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
-    setCurrentUser(null);
-    navigate("/login");
-  };
-
   const closeModal = () => {
     setIsModalOpen(false);
     navigate("/login");
   };
-
-  useEffect(() => {
-    const validateUser = () => {
-      const token = localStorage.getItem("token");
-      const storedUser = JSON.parse(localStorage.getItem("currentUser"));
-
-      const restrictedRoutes = ["/profile", "/services", "/pets"];
-      const isRestrictedRoute = restrictedRoutes.includes(location.pathname);
-
-      if (isRestrictedRoute && (!token || !storedUser)) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("currentUser");
-        setCurrentUser(null);
-        navigate("/login");
-      } else {
-        setCurrentUser(storedUser);
-      }
-    };
-
-    validateUser();
-  }, [location, navigate]);
 
   return (
     <>
@@ -126,9 +97,6 @@ const Navbar = ({ title, children }) => {
               { label: "Home", path: "/" },
               { label: "Community", path: "/community" },
               { label: "My Recipes", path: "/myrecipes" },
-
-              /* label: "Contact", path: "/contact" */
-
               { label: "Mood Meal", path: "/moodtracker" },
               { label: "Meal Planner", path: "/mealplanner" },
             ].map((link) => (
@@ -148,12 +116,14 @@ const Navbar = ({ title, children }) => {
                   },
                 }}
                 onClick={() =>
-                  link.path === "/services" ||
-                  link.path === "/community" ||
-                  link.path === "/profile" ||
-                  link.path === "/myrecipes" ||
-                  link.path === "/mealplanner" ||
-                  link.path === "/moodtracker"
+                  [
+                    "/services",
+                    "/community",
+                    "/profile",
+                    "/myrecipes",
+                    "/mealplanner",
+                    "/moodtracker",
+                  ].includes(link.path)
                     ? handleRestrictedNavigation(link.path)
                     : navigate(link.path)
                 }
@@ -163,7 +133,7 @@ const Navbar = ({ title, children }) => {
             ))}
 
             {/* Conditional Login or Logout Button */}
-            {!currentUser ? (
+            {!user ? (
               <Button
                 variant="outlined"
                 sx={{
@@ -195,7 +165,7 @@ const Navbar = ({ title, children }) => {
                     color: "#fff",
                   },
                 }}
-                onClick={handleLogout}
+                onClick={logout}
               >
                 Logout
               </Button>
@@ -203,10 +173,10 @@ const Navbar = ({ title, children }) => {
           </Box>
 
           <Box display="flex" alignItems="center" gap={2}>
-            {currentUser && (
+            {user && (
               <Avatar
-                src={currentUser.img || ""}
-                alt={currentUser.username || "User"}
+                src={user.img || ""}
+                alt={user.username || "User"}
                 sx={{
                   width: "40px",
                   height: "40px",
@@ -227,7 +197,7 @@ const Navbar = ({ title, children }) => {
       </AppBar>
 
       {/* Render children */}
-      {children && <Box>{React.cloneElement(children, { currentUser })}</Box>}
+      {children && <Box>{React.cloneElement(children, { user })}</Box>}
     </>
   );
 };
