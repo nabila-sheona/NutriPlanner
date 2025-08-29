@@ -16,8 +16,9 @@ import {
   DialogActions,
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { auth, provider, signInWithPopup } from "../../firebase";
+import { auth, provider, signInWithPopup } from "../../firebase.js";
 import newRequest from "../../utils/newRequest.js";
+import { useAuth } from "../../context/AuthContext.js"; // Import the AuthContext
 
 const lightTheme = createTheme({
   palette: {
@@ -47,6 +48,7 @@ const lightTheme = createTheme({
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth(); // Use the login function from AuthContext
 
   // Form state
   const [username, setUsername] = useState("");
@@ -97,8 +99,7 @@ const Login = () => {
         password,
       });
       const { token, user } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      login(user, token); // Use the login function from AuthContext
       navigate("/"); // Always redirect to home
     } catch (err) {
       console.error("Login Error:", err);
@@ -123,8 +124,7 @@ const Login = () => {
         }
       );
       const { token, user } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("currentUser", JSON.stringify(user));
+      login(user, token); // Use the login function from AuthContext
       navigate("/"); // Always redirect to home
     } catch (error) {
       console.error("Google Sign-in Error:", error);
@@ -302,7 +302,7 @@ const Login = () => {
           }}
         >
           <Typography variant="body2">
-            Drag the pinky icon to the circle to verify you’re human:
+            Drag the pinky icon to the circle to verify you're human:
           </Typography>
           <Box
             sx={{

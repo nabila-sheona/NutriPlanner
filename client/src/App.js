@@ -1,34 +1,34 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+import { Box } from "@mui/material";
+
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./Components/NavBar/Navbar";
 import Home from "./Components/Home/Home";
 import Profile from "./Components/Profile/Profile.jsx";
-import Login from "./Pages/login/Login.jsx";
+import Login from "./Pages/login/Login.js";
 import Register from "./Pages/register/Register.jsx";
 import MealPlan from "./Pages/MealPlan/MealPlanner.jsx";
 import CommunityRecipes from "./Components/community/CommunityRecipes";
 import MyRecipes from "./Components/community/MyRecipes";
 import RecipeUploadsHeatmap from "./Components/Heatmap/RecipeUploadsHeatmap";
 import Footer from "./Components/Footer/Footer";
-import { Box } from "@mui/material";
 import Chatbot from "./Components/Chatbot/Chatbot.jsx";
 import MoodTracker from "./Components/moodtracker/MoodTracker";
 import MoodRecipeHistory from "./Components/moodtracker/MoodRecipeHistory";
 import MoodGraph from "./Components/moodtracker/MoodGraph.jsx";
 import YouTubeRecipeSearch from "./Components/moodtracker/YouTubeRecipeSearch.jsx";
 
-// Import Auth Context
-import { AuthContext, AuthProvider } from "./context/AuthContext";
 import "./App.css";
 
-// Layout component with conditional chatbot rendering
+// Layout component
 const Layout = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -41,25 +41,15 @@ const Layout = ({ children }) => {
             flex: 1,
             padding: "1rem",
             transition: "margin-left 0.3s",
-            "@media (max-width: 768px)": {
-              marginLeft: "0",
-            },
+            "@media (max-width: 768px)": { marginLeft: 0 },
           }}
         >
           {children}
         </Box>
       </Box>
 
-      {/* Only show chatbot if user is logged in */}
       {user && (
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: 20,
-            right: 20,
-            zIndex: 1500,
-          }}
-        >
+        <Box sx={{ position: "fixed", bottom: 20, right: 20, zIndex: 1500 }}>
           <Chatbot />
         </Box>
       )}
@@ -69,32 +59,24 @@ const Layout = ({ children }) => {
   );
 };
 
-// Protected Route component
+// Protected Route
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext);
-
-  if (loading) {
-    return <div>Loading...</div>; // You can replace this with a proper loading component
-  }
-
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
   return user ? children : <Navigate to="/login" />;
 };
 
-// Public Route component (redirect to home if already logged in)
+// Public Route
 const PublicRoute = ({ children }) => {
-  const { user, loading } = useContext(AuthContext);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
   return !user ? children : <Navigate to="/" />;
 };
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route
             path="/"
@@ -215,8 +197,8 @@ const App = () => {
             }
           />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 };
 

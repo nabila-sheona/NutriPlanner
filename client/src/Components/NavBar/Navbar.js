@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   AppBar,
@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import logo from "./images/logo.png";
 import MessageModal from "../MessageModal/MessageModal";
-import { AuthContext } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext"; // Import the AuthContext
 
 const Navbar = ({ title, children }) => {
-  const { user, logout } = useContext(AuthContext); // use AuthContext
+  const { user, logout } = useAuth(); // Use AuthContext
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,6 +24,10 @@ const Navbar = ({ title, children }) => {
     } else {
       setIsModalOpen(true);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   const closeModal = () => {
@@ -116,14 +120,12 @@ const Navbar = ({ title, children }) => {
                   },
                 }}
                 onClick={() =>
-                  [
-                    "/services",
-                    "/community",
-                    "/profile",
-                    "/myrecipes",
-                    "/mealplanner",
-                    "/moodtracker",
-                  ].includes(link.path)
+                  link.path === "/services" ||
+                  link.path === "/community" ||
+                  link.path === "/profile" ||
+                  link.path === "/myrecipes" ||
+                  link.path === "/mealplanner" ||
+                  link.path === "/moodtracker"
                     ? handleRestrictedNavigation(link.path)
                     : navigate(link.path)
                 }
@@ -165,7 +167,7 @@ const Navbar = ({ title, children }) => {
                     color: "#fff",
                   },
                 }}
-                onClick={logout}
+                onClick={handleLogout}
               >
                 Logout
               </Button>
@@ -188,7 +190,6 @@ const Navbar = ({ title, children }) => {
             )}
           </Box>
         </Toolbar>
-
         <MessageModal
           isOpen={isModalOpen}
           onClose={closeModal}
