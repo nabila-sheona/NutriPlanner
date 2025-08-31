@@ -1,7 +1,5 @@
 # NutriPlan - Recipe & Meal Planning Application
 
-![NutriPlan Banner](https://via.placeholder.com/1200x400?text=NutriPlan+Banner)
-
 NutriPlan is a full-stack web application designed for food enthusiasts to create, share, and discover recipes, generate AI-powered meal plans, track mood-based recipe recommendations, and visualize recipe upload streaks via a GitHub-like heatmap.
 
 ## ✨ Features

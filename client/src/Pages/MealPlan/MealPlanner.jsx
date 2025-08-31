@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { ChefHat, Calendar, Target, Check } from "lucide-react";
 import {
@@ -52,6 +52,19 @@ const dayNames = [
   "Friday",
   "Saturday",
   "Sunday",
+];
+
+const CUISINES = [
+  "Italian",
+  "Mexican",
+  "Indian",
+  "Thai",
+  "Mediterranean",
+  "Middle Eastern",
+  "Japanese",
+  "Korean",
+  "American",
+  "French",
 ];
 
 // Custom styled components
@@ -158,191 +171,7 @@ export default function MealPlanner() {
     );
   };
 
-  // useEffect(() => {
-  //   console.log("API Key:", process.env.REACT_APP_GEMINI_API_KEY);
-  // }, []);
-
-  const generateRecipe = async () => {
-    setLoadingRecipe(true);
-
-    const basePrompt = `
-Generate a COMPLETE healthy recipe in the following format.
-Keep it under 300 words per message, but if you can't finish, I will ask you to continue.
-Always include ALL sections exactly in this order and do not stop mid-sentence.
-
-Format:
-Title: [Recipe Name]
-Time: [Time in minutes]
-Calories: [Calories]
-Type: [Breakfast/Lunch/Dinner]
-
-Ingredients:
-- Item - quantity in grams or cups
-
-Instructions:
-1. Step 1
-2. Step 2
-3. Step 3
-
-Macros:
-Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
-`;
-
-    let fullText = "";
-    let continuePrompt = basePrompt;
-    let attempt = 0;
-    const maxAttempts = 5;
-
-    try {
-      while (attempt < maxAttempts) {
-        attempt++;
-
-        const response = await axios.post(
-          `${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`,
-          {
-            contents: [{ parts: [{ text: continuePrompt }] }],
-            generationConfig: {
-              maxOutputTokens: 1024,
-              temperature: 0.7,
-            },
-          },
-          { headers: { "Content-Type": "application/json" } }
-        );
-
-        const aiChunk =
-          response.data.candidates[0].content.parts[0].text.trim();
-        fullText += (fullText ? "\n" : "") + aiChunk;
-
-        if (aiChunk.toLowerCase().includes("macros:")) {
-          break;
-        }
-
-        continuePrompt = `Continue the previous recipe from where it stopped. Do not repeat anything. Here is what you wrote so far:\n${fullText}`;
-      }
-
-      setRecipe(fullText);
-    } catch (error) {
-      console.error("Error generating recipe:", error);
-      setRecipe("Oops! Couldn't fetch recipe. Blame the AI chef. 🤖🍳");
-    } finally {
-      setLoadingRecipe(false);
-    }
-  };
-
-  const generatePlan = async () => {
-    setLoading(true);
-
-    const prompt = `
-      Create a personalized 7-day meal plan with breakfast, lunch, and dinner for each day.
-      Dietary Preferences: ${
-        preferences.length > 0 ? preferences.join(", ") : "None"
-      }
-      Health Goal: ${goal}
-      Format it like:
-      Monday:
-        Breakfast: ...
-        Lunch: ...
-        Dinner: ...
-      Keep it concise, clear, and skip health tips or intro text.
-    `;
-
-    const requestData = {
-      contents: [{ parts: [{ text: prompt }] }],
-    };
-
-    try {
-      const response = await axios.post(
-        `${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`,
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const aiText = response.data.candidates[0].content.parts[0].text;
-      setPlan(aiText);
-    } catch (error) {
-      console.error("Error generating meal plan:", error);
-      setPlan("Oops! Couldn't fetch a plan. Maybe Gemini got hangry? 🤖🍽️");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveMealPlanToProfile = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.post(
-        "http://localhost:4000/mealplans/save",
-        {
-          planText: plan,
-          goal,
-          preferences,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      alert("Meal plan saved to profile!");
-    } catch (error) {
-      console.error("Error saving meal plan:", error);
-      alert("Failed to save meal plan.");
-    }
-  };
-
-  const saveRecipeToProfile = async () => {
-    const token = localStorage.getItem("token");
-    const recipeData = parseRecipeText(recipe);
-    try {
-      await axios.post(
-        "http://localhost:4000/mealplanrecipes/save",
-        recipeData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      alert("Recipe saved to profile!");
-    } catch (error) {
-      console.error("Error saving recipe:", error);
-      alert("Failed to save recipe.");
-    }
-  };
-
-  const extractMealsPerDay = (text) => {
-    const mealMap = {};
-    let currentDay = null;
-
-    const lines = text
-      .split(/\*\*|\n/)
-      .map((l) => l.trim())
-      .filter((l) => l);
-
-    for (let line of lines) {
-      for (let day of dayNames) {
-        if (line.toLowerCase().startsWith(day.toLowerCase())) {
-          currentDay = day;
-          mealMap[day] = {};
-          break;
-        }
-      }
-
-      if (!currentDay) continue;
-
-      const mealMatch = line.match(/(?:Breakfast|Lunch|Dinner):\**\s*(.+)/i);
-      if (mealMatch) {
-        const mealType = line.match(/Breakfast|Lunch|Dinner/i)[0];
-        mealMap[currentDay][mealType] = mealMatch[1];
-      }
-    }
-
-    return mealMap;
-  };
-
+  // -------------------- Parsing & extraction utilities --------------------
   const parseRecipeText = (text) => {
     const lines = text
       .split("\n")
@@ -400,6 +229,296 @@ Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
     };
   };
 
+  const extractMealsPerDay = (text) => {
+    const mealMap = {};
+    let currentDay = null;
+
+    const lines = text
+      .split(/\*\*|\n/)
+      .map((l) => l.trim())
+      .filter((l) => l);
+
+    for (let line of lines) {
+      for (let day of dayNames) {
+        if (line.toLowerCase().startsWith(day.toLowerCase())) {
+          currentDay = day;
+          mealMap[day] = {};
+          break;
+        }
+      }
+
+      if (!currentDay) continue;
+
+      const mealMatch = line.match(/(?:Breakfast|Lunch|Dinner):\**\s*(.+)/i);
+      if (mealMatch) {
+        const mealType = line.match(/Breakfast|Lunch|Dinner/i)[0];
+        mealMap[currentDay][mealType] = mealMatch[1];
+      }
+    }
+
+    return mealMap;
+  };
+
+  // -------------------- Fingerprinting & history (localStorage) --------------------
+  const normalizeFingerprint = (text) => {
+    try {
+      const parsed = parseRecipeText(text);
+      const title = (parsed.title || "")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+      const ingredients = (parsed.ingredients || [])
+        .join(",")
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+      return `${title}||${ingredients}`;
+    } catch {
+      return text.slice(0, 200).toLowerCase().replace(/\s+/g, " ").trim();
+    }
+  };
+
+  const getHistory = () => {
+    try {
+      return JSON.parse(
+        localStorage.getItem("generatedRecipeFingerprints") || "[]"
+      );
+    } catch {
+      return [];
+    }
+  };
+
+  const pushToHistory = (fingerprint) => {
+    const h = getHistory();
+    if (!h.includes(fingerprint)) {
+      h.unshift(fingerprint);
+      localStorage.setItem(
+        "generatedRecipeFingerprints",
+        JSON.stringify(h.slice(0, 50))
+      );
+    }
+  };
+
+  const isDuplicate = (fingerprint) => {
+    const h = getHistory();
+    return h.includes(fingerprint);
+  };
+
+  // Small deterministic variation to ensure visible differences if LLM is stubborn
+  const applySmallVariation = (recipeText) => {
+    if (!recipeText) return recipeText;
+    const swapped = recipeText
+      .replace(/(roast|bake|grill|saute|pan-fry)/gi, (m) => {
+        const map = {
+          roast: "grill",
+          bake: "pan-fry",
+          grill: "roast",
+          saute: "bake",
+          "pan-fry": "saute",
+        };
+        return map[m.toLowerCase()] || m;
+      })
+      .replace(
+        /(salt and pepper|salt & pepper)/gi,
+        "salt, pepper, and a pinch of smoked paprika"
+      );
+
+    // If still looks identical, append a short hint to force uniqueness
+    return swapped.includes("smoked paprika")
+      ? swapped
+      : swapped + "\n\nNote: add a pinch of smoked paprika for depth.";
+  };
+
+  // -------------------- Generation functions (improved) --------------------
+  const generateRecipe = async () => {
+    setLoadingRecipe(true);
+
+    const basePrompt = `
+Generate a COMPLETE healthy recipe in the following format.
+Keep it under 300 words per message, but if you can't finish, I will ask you to continue.
+Always include ALL sections exactly in this order and do not stop mid-sentence.
+
+Format:
+Title: [Recipe Name]
+Time: [Time in minutes]
+Calories: [Calories]
+Type: [Breakfast/Lunch/Dinner]
+
+Ingredients:
+- Item - quantity in grams or cups
+
+Instructions:
+1. Step 1
+2. Step 2
+3. Step 3
+
+Macros:
+Calories: xxx | Protein: xxg | Carbs: xxg | Fat: xxg | Fiber: xxg | Sodium: xxmg
+`;
+
+    const chosenCuisine = CUISINES[Math.floor(Math.random() * CUISINES.length)];
+    const history = getHistory();
+    const historyHint = history.length
+      ? `Avoid recipes that match any of these fingerprints: ${history
+          .slice(0, 10)
+          .join(" ; ")}.`
+      : "";
+
+    let attempt = 0;
+    const maxAttempts = 5;
+    let finalText = "";
+    let lastFingerprint = null;
+
+    try {
+      while (attempt < maxAttempts) {
+        attempt++;
+        const creativeTemp = attempt === 1 ? 0.8 : 0.95; // escalate creativity on retries
+
+        const continuePrompt = `
+${basePrompt}
+Please create a unique ${chosenCuisine} style recipe.
+${historyHint}
+If the recipe would duplicate an existing title or exact ingredient list, choose a different title and swap at least one major ingredient and one cooking method.
+Keep ingredients realistic and quantities reasonable.
+`;
+
+        const response = await axios.post(
+          `${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`,
+          {
+            contents: [{ parts: [{ text: continuePrompt }] }],
+            generationConfig: {
+              maxOutputTokens: 1024,
+              temperature: creativeTemp,
+              topP: 0.95,
+            },
+          },
+          { headers: { "Content-Type": "application/json" } }
+        );
+
+        const aiChunk =
+          response.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+          "";
+        finalText = aiChunk;
+
+        // fingerprint and check uniqueness
+        const fp = normalizeFingerprint(finalText);
+        lastFingerprint = fp;
+
+        if (!isDuplicate(fp)) {
+          pushToHistory(fp);
+          setRecipe(finalText);
+          setLoadingRecipe(false);
+          return;
+        } else {
+          console.warn("Duplicate recipe detected, retrying...", fp);
+          // loop to try again with higher temperature
+        }
+      }
+
+      // If we exit loop without a unique result, apply a local variation and accept
+      const varied = applySmallVariation(finalText || "");
+      const fp2 = normalizeFingerprint(varied);
+      pushToHistory(fp2);
+      setRecipe(varied);
+    } catch (error) {
+      console.error("Error generating recipe:", error);
+      setRecipe("Oops! Couldn't fetch recipe. Blame the AI chef. 🤖🍳");
+    } finally {
+      setLoadingRecipe(false);
+    }
+  };
+
+  const generatePlan = async () => {
+    setLoading(true);
+
+    const prompt = `
+Create a personalized 7-day meal plan with breakfast, lunch, and dinner for each day.
+Dietary Preferences: ${preferences.length > 0 ? preferences.join(", ") : "None"}
+Health Goal: ${goal}
+
+Constraints:
+- Do not repeat the same dish title more than once in the week.
+- Aim for at least 4 different protein/primary ingredient sources across the week (e.g., tofu, chickpeas, lentils, salmon, chicken).
+- Vary cuisines across days (e.g., mix Italian, Indian, Mexican etc.)
+- Keep it concise, clear, and skip health tips or intro text.
+Format it like:
+Monday:
+  Breakfast: ...
+  Lunch: ...
+  Dinner: ...
+`;
+
+    try {
+      const response = await axios.post(
+        `${GEMINI_ENDPOINT}?key=${GEMINI_API_KEY}`,
+        {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: 1200,
+            temperature: 0.8,
+            topP: 0.95,
+          },
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const aiText =
+        response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      setPlan(aiText);
+    } catch (error) {
+      console.error("Error generating meal plan:", error);
+      setPlan("Oops! Couldn't fetch a plan. Maybe Gemini got hangry? 🤖🍽️");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // -------------------- Save handlers --------------------
+  const saveMealPlanToProfile = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        "http://localhost:4000/mealplans/save",
+        {
+          planText: plan,
+          goal,
+          preferences,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Meal plan saved to profile!");
+    } catch (error) {
+      console.error("Error saving meal plan:", error);
+      alert("Failed to save meal plan.");
+    }
+  };
+
+  const saveRecipeToProfile = async () => {
+    const token = localStorage.getItem("token");
+    const recipeData = parseRecipeText(recipe);
+    try {
+      await axios.post(
+        "http://localhost:4000/mealplanrecipes/save",
+        recipeData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      alert("Recipe saved to profile!");
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      alert("Failed to save recipe.");
+    }
+  };
+
+  // -------------------- UI --------------------
   return (
     <Box sx={{ backgroundColor: "#f5f9f9", minHeight: "100vh" }}>
       {/* Header */}

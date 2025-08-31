@@ -93,7 +93,7 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 ">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -204,40 +204,6 @@ export default function Chatbot() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Floating button 
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="shadow-lg rounded-full"
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          zIndex: 50,
-        }}
-      >
-        <IconButton
-          onClick={() => {
-            setOpen(!open);
-            if (!open) {
-              setTimeout(() => inputRef.current?.focus(), 300);
-            }
-          }}
-          style={{
-            background: "linear-gradient(45deg, #6366f1, #8b5cf6)",
-            color: "#fff",
-            boxShadow: "0 4px 20px rgba(99, 102, 241, 0.4)",
-          }}
-          size="large"
-        >
-          {open ? <CloseIcon /> : <ChatIcon />}
-        </IconButton>
-      </motion.div>
-      
-      */}
 
       {/* Floating button - Only show when chat is closed */}
       {!open && (
