@@ -132,9 +132,10 @@ NutriPlan is a full-stack web application designed for food enthusiasts to creat
 
 ## 🏏 Contributors
 - [Nabila Islam](https://github.com/nabila-sheona)
+- [Nusrat Siddique Tuli](https://github.com/ns-tuli)
 - [Namisa Najah Raisa](https://github.com/N4M154)
 - [Nazifa Tasneem](https://github.com/nazifatasneem13)
-- [Nusrat Siddique Tuli](https://github.com/ns-tuli)
+
 
 ## 🔐 Environment Variables
 
